@@ -7,4 +7,5 @@
 #pragma once
 
 #include "types.h"
+#include "vector.h"
 #include "visibility.h"

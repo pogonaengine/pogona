@@ -16,6 +16,7 @@
 #include <string.h>
 
 #include <pogona/types.h>
+#include <pogona/vector.h>
 #include <pogona/visibility.h>
 
 #endif /* _PCH_H */

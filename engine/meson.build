@@ -1,5 +1,6 @@
 libpogona_src = [
   'pogona.c',
+  'vector.c',
 ]
 
 libpogona_include = [
