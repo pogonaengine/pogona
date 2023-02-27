@@ -6,6 +6,7 @@
 
 #pragma once
 
+#include "logger.h"
 #include "types.h"
 #include "vector.h"
 #include "visibility.h"
