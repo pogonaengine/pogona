@@ -12,4 +12,5 @@ project(
 cc = meson.get_compiler('c')
 
 subdir('engine')
+subdir('vulkan')
 subdir('tests')

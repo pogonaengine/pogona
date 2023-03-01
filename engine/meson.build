@@ -25,6 +25,7 @@ libpogona = library(
   gnu_symbol_visibility: 'hidden',
   include_directories: libpogona_include,
   install: true,
+  install_dir: '',
 )
 libpogona_dep = declare_dependency(
   link_with: libpogona,
