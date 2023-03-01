@@ -1,7 +1,7 @@
 libpogona_src = [
   'file_api.c',
   'logger.c',
-  'pogona.c',
+  'engine.c',
   'vector.c',
 ]
 
