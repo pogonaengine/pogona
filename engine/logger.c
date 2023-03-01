@@ -4,7 +4,7 @@
  * Copyright (c) 2023, Nikita Romanyuk
  */
 
-#include "pch/pch.h"
+#include <pch.h>
 #include <pogona/logger.h>
 
 static const char* sLevelNames[pLOGGER_LEVEL_COUNT] = {

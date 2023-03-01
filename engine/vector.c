@@ -4,7 +4,7 @@
  * Copyright (c) 2023, Nikita Romanyuk
  */
 
-#include "pch/pch.h"
+#include <pch.h>
 #include <pogona/vector.h>
 
 #define START_CAPACITY 16

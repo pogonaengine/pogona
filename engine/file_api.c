@@ -4,9 +4,9 @@
  * Copyright (c) 2023, Nikita Romanyuk
  */
 
-#include "pch/pch.h"
 #include <dirent.h>
 #include <errno.h>
+#include <pch.h>
 #include <pogona/logger.h>
 
 bool pIsFilePresentAt(const char* path, const char* name)

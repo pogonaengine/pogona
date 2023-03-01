@@ -7,6 +7,7 @@ libpogona_src = [
 
 libpogona_include = [
   include_directories('../include'),
+  include_directories('../pch'),
 ]
 
 libpogona_deps = [
@@ -19,7 +20,7 @@ libpogona = library(
   libpogona_src,
   version: meson.project_version(),
   dependencies: libpogona_deps,
-  c_pch: 'pch/pch.h',
+  c_pch: '../pch/pch.h',
   c_args: ['-DPEXPORT'],
   gnu_symbol_visibility: 'hidden',
   include_directories: libpogona_include,
