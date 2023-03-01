@@ -18,7 +18,6 @@ libpogona_deps = [
 libpogona = library(
   'pogona',
   libpogona_src,
-  version: meson.project_version(),
   dependencies: libpogona_deps,
   c_pch: '../pch/pch.h',
   c_args: ['-DPEXPORT'],

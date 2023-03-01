@@ -14,7 +14,6 @@ libpogona_vulkan_deps = [
 libpogona_vulkan = library(
   'pogona_vulkan',
   libpogona_vulkan_src,
-  version: '0.1.0',
   dependencies: libpogona_vulkan_deps,
   c_pch: '../pch/pch.h',
   include_directories: libpogona_vulkan_include,
