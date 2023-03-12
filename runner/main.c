@@ -4,7 +4,9 @@
  * Copyright (c) 2023, Nikita Romanyuk
  */
 
-#ifndef __linux__
+#include <../config.h>
+
+#ifndef POS_UNIX
 # error go port me!
 #endif
 
@@ -13,7 +15,7 @@
 #include <pogona/types.h>
 
 typedef int32_t (*EngineInitFunc)(int argc, char** argv);
-typedef void (*EngineShutdownFunc)();
+typedef void    (*EngineShutdownFunc)();
 
 int main(int argc, char** argv)
 {
@@ -24,20 +26,20 @@ int main(int argc, char** argv)
 
 	engineHandle = dlopen("libpogona.so", RTLD_NOW);
 	if (!engineHandle) {
-		fprintf(stderr, "could not open `libpogona.so`: %s\n", dlerror());
+		fprintf(stderr, "%s\n", dlerror());
 		return 1;
 	}
 
 	engineInitFunc = dlsym(engineHandle, "pEngineInit");
 	if (!engineInitFunc) {	
-		fprintf(stderr, "could not find `pEngineInit` in `libpogona.so`: %s\n", dlerror());
+		fprintf(stderr, "%s\n", dlerror());
 		result = 1;
 		goto exit;
 	}
 
 	engineShutdownFunc = dlsym(engineHandle, "pEngineShutdown");
 	if (!engineShutdownFunc) {	
-		fprintf(stderr, "could not find `pEngineShutdown` in `libpogona.so`: %s\n", dlerror());
+		fprintf(stderr, "%s\n", dlerror());
 		result = 1;
 		goto exit;
 	}
