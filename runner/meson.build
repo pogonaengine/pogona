@@ -4,9 +4,7 @@ runner_include = [
 ]
 
 runner_deps = [
-  # it's only required on linux
-  # TODO: check if running on linux
-  cc.find_library('dl', required: false),
+  libdl,
 ]
 
 runner = executable(

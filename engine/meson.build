@@ -11,8 +11,8 @@ libpogona_include = [
 ]
 
 libpogona_deps = [
-  cc.find_library('m', required: false),
-  cc.find_library('dl', required: false),
+  libm,
+  libdl,
 ]
 
 libpogona = library(

@@ -8,7 +8,7 @@ libpogona_vulkan_include = [
 ]
 
 libpogona_vulkan_deps = [
-  cc.find_library('m', required: false),
+  libm,
 ]
 
 libpogona_vulkan = library(
