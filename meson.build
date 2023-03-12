@@ -10,9 +10,8 @@ project(
 )
 
 cc = meson.get_compiler('c')
-# FIXME: they're required on Linux, but not on other OSs
-libm = cc.find_library('m', required: false)
-libdl = cc.find_library('dl', required: false)
+libm = cc.find_library('m', required: target_machine.system() == 'linux')
+libdl = cc.find_library('dl', required: target_machine.system() == 'linux')
 
 config = configuration_data()
 
