@@ -10,6 +10,14 @@
 # error go port me!
 #endif
 
+#if defined(POS_UNIX) && !defined(POS_DARWIN)
+# define LIBRARY_NAME "libpogona.so"
+#elif defined(POS_DARWIN)
+# define LIBRARY_NAME "libpogona.dylib"
+#elif defined(POS_WINDOWS)
+# define LIBRARY_NAME "libpogona.dll"
+#endif
+
 #include <dlfcn.h>
 #include <pch.h>
 #include <pogona/types.h>
@@ -24,7 +32,7 @@ int main(int argc, char** argv)
 	EngineInitFunc engineInitFunc = NULL;
 	EngineShutdownFunc engineShutdownFunc = NULL;
 
-	engineHandle = dlopen("libpogona.so", RTLD_NOW);
+	engineHandle = dlopen(LIBRARY_NAME, RTLD_NOW);
 	if (!engineHandle) {
 		fprintf(stderr, "%s\n", dlerror());
 		return 1;
