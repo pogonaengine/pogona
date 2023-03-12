@@ -20,7 +20,7 @@
 
 #include <dlfcn.h>
 #include <pch.h>
-#include <pogona/types.h>
+#include <pogona/defines.h>
 
 typedef int32_t (*EngineInitFunc)(int argc, char** argv);
 typedef void    (*EngineShutdownFunc)();

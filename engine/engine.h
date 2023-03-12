@@ -6,8 +6,7 @@
 
 #pragma once
 
-#include <pogona/types.h>
-#include <pogona/visibility.h>
+#include <pogona/defines.h>
 
 PAPI int32_t pEngineInit(int argc, char** argv);
 PAPI void    pEngineShutdown(void);

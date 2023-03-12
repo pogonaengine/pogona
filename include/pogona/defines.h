@@ -10,6 +10,20 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#ifdef PEXPORT
+# ifdef _MSC_VER
+#  define PAPI __declspec(dllexport)
+# else
+#  define PAPI __attribute__((visibility("default")))
+# endif /* _MSC_VER */
+#else
+# ifdef _MSC_VER
+#  define PAPI __declspec(dllimport)
+# else
+#  define PAPI
+# endif /* _MSC_VER */
+#endif /* PEXPORT */
+
 typedef uint8_t  u8;
 typedef uint16_t u16;
 typedef uint32_t u32;

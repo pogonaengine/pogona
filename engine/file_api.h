@@ -6,6 +6,6 @@
 
 #pragma once
 
-#include <pogona/types.h>
+#include <pogona/defines.h>
 
 bool pIsFilePresentAt(const char* path, const char* name);

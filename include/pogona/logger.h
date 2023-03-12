@@ -6,8 +6,7 @@
 
 #pragma once
 
-#include "types.h"
-#include "visibility.h"
+#include "defines.h"
 
 enum {
 	pLOGGER_DEBUG,
