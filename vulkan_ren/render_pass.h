@@ -8,5 +8,6 @@
 
 #include "defines.h"
 #include "vulkan.h"
+#include <engine/math.h>
 
 i32 rVkCreateRenderPass(void);
