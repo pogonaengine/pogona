@@ -6,6 +6,7 @@
 
 #include "engine.h"
 #include "logger.h"
+#include "renderer.h"
 #include "util.h"
 #include <config.h>
 #include <dirent.h>
@@ -21,6 +22,10 @@
 #elif defined(POS_WINDOWS)
 # define RENDERER_ENDING "_ren.dll"
 #endif
+
+pEngine gEngine = {
+	.loggerLog = _pLoggerLog,
+};
 
 static i32 sFindRenderers(const char* path, u8 size, char rendererPaths[size][FILE_NAME_SIZE])
 {
@@ -82,6 +87,18 @@ extern PAPI i32 pEngineEntry(int argc, char** argv)
 	for (u8 i = 0; i < renderersCount; ++i) {
 		pLoggerInfo("%s\n", rendererPaths[i]);
 	}
+	assert(renderersCount > 0); /* FIXME: don't crash */
+
+	/* FIXME: if the first renderer fails, try second one, ... */
+	error = pLoadRenderer(rendererPaths[0]);
+	if (error < 0)
+		goto exit;
+
+	gRenderer.entry->create(&gEngine);
+	gRenderer.entry->destroy();
+
+	pUnloadRenderer();
+
 exit:
 	return error;
 }

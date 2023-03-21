@@ -19,7 +19,14 @@ enum {
 
 PAPI void _pLoggerLog(i8 level, const char* fmt, ...);
 
-#define pLoggerDebug(...)   _pLoggerLog(pLOGGER_DEBUG,   __VA_ARGS__)
-#define pLoggerInfo(...)    _pLoggerLog(pLOGGER_INFO,    __VA_ARGS__)
-#define pLoggerWarning(...) _pLoggerLog(pLOGGER_WARNING, __VA_ARGS__)
-#define pLoggerError(...)   _pLoggerLog(pLOGGER_ERROR,   __VA_ARGS__)
+#ifndef PRENDERER
+# define pLoggerDebug(...)   _pLoggerLog(pLOGGER_DEBUG,   __VA_ARGS__)
+# define pLoggerInfo(...)    _pLoggerLog(pLOGGER_INFO,    __VA_ARGS__)
+# define pLoggerWarning(...) _pLoggerLog(pLOGGER_WARNING, __VA_ARGS__)
+# define pLoggerError(...)   _pLoggerLog(pLOGGER_ERROR,   __VA_ARGS__)
+#else
+# define pLoggerDebug(...)   gEngine->loggerLog(pLOGGER_DEBUG,   __VA_ARGS__)
+# define pLoggerInfo(...)    gEngine->loggerLog(pLOGGER_INFO,    __VA_ARGS__)
+# define pLoggerWarning(...) gEngine->loggerLog(pLOGGER_WARNING, __VA_ARGS__)
+# define pLoggerError(...)   gEngine->loggerLog(pLOGGER_ERROR,   __VA_ARGS__)
+#endif

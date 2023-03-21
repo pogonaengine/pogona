@@ -9,3 +9,8 @@
 #include "defines.h"
 
 typedef i32 (*PFN_pEngineEntry)(int argc, char** argv);
+
+/* this structure is primarily used by the renderer */
+typedef struct {
+	void (*loggerLog)(i8 level, const char* fmt, ...);
+} pEngine;
