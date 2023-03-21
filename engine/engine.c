@@ -8,16 +8,9 @@
 #include <pch.h>
 #include <pogona/logger.h>
 
-int32_t pEngineInit(int argc, char** argv)
+int32_t pEngineEntry(int argc, char** argv)
 {
 	(void) argc;
 	(void) argv;
-
-	pLoggerInfo("pEngineInit() was called\n");
 	return 0;
-}
-
-void pEngineShutdown(void)
-{
-	pLoggerInfo("pEngineShutdown() was called\n");
 }

@@ -22,15 +22,13 @@
 #include <pch.h>
 #include <pogona/defines.h>
 
-typedef int32_t (*EngineInitFunc)(int argc, char** argv);
-typedef void    (*EngineShutdownFunc)();
+typedef int32_t (*EngineEntryFunc)(int argc, char** argv);
 
 int main(int argc, char** argv)
 {
 	int32_t result = 0;
 	void* engineHandle = NULL;
-	EngineInitFunc engineInitFunc = NULL;
-	EngineShutdownFunc engineShutdownFunc = NULL;
+	EngineEntryFunc engineEntryFunc = NULL;
 
 	engineHandle = dlopen(LIBRARY_NAME, RTLD_NOW);
 	if (!engineHandle) {
@@ -38,24 +36,15 @@ int main(int argc, char** argv)
 		return 1;
 	}
 
-	engineInitFunc = dlsym(engineHandle, "pEngineInit");
-	if (!engineInitFunc) {	
+	engineEntryFunc = dlsym(engineHandle, "pEngineEntry");
+	if (!engineEntryFunc) {
 		fprintf(stderr, "%s\n", dlerror());
 		result = 1;
 		goto exit;
 	}
 
-	engineShutdownFunc = dlsym(engineHandle, "pEngineShutdown");
-	if (!engineShutdownFunc) {	
-		fprintf(stderr, "%s\n", dlerror());
-		result = 1;
-		goto exit;
-	}
-
-	result = engineInitFunc(argc, argv);
-
+	result = engineEntryFunc(argc, argv);
 exit:
-	engineShutdownFunc();
 	dlclose(engineHandle);
 	return result;
 }
