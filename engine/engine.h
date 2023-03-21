@@ -8,4 +8,4 @@
 
 #include <pogona/defines.h>
 
-PAPI int32_t pEngineEntry(int argc, char** argv);
+typedef int32_t (*PFN_pEngineEntry)(int argc, char** argv);

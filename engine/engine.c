@@ -8,7 +8,7 @@
 #include <pch.h>
 #include <pogona/logger.h>
 
-int32_t pEngineEntry(int argc, char** argv)
+extern PAPI int32_t pEngineEntry(int argc, char** argv)
 {
 	(void) argc;
 	(void) argv;

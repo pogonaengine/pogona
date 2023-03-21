@@ -19,16 +19,15 @@
 #endif
 
 #include <dlfcn.h>
+#include <engine.h>
 #include <pch.h>
 #include <pogona/defines.h>
-
-typedef int32_t (*EngineEntryFunc)(int argc, char** argv);
 
 int main(int argc, char** argv)
 {
 	int32_t result = 0;
 	void* engineHandle = NULL;
-	EngineEntryFunc engineEntryFunc = NULL;
+	PFN_pEngineEntry pEngineEntry = NULL;
 
 	engineHandle = dlopen(LIBRARY_NAME, RTLD_NOW);
 	if (!engineHandle) {
@@ -36,14 +35,14 @@ int main(int argc, char** argv)
 		return 1;
 	}
 
-	engineEntryFunc = dlsym(engineHandle, "pEngineEntry");
-	if (!engineEntryFunc) {
+	pEngineEntry = dlsym(engineHandle, "pEngineEntry");
+	if (!pEngineEntry) {
 		fprintf(stderr, "%s\n", dlerror());
 		result = 1;
 		goto exit;
 	}
 
-	result = engineEntryFunc(argc, argv);
+	result = pEngineEntry(argc, argv);
 exit:
 	dlclose(engineHandle);
 	return result;
