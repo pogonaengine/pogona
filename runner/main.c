@@ -25,7 +25,7 @@
 
 int main(int argc, char** argv)
 {
-	int32_t result = 0;
+	i32 result = 0;
 	void* engineHandle = NULL;
 	PFN_pEngineEntry pEngineEntry = NULL;
 

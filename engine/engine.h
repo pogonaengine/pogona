@@ -8,4 +8,4 @@
 
 #include "defines.h"
 
-typedef int32_t (*PFN_pEngineEntry)(int argc, char** argv);
+typedef i32 (*PFN_pEngineEntry)(int argc, char** argv);

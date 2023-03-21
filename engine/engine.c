@@ -8,7 +8,7 @@
 #include "logger.h"
 #include <pch/pch.h>
 
-extern PAPI int32_t pEngineEntry(int argc, char** argv)
+extern PAPI i32 pEngineEntry(int argc, char** argv)
 {
 	(void) argc;
 	(void) argv;
