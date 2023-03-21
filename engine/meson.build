@@ -6,8 +6,7 @@ libpogona_src = [
 ]
 
 libpogona_include = [
-  include_directories('../include'),
-  include_directories('../pch'),
+  include_directories('..'),
 ]
 
 libpogona_deps = [

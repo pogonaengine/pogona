@@ -19,9 +19,9 @@
 #endif
 
 #include <dlfcn.h>
-#include <engine.h>
-#include <pch.h>
-#include <pogona/defines.h>
+#include <engine/defines.h>
+#include <engine/engine.h>
+#include <pch/pch.h>
 
 int main(int argc, char** argv)
 {

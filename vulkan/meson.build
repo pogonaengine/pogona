@@ -3,8 +3,7 @@ libpogona_vulkan_src = [
 ]
 
 libpogona_vulkan_include = [
-  include_directories('../include'),
-  include_directories('../pch'),
+  include_directories('..'),
 ]
 
 libpogona_vulkan_deps = [

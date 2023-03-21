@@ -5,8 +5,8 @@
  */
 
 #include "engine.h"
-#include <pch.h>
-#include <pogona/logger.h>
+#include "logger.h"
+#include <pch/pch.h>
 
 extern PAPI int32_t pEngineEntry(int argc, char** argv)
 {

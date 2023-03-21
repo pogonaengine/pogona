@@ -4,8 +4,8 @@
  * Copyright (c) 2023, Nikita Romanyuk
  */
 
-#include <pch.h>
-#include <pogona/vector.h>
+#include "vector.h"
+#include <pch/pch.h>
 
 #define START_CAPACITY 16
 #define RESIZE_BY      8

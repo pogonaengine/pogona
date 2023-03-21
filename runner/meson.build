@@ -1,7 +1,5 @@
 runner_include = [
-  include_directories('../include'),
-  include_directories('../engine'),
-  include_directories('../pch'),
+  include_directories('..'),
 ]
 
 runner_deps = [

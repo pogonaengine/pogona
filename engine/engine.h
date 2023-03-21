@@ -6,6 +6,6 @@
 
 #pragma once
 
-#include <pogona/defines.h>
+#include "defines.h"
 
 typedef int32_t (*PFN_pEngineEntry)(int argc, char** argv);
