@@ -6,6 +6,7 @@
 
 #include "engine.h"
 #include "logger.h"
+#include "util.h"
 #include <config.h>
 #include <dirent.h>
 #include <errno.h>
@@ -20,18 +21,6 @@
 #elif defined(POS_WINDOWS)
 # define RENDERER_ENDING "_ren.dll"
 #endif
-
-/* TODO: MOVE OUT */
-static bool sStringEndsWith(const char* string, const char* ending)
-{
-	if (!string || !ending)
-		return false;
-	u64 stringLength = strlen(string);
-	u64 endingLength = strlen(ending);
-	if (stringLength < endingLength)
-		return false;
-	return strncmp(string + stringLength - endingLength, ending, endingLength) == 0;
-}
 
 static i32 sFindRenderers(const char* path, u8 size, char rendererPaths[size][FILE_NAME_SIZE])
 {
@@ -64,7 +53,7 @@ static i32 sFindRenderers(const char* path, u8 size, char rendererPaths[size][FI
 			break;
 		}
 
-		if (sStringEndsWith(entry->d_name, RENDERER_ENDING)) {
+		if (pStringEndsWith(entry->d_name, RENDERER_ENDING)) {
 			strncpy(rendererPaths[i], entry->d_name, FILE_NAME_SIZE);
 			i++;
 		}
