@@ -5,7 +5,10 @@ project(
   license: 'BSD-2-Clause',
   default_options: [
     'c_std=gnu11',
-    'warning_level=2',
+    'warning_level=3',
+    'b_lto_mode=thin',
+    'b_thinlto_cache=true',
+    'b_pie=true',
   ],
 )
 
