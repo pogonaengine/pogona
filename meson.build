@@ -18,6 +18,12 @@ libdl = cc.find_library('dl', required: target_machine.system() == 'linux')
 
 config = configuration_data()
 
+version_parts = meson.project_version().split('.')
+config.set('PVERSION', '@0@'.format(meson.project_version()))
+config.set('PVERSION_MAJOR', '@0@'.format(version_parts[0]))
+config.set('PVERSION_MINOR', '@0@'.format(version_parts[1]))
+config.set('PVERSION_PATCH', '@0@'.format(version_parts[2]))
+
 # Endianness detection
 if target_machine.endian() == 'big'
   config.set('PENDIANNESS_BIG', 1)
