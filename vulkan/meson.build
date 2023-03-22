@@ -8,6 +8,7 @@ libpogona_vulkan_ren_include = [
 
 libpogona_vulkan_ren_deps = [
   libm,
+  subproject('vulkan-headers').get_variable('vulkan_headers_dep'),
 ]
 
 libpogona_vulkan = library(

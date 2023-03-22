@@ -4,3 +4,6 @@
 /.vscode/
 /compile_flags.txt
 /compile_options.json
+
+/subprojects/*/
+!/subprojects/packagefiles/
