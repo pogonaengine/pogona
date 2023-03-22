@@ -11,7 +11,6 @@
 
 /* It is stored in the renderer's library as 'gEntry' */
 typedef struct {
-	/* FIXME: these are stubs for now */
 	i32 (*create)(pEngine* engine);
 	i32 (*destroy)(void);
 } pRendererEntry;
