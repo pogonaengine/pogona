@@ -8,6 +8,9 @@
 
 typedef struct {
 	VkInstance instance;
+#ifndef NDEBUG
+	VkDebugUtilsMessengerEXT debugUtilsMessenger;
+#endif
 } rVkCore;
 
 extern rVkCore gCore;
