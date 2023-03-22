@@ -83,6 +83,10 @@ else
 endif
 config.set('PLD_NAME', cc.get_linker_id())
 
+if cc.get_id() == 'clang'
+  add_project_arguments('-Wno-gnu', language: 'c')
+endif
+
 subdir('engine')
 subdir('vulkan')
 subdir('runner')
