@@ -1,5 +1,6 @@
 libpogona_vulkan_ren_src = [
   'entry.c',
+  'vulkan.c',
 ]
 
 libpogona_vulkan_ren_include = [
@@ -17,7 +18,7 @@ libpogona_vulkan = library(
   libpogona_vulkan_ren_src,
   dependencies: libpogona_vulkan_ren_deps,
   c_args: '-DPRENDERER',
-  c_pch: '../pch/pch.h',
+  c_pch: '../pch/vulkan.h',
   include_directories: libpogona_vulkan_ren_include,
   install: true,
   install_dir: '',

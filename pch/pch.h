@@ -7,6 +7,8 @@
 #ifndef _PCH_H
 #define _PCH_H
 
+#include <config.h>
+
 #include <assert.h>
 #include <stdarg.h>
 #include <stdbool.h>
