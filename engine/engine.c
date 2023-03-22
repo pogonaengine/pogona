@@ -25,6 +25,12 @@
 
 pEngine gEngine = {
 	.loggerLog = _pLoggerLog,
+	.vectorCreate = _pVectorCreate,
+	.vectorPush = _pVectorPush,
+	.vectorPop = _pVectorPop,
+	.vectorResize = _pVectorResize,
+	.vectorShrinkToFit = _pVectorShrinkToFit,
+	.vectorDestroy = _pVectorDestroy,
 };
 
 static i32 sFindRenderers(const char* path, u8 size, char rendererPaths[size][FILE_NAME_SIZE])

@@ -25,15 +25,24 @@ PAPI i32 _pVectorResize(pVector* self, u64 size);
 PAPI i32 _pVectorShrinkToFit(pVector* self);
 PAPI void _pVectorDestroy(pVector* self);
 
-#define pVectorCreate(self) (_pVectorCreate((pVector*) self, sizeof(**self.data)))
-#define pVectorPushPtr(self, data) (_pVectorPush((pVector*) self, (void*) data))
-#define pVectorPop(self) (_pVectorPop((pVector*) self))
-#define pVectorResize(self, size) (_pVectorResize((pVector*) self, size))
-#define pVectorShrinkToFit(self) (_pVectorShrinkToFit((pVector*) self))
-#define pVectorDestroy(self) (_pVectorDestroy((pVector*) self))
+#ifndef PRENDERER
+# define pVectorCreate(self) (_pVectorCreate((pVector*) self, sizeof(**self.data)))
+# define pVectorPushPtr(self, data) (_pVectorPush((pVector*) self, (void*) data))
+# define pVectorPop(self) (_pVectorPop((pVector*) self))
+# define pVectorResize(self, size) (_pVectorResize((pVector*) self, size))
+# define pVectorShrinkToFit(self) (_pVectorShrinkToFit((pVector*) self))
+# define pVectorDestroy(self) (_pVectorDestroy((pVector*) self))
+#else
+# define pVectorCreate(self) (gEngine->vectorCreate((pVector*) self, sizeof(**self.data)))
+# define pVectorPushPtr(self, data) (gEngine->vectorPush((pVector*) self, (void*) data))
+# define pVectorPop(self) (gEngine->vectorPop((pVector*) self))
+# define pVectorResize(self, size) (gEngine->vectorResize((pVector*) self, size))
+# define pVectorShrinkToFit(self) (gEngine->vectorShrinkToFit((pVector*) self))
+# define pVectorDestroy(self) (gEngine->vectorDestroy((pVector*) self))
+#endif
 
-#define pVectorPush(self, data)                   \
-	{                                               \
-		__auto_type temp = (data);                    \
-		_pVectorPush((pVector*) self, (void*) &temp); \
+#define pVectorPush(self, data)                      \
+	{                                                  \
+		__auto_type temp = (data);                       \
+		pVectorPushPtr((pVector*) self, (void*) &temp);  \
 	}
