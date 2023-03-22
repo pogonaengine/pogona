@@ -35,7 +35,7 @@ int main(int argc, char** argv)
 		return 1;
 	}
 
-	pEngineEntry = dlsym(engineHandle, "pEngineEntry");
+	pEngineEntry = (PFN_pEngineEntry) dlsym(engineHandle, "pEngineEntry");
 	if (!pEngineEntry) {
 		fprintf(stderr, "%s\n", dlerror());
 		result = 1;
