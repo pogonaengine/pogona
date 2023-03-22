@@ -88,7 +88,7 @@ if cc.get_id() == 'clang'
 endif
 
 subdir('engine')
-subdir('vulkan')
+subdir('vulkan_ren')
 subdir('runner')
 subdir('tests')
 
