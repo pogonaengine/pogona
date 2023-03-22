@@ -23,7 +23,7 @@ i32 rVkInstanceCreate(void)
 	const VkApplicationInfo applicationInfo = {
 		.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO,
 		.pEngineName = "pogona",
-		.engineVersion = 0, /* TODO: */
+		.engineVersion = VK_MAKE_VERSION(PVERSION_MAJOR, PVERSION_MINOR, PVERSION_PATCH),
 		.apiVersion = VK_API_VERSION_1_2,
 	};
 	const VkInstanceCreateInfo instanceCreateInfo = {
