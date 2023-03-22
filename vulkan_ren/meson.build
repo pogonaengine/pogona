@@ -1,4 +1,5 @@
 libpogona_vulkan_ren_src = [
+  'core.c',
   'entry.c',
   'vulkan.c',
 ]
