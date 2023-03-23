@@ -29,8 +29,8 @@ i32 rVkInstanceCreate(void)
 {
 	uint32_t supportedApiVersion = 0;
 	RVK_CHECK(vkEnumerateInstanceVersion(&supportedApiVersion));
-	if (supportedApiVersion < VK_API_VERSION_1_2) {
-		pLoggerError("Vulkan instance does not support 1.2\n");
+	if (supportedApiVersion < VK_API_VERSION_1_3) {
+		pLoggerError("Vulkan instance does not support 1.3\n");
 		return -1;
 	}
 
@@ -38,7 +38,7 @@ i32 rVkInstanceCreate(void)
 		.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO,
 		.pEngineName = "pogona",
 		.engineVersion = VK_MAKE_VERSION(PVERSION_MAJOR, PVERSION_MINOR, PVERSION_PATCH),
-		.apiVersion = VK_API_VERSION_1_2,
+		.apiVersion = VK_API_VERSION_1_3,
 	};
 
 	pVector(const char*) layers;
@@ -139,8 +139,8 @@ i32 rVkPickPhysicalDevice(void)
 			pLoggerDebug(" Device type: %s\n", deviceType);
 #endif
 
-			if (deviceProperties.apiVersion < VK_API_VERSION_1_2) {
-				pLoggerWarning("%s does not support Vulkan 1.2\n", deviceProperties.deviceName);
+			if (deviceProperties.apiVersion < VK_API_VERSION_1_3) {
+				pLoggerWarning("%s does not support Vulkan 1.3\n", deviceProperties.deviceName);
 				continue;
 			}
 
