@@ -18,6 +18,8 @@ typedef struct {
 	VkDebugUtilsMessengerEXT debugUtilsMessenger;
 #endif
 	rVkPhysicalDevice physicalDevice;
+	VkDevice device;
+	VkQueue queue;
 } rVkCore;
 
 extern rVkCore gCore;
@@ -27,3 +29,4 @@ i32 rVkInstanceCreate(void);
 void rVkInstanceDestroy(void);
 
 i32 rVkPickPhysicalDevice(void);
+i32 rVkCreateDevice(void);

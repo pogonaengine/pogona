@@ -190,3 +190,31 @@ i32 rVkPickPhysicalDevice(void)
 	gCore.physicalDevice.queueFamilyIndex = pickedQueueFamily;
 	return 0;
 }
+
+i32 rVkCreateDevice(void)
+{
+	const char* extensions[] = {
+		VK_KHR_SWAPCHAIN_EXTENSION_NAME,
+	};
+
+	const float queuePriorities[] = { 1.f };
+	VkDeviceQueueCreateInfo queueCreateInfo = {
+		.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO,
+		.pQueuePriorities = queuePriorities,
+		.queueCount = 1,
+		.queueFamilyIndex = gCore.physicalDevice.queueFamilyIndex,
+	};
+
+	VkDeviceCreateInfo deviceCreateInfo = {
+		.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO,
+		.queueCreateInfoCount = 1,
+		.pQueueCreateInfos = &queueCreateInfo,
+		.enabledExtensionCount = sizeof(extensions) / sizeof(extensions[0]),
+		.ppEnabledExtensionNames = extensions,
+		.pEnabledFeatures = NULL,
+	};
+	RVK_CHECK(vkCreateDevice(gCore.physicalDevice.physicalDevice, &deviceCreateInfo, NULL, &gCore.device));
+	volkLoadDevice(gCore.device);
+	vkGetDeviceQueue(gCore.device, gCore.physicalDevice.queueFamilyIndex, 0, &gCore.queue);
+	return 0;
+}

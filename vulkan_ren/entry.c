@@ -35,12 +35,19 @@ i32 rCreate(pEngine* engine)
 		goto exit;
 	}
 
+	error = rVkCreateDevice();
+	if (error < 0) {
+		pLoggerError("Could not create device\n");
+		goto exit;
+	}
+
 exit:
 	return error;
 }
 
 i32 rDestroy(void)
 {
+	vkDestroyDevice(gCore.device, NULL);
 	rVkInstanceDestroy();
 	return 0;
 }
