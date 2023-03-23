@@ -20,6 +20,8 @@ typedef struct {
 	rVkPhysicalDevice physicalDevice;
 	VkDevice device;
 	VkQueue queue;
+	VkCommandPool commandPool;
+	VkCommandBuffer commandBuffers[1];
 } rVkCore;
 
 extern rVkCore gCore;
@@ -30,3 +32,4 @@ void rVkInstanceDestroy(void);
 
 i32 rVkPickPhysicalDevice(void);
 i32 rVkCreateDevice(void);
+i32 rVkCreateCommandPool(void);

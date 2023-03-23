@@ -41,12 +41,19 @@ i32 rCreate(pEngine* engine)
 		goto exit;
 	}
 
+	error = rVkCreateCommandPool();
+	if (error < 0) {
+		pLoggerError("Could not create command pool\n");
+		goto exit;
+	}
+
 exit:
 	return error;
 }
 
 i32 rDestroy(void)
 {
+	vkDestroyCommandPool(gCore.device, gCore.commandPool, NULL);
 	vkDestroyDevice(gCore.device, NULL);
 	rVkInstanceDestroy();
 	return 0;

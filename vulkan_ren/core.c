@@ -218,3 +218,23 @@ i32 rVkCreateDevice(void)
 	vkGetDeviceQueue(gCore.device, gCore.physicalDevice.queueFamilyIndex, 0, &gCore.queue);
 	return 0;
 }
+
+i32 rVkCreateCommandPool(void)
+{
+	VkCommandPoolCreateInfo commandPoolCreateInfo = {
+		.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO,
+		.queueFamilyIndex = gCore.physicalDevice.queueFamilyIndex,
+		.flags = VK_COMMAND_POOL_CREATE_TRANSIENT_BIT
+		       | VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT,
+	};
+	RVK_CHECK(vkCreateCommandPool(gCore.device, &commandPoolCreateInfo, NULL, &gCore.commandPool));
+
+	VkCommandBufferAllocateInfo commandBufferAllocateInfo = {
+		.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,
+		.commandBufferCount = 1,
+		.commandPool = gCore.commandPool,
+		.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY,
+	};
+	RVK_CHECK(vkAllocateCommandBuffers(gCore.device, &commandBufferAllocateInfo, gCore.commandBuffers));
+	return 0;
+}
