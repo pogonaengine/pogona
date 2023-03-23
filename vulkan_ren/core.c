@@ -90,3 +90,103 @@ void rVkInstanceDestroy(void)
 #endif
 	vkDestroyInstance(gCore.instance, NULL);
 }
+
+i32 rVkPickPhysicalDevice(void)
+{
+	u32 groupCount = 0;
+	RVK_CHECK(vkEnumeratePhysicalDeviceGroups(gCore.instance, &groupCount, NULL));
+	VkPhysicalDeviceGroupProperties* groupProperties = calloc(groupCount, sizeof(*groupProperties));
+	RVK_CHECK(vkEnumeratePhysicalDeviceGroups(gCore.instance, &groupCount, groupProperties));
+
+	VkPhysicalDevice pickedPhysicalDevice = NULL;
+	u32 pickedQueueFamily = VK_QUEUE_FAMILY_IGNORED;
+	for (u32 i = 0; i < groupCount; ++i) {
+		VkPhysicalDeviceGroupProperties properties = groupProperties[i];
+		for (u32 j = 0; j < properties.physicalDeviceCount; ++j) {
+			VkPhysicalDevice device = properties.physicalDevices[j];
+			VkPhysicalDeviceProperties deviceProperties;
+			vkGetPhysicalDeviceProperties(device, &deviceProperties);
+
+#ifndef NDEBUG
+			pLoggerDebug("%s:\n", deviceProperties.deviceName);
+			pLoggerDebug(" API version: %u.%u.%u\n",
+					VK_API_VERSION_MAJOR(deviceProperties.apiVersion),
+					VK_API_VERSION_MINOR(deviceProperties.apiVersion),
+					VK_API_VERSION_PATCH(deviceProperties.apiVersion));
+			pLoggerDebug(" Driver version: %u.%u.%u\n",
+					VK_API_VERSION_MAJOR(deviceProperties.driverVersion),
+					VK_API_VERSION_MINOR(deviceProperties.driverVersion),
+					VK_API_VERSION_PATCH(deviceProperties.driverVersion));
+			pLoggerDebug(" Vendor ID: %#x\n", deviceProperties.vendorID);
+			pLoggerDebug(" Device ID: %#x\n", deviceProperties.deviceID);
+
+			const char* deviceType = NULL;
+			/* TODO: move this switch out */
+			switch (deviceProperties.deviceType) {
+			case VK_PHYSICAL_DEVICE_TYPE_OTHER:
+				deviceType = "Other"; break;
+			case VK_PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU:
+				deviceType = "iGPU"; break;
+			case VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU:
+				deviceType = "dGPU"; break;
+			case VK_PHYSICAL_DEVICE_TYPE_VIRTUAL_GPU:
+				deviceType = "vGPU"; break;
+			case VK_PHYSICAL_DEVICE_TYPE_CPU:
+				deviceType = "CPU"; break;
+			default:
+				assert(false && "Unreachable");
+			}
+			pLoggerDebug(" Device type: %s\n", deviceType);
+#endif
+
+			if (deviceProperties.apiVersion < VK_API_VERSION_1_2) {
+				pLoggerWarning("%s does not support Vulkan 1.2\n", deviceProperties.deviceName);
+				continue;
+			}
+
+			u32 queueFamilyCount = 0;
+			vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, NULL);
+			VkQueueFamilyProperties* queueFamilyProperties = calloc(queueFamilyCount, sizeof(*queueFamilyProperties));
+			vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, queueFamilyProperties);
+
+			for (u32 k = 0; k < queueFamilyCount; ++k) {
+				VkQueueFamilyProperties properties = queueFamilyProperties[k];
+#ifndef NDEBUG
+				pLoggerDebug(" Queue %u:\n", k);
+				pLoggerDebug("  Queue flags:\n");
+				pLoggerDebug("   Graphics bit: %s\n", properties.queueFlags & VK_QUEUE_GRAPHICS_BIT ? "true" : "false");
+				pLoggerDebug("   Compute bit: %s\n", properties.queueFlags & VK_QUEUE_COMPUTE_BIT ? "true" : "false");
+				pLoggerDebug("   Transfer bit: %s\n", properties.queueFlags & VK_QUEUE_TRANSFER_BIT ? "true" : "false");
+				pLoggerDebug("   Sparse binding bit: %s\n", properties.queueFlags & VK_QUEUE_SPARSE_BINDING_BIT ? "true" : "false");
+				pLoggerDebug("   Protected bit: %s\n", properties.queueFlags & VK_QUEUE_PROTECTED_BIT ? "true" : "false");
+				pLoggerDebug("   Video decode bit: %s\n", properties.queueFlags & VK_QUEUE_VIDEO_DECODE_BIT_KHR ? "true" : "false");
+# ifdef VK_ENABLE_BETA_EXTENSIONS
+				pLoggerDebug("   Video encode bit: %s\n", properties.queueFlags & VK_QUEUE_VIDEO_ENCODE_BIT_KHR ? "true" : "false");
+# endif
+				pLoggerDebug("   Optical flow bit: %s\n", properties.queueFlags & VK_QUEUE_OPTICAL_FLOW_BIT_NV ? "true" : "false");
+				pLoggerDebug("  Queue count: %u\n", properties.queueCount);
+#endif
+
+				if (properties.queueFlags & VK_QUEUE_GRAPHICS_BIT) {
+					pickedQueueFamily = k;
+					pickedPhysicalDevice = device;
+					pLoggerDebug("Picked queue %u of %s\n", k, deviceProperties.deviceName);
+					break;
+				}
+			}
+
+			free(queueFamilyProperties);
+		}
+	}
+
+	if (!pickedPhysicalDevice || pickedQueueFamily == VK_QUEUE_FAMILY_IGNORED) {
+		free(groupProperties);
+		return -1;
+	}
+
+	free(groupProperties);
+
+	gCore.physicalDevice.physicalDevice = pickedPhysicalDevice;
+	gCore.physicalDevice.queueFamilyIndex = pickedQueueFamily;
+	return 0;
+}

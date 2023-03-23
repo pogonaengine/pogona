@@ -29,6 +29,12 @@ i32 rCreate(pEngine* engine)
 			VK_API_VERSION_MINOR(error),
 			VK_API_VERSION_PATCH(error));
 
+	error = rVkPickPhysicalDevice();
+	if (error < 0) {
+		pLoggerError("Could not pick physical device or queue family\n");
+		goto exit;
+	}
+
 exit:
 	return error;
 }
