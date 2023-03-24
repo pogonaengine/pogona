@@ -3,7 +3,7 @@
 /.cache/
 /.vscode/
 /compile_flags.txt
-/compile_options.json
+/compile_commands.json
 
 /subprojects/*/
 !/subprojects/packagefiles/
