@@ -10,12 +10,12 @@
 
 typedef struct pVector pVector;
 
-#define pVector(x) \
-	struct {         \
-		x* data;       \
-		u64 size;      \
-		u64 typeSize;  \
-		u64 capacity;  \
+#define pVector(x)																																																		 \
+	struct {																																																						 \
+		x*  data;																																																					 \
+		u64 size;																																																					 \
+		u64 typeSize;																																																			 \
+		u64 capacity;																																																			 \
 	}
 
 PAPI i32 _pVectorCreate(pVector* self, u64 typeSize);
@@ -41,8 +41,8 @@ PAPI void _pVectorDestroy(pVector* self);
 # define pVectorDestroy(self) (gEngine->vectorDestroy((pVector*) self))
 #endif
 
-#define pVectorPush(self, data)                      \
-	{                                                  \
-		__auto_type temp = (data);                       \
-		pVectorPushPtr((pVector*) self, (void*) &temp);  \
+#define pVectorPush(self, data)																																												 \
+	{																																																										 \
+		__auto_type temp = (data);																																												 \
+		pVectorPushPtr((pVector*) self, (void*) &temp);																																		 \
 	}

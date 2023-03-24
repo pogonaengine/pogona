@@ -9,10 +9,10 @@
 #include "engine.h"
 #include <engine/logger.h>
 
-#define RVK_CHECK(x)                                     \
-	do {                                                   \
-		if ((x) < 0) {                                       \
-			pLoggerError("Vulkan call '%s' failed: %d\n", #x); \
-			return -1;                                         \
-		}                                                    \
+#define RVK_CHECK(x)																																																	 \
+	do {																																																								 \
+		if ((x) < 0) {																																																		 \
+			pLoggerError("Vulkan call '%s' failed: %d\n", #x);																															 \
+			return -1;																																																			 \
+		}																																																									 \
 	} while (false);
