@@ -1,4 +1,6 @@
 libpogona_src = [
+	'window/wayland.c',
+	'window/window.c',
   'engine.c',
   'logger.c',
   'renderer.c',
