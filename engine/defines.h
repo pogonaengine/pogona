@@ -10,7 +10,7 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#ifdef PEXPORT
+#ifdef pEXPORT
 # ifdef _MSC_VER
 #  define PAPI __declspec(dllexport)
 # else

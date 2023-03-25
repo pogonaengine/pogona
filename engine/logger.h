@@ -19,7 +19,7 @@ enum {
 
 PAPI void _pLoggerLog(i8 level, const char* fmt, ...);
 
-#ifndef PRENDERER
+#ifndef pRENDERER
 # define pLoggerDebug(...)   _pLoggerLog(pLOGGER_DEBUG,   __VA_ARGS__)
 # define pLoggerInfo(...)    _pLoggerLog(pLOGGER_INFO,    __VA_ARGS__)
 # define pLoggerWarning(...) _pLoggerLog(pLOGGER_WARNING, __VA_ARGS__)

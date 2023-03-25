@@ -25,7 +25,7 @@ PAPI i32 _pVectorResize(pVector* self, u64 size);
 PAPI i32 _pVectorShrinkToFit(pVector* self);
 PAPI void _pVectorDestroy(pVector* self);
 
-#ifndef PRENDERER
+#ifndef pRENDERER
 # define pVectorCreate(self) (_pVectorCreate((pVector*) self, sizeof(**self.data)))
 # define pVectorPushPtr(self, data) (_pVectorPush((pVector*) self, (void*) data))
 # define pVectorPop(self) (_pVectorPop((pVector*) self))

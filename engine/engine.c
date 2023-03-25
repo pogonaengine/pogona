@@ -15,11 +15,11 @@
 
 #define FILE_NAME_SIZE 255
 
-#if defined(POS_UNIX) && !defined(POS_DARWIN)
+#if defined(pOS_UNIX) && !defined(pOS_DARWIN)
 # define RENDERER_ENDING "_ren.so"
-#elif defined(POS_DARWIN)
+#elif defined(pOS_DARWIN)
 # define RENDERER_ENDING "_ren.dylib"
-#elif defined(POS_WINDOWS)
+#elif defined(pOS_WINDOWS)
 # define RENDERER_ENDING "_ren.dll"
 #endif
 

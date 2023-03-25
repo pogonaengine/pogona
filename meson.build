@@ -19,75 +19,75 @@ libdl = cc.find_library('dl', required: target_machine.system() == 'linux')
 config = configuration_data()
 
 version_parts = meson.project_version().split('.')
-config.set('PVERSION', '@0@'.format(meson.project_version()))
-config.set('PVERSION_MAJOR', '@0@'.format(version_parts[0]))
-config.set('PVERSION_MINOR', '@0@'.format(version_parts[1]))
-config.set('PVERSION_PATCH', '@0@'.format(version_parts[2]))
+config.set('pVERSION', '@0@'.format(meson.project_version()))
+config.set('pVERSION_MAJOR', '@0@'.format(version_parts[0]))
+config.set('pVERSION_MINOR', '@0@'.format(version_parts[1]))
+config.set('pVERSION_PATCH', '@0@'.format(version_parts[2]))
 
 # Endianness detection
 if target_machine.endian() == 'big'
-  config.set('PENDIANNESS_BIG', 1)
+  config.set('pENDIANNESS_BIG', 1)
 else
-  config.set('PENDIANNESS_LITTLE', 1)
+  config.set('pENDIANNESS_LITTLE', 1)
 endif
-config.set('PENDIANNESS_NAME', target_machine.endian())
+config.set('pENDIANNESS_NAME', target_machine.endian())
 
 # OS detection
 if target_machine.system() == 'linux'
-  config.set('POS_LINUX', 1)
-  config.set('POS_UNIX', 1)
+  config.set('pOS_LINUX', 1)
+  config.set('pOS_UNIX', 1)
 elif target_machine.system() == 'freebsd'
-  config.set('POS_FREEBSD', 1)
-  config.set('POS_BSD', 1)
-  config.set('POS_UNIX', 1)
+  config.set('pOS_FREEBSD', 1)
+  config.set('pOS_BSD', 1)
+  config.set('pOS_UNIX', 1)
 elif target_machine.system() == 'netbsd'
-  config.set('POS_NETBSD', 1)
-  config.set('POS_BSD', 1)
-  config.set('POS_UNIX', 1)
+  config.set('pOS_NETBSD', 1)
+  config.set('pOS_BSD', 1)
+  config.set('pOS_UNIX', 1)
 elif target_machine.system() == 'openbsd'
-  config.set('POS_OPENBSD', 1)
-  config.set('POS_BSD', 1)
-  config.set('POS_UNIX', 1)
+  config.set('pOS_OPENBSD', 1)
+  config.set('pOS_BSD', 1)
+  config.set('pOS_UNIX', 1)
 elif target_machine.system() == 'dragonfly'
-  config.set('POS_DRAGONFLY', 1)
-  config.set('POS_BSD', 1)
-  config.set('POS_UNIX', 1)
+  config.set('pOS_DRAGONFLY', 1)
+  config.set('pOS_BSD', 1)
+  config.set('pOS_UNIX', 1)
 elif target_machine.system() == 'darwin'
-  config.set('POS_DARWIN', 1)
-  config.set('POS_BSD', 1)
-  config.set('POS_UNIX', 1)
+  config.set('pOS_DARWIN', 1)
+  config.set('pOS_BSD', 1)
+  config.set('pOS_UNIX', 1)
 elif target_machine.system() == 'windows'
-  config.set('POS_WINDOWS', 1)
+  config.set('pOS_WINDOWS', 1)
 else
   message('Your OS is not supported, be aware of compilation/runtime bugs!')
 endif
-config.set('POS_NAME', target_machine.system())
+config.set('pOS_NAME', target_machine.system())
 
 # Compiler detection
 if cc.get_id() == 'clang'
-  config.set('PCC_CLANG', 1)
+  config.set('pCC_CLANG', 1)
 elif cc.get_id() == 'gcc'
-  config.set('PCC_GCC', 1)
+  config.set('pCC_GCC', 1)
 elif cc.get_id() == 'msvc'
-  config.set('PCC_MSVC', 1)
+  config.set('pCC_MSVC', 1)
 else
   message('Your compiler is not supported, be aware of compilation bugs!')
 endif
-config.set('PCC_NAME', cc.get_id())
+config.set('pCC_NAME', cc.get_id())
 
 # Linker detection
 if cc.get_linker_id() == 'ld.lld'
-  config.set('PLD_LLD', 1)
+  config.set('pLD_LLD', 1)
 elif cc.get_linker_id() == 'ld.bfd'
-  config.set('PLD_BFD', 1)
+  config.set('pLD_BFD', 1)
 elif cc.get_linker_id() == 'ld.mold'
-  config.set('PLD_MOLD', 1)
+  config.set('pLD_MOLD', 1)
 elif cc.get_linker_id() == 'link'
-  config.set('PLD_LINK', 1)
+  config.set('pLD_LINK', 1)
 else
   message('Your linker is not supported, be aware of compilation bugs!')
 endif
-config.set('PLD_NAME', cc.get_linker_id())
+config.set('pLD_NAME', cc.get_linker_id())
 
 if cc.get_id() == 'clang'
   add_project_arguments('-Wno-gnu', language: 'c')

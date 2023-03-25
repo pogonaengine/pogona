@@ -37,7 +37,7 @@ libpogona = library(
   libpogona_custom_targets,
   dependencies: libpogona_deps,
   c_pch: '../pch/pch.h',
-  c_args: ['-DPEXPORT'],
+  c_args: ['-DpEXPORT'],
   gnu_symbol_visibility: 'hidden',
   include_directories: libpogona_include,
   install: true,

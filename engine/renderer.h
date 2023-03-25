@@ -20,7 +20,7 @@ typedef struct {
 	void* libraryHandle;
 } pRendererState;
 
-#ifndef PRENDERER
+#ifndef pRENDERER
 extern pRendererState gRenderer;
 #else
 extern pRendererEntry gEntry;

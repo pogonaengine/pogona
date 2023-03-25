@@ -6,15 +6,15 @@
 
 #include <../config.h>
 
-#ifndef POS_UNIX
+#ifndef pOS_UNIX
 # error go port me!
 #endif
 
-#if defined(POS_UNIX) && !defined(POS_DARWIN)
+#if defined(pOS_UNIX) && !defined(pOS_DARWIN)
 # define LIBRARY_NAME "libpogona.so"
-#elif defined(POS_DARWIN)
+#elif defined(pOS_DARWIN)
 # define LIBRARY_NAME "libpogona.dylib"
-#elif defined(POS_WINDOWS)
+#elif defined(pOS_WINDOWS)
 # define LIBRARY_NAME "libpogona.dll"
 #endif
 
