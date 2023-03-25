@@ -7,9 +7,15 @@
 #include "core.h"
 #include "defines.h"
 #include <engine/engine.h>
-#include <pch/vulkan.h>
+#include <pch/pch.h>
 
 rVkCore gCore = { 0 };
+
+bool pVulkanSupport(void)
+{
+	/* FIXME: implement */
+	return true;
+}
 
 static VkBool32 VKAPI_PTR sDebugCallback(
 		VkDebugUtilsMessageSeverityFlagsEXT severity,
@@ -237,4 +243,61 @@ i32 rVkCreateCommandPool(void)
 	};
 	RVK_CHECK(vkAllocateCommandBuffers(gCore.device, &commandBufferAllocateInfo, gCore.commandBuffers));
 	return 0;
+}
+
+i32 rVkCreate(pWindow* window)
+{
+	(void) window;
+
+	i32 error = 0;
+
+	RVK_CHECK(volkInitialize());
+
+	error = rVkInstanceCreate();
+	if (error < 0) {
+		pLoggerError("Could not create Vulkan instance: %d\n", error);
+		goto exit;
+	}
+	pLoggerInfo("Supported Vulkan version: %u.%u.%u\n",
+			VK_API_VERSION_MAJOR(error),
+			VK_API_VERSION_MINOR(error),
+			VK_API_VERSION_PATCH(error));
+
+	error = rVkPickPhysicalDevice();
+	if (error < 0) {
+		pLoggerError("Could not pick physical device or queue family\n");
+		goto exit;
+	}
+
+	error = rVkCreateDevice();
+	if (error < 0) {
+		pLoggerError("Could not create device\n");
+		goto exit;
+	}
+
+	error = rVkCreateCommandPool();
+	if (error < 0) {
+		pLoggerError("Could not create command pool\n");
+		goto exit;
+	}
+
+exit:
+	return error;
+}
+
+i32 rVkBeginFrame(void)
+{
+	return 0;
+}
+
+i32 rVkEndFrame(void)
+{
+	return 0;
+}
+
+void rVkDestroy(void)
+{
+	vkDestroyCommandPool(gCore.device, gCore.commandPool, NULL);
+	vkDestroyDevice(gCore.device, NULL);
+	rVkInstanceDestroy();
 }

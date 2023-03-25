@@ -6,7 +6,6 @@
 
 #pragma once
 
-#include "engine.h"
 #include <engine/logger.h>
 
 #define RVK_CHECK(x)																																																	 \

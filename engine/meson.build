@@ -13,7 +13,6 @@ libpogona_include = [
 
 libpogona_deps = [
   libm,
-  libdl,
 ]
 
 libpogona_custom_targets = []
@@ -29,6 +28,16 @@ if libwayland_client.found()
     'window/wayland.c',
   ]
   config.set('pWAYLAND', 1)
+endif
+
+
+if get_option('vulkan').enabled()
+  libpogona_src += vulkan_ren_src
+  libpogona_deps += [
+    subproject('vulkan-headers').get_variable('vulkan_headers_dep'),
+    subproject('volk').get_variable('volk_dep'),
+  ]
+  config.set('pVULKAN', 1)
 endif
 
 libpogona = library(

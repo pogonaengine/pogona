@@ -1,2 +1,5 @@
 option('wayland', type: 'feature', value: 'auto',
        description: 'Build with Wayland support')
+
+option('vulkan', type: 'feature', value: 'enabled',
+       description: 'Build with Vulkan renderer')

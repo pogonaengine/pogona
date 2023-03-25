@@ -4,15 +4,11 @@
  * Copyright (c) 2023, Nikita Romanyuk
  */
 
-#ifndef _VULKAN_PCH_H
-#define _VULKAN_PCH_H
+#pragma once
 
-#include "pch.h"
+#include <config.h>
 
-#ifdef POS_WINDOWS
+#ifdef pOS_WINDOWS
 # define VK_USE_PLATFORM_WIN32_KHR
 #endif
-/* TODO: other defines */
 #include <volk.h>
-
-#endif /* _VULKAN_PCH_H */

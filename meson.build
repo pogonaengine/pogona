@@ -93,8 +93,8 @@ if cc.get_id() == 'clang'
   add_project_arguments('-Wno-gnu', language: 'c')
 endif
 
-subdir('engine')
 subdir('vulkan_ren')
+subdir('engine')
 subdir('runner')
 subdir('tests')
 

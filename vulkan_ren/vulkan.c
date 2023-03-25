@@ -8,6 +8,6 @@
 #pragma clang diagnostic ignored "-Wstrict-prototypes"
 
 #define VOLK_IMPLEMENTATION
-#include <volk.h>
+#include "vulkan.h"
 
 #pragma clang diagnostic pop

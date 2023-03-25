@@ -7,6 +7,7 @@
 #pragma once
 
 #include <engine/defines.h>
+#include <engine/window/window.h>
 #include <volk.h>
 
 typedef struct {
@@ -27,6 +28,13 @@ typedef struct {
 } rVkCore;
 
 extern rVkCore gCore;
+
+bool pVulkanSupport(void);
+
+i32 rVkCreate(pWindow* window);
+i32 rVkBeginFrame(void);
+i32 rVkEndFrame(void);
+void rVkDestroy(void);
 
 /* returns supported instance version on success, otherwise a negative value */
 i32 rVkInstanceCreate(void);
