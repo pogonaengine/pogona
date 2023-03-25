@@ -25,6 +25,8 @@ typedef struct {
 } pWindow;
 
 i32 pWindowCreate(pWindow* self, const char* title, u32 width, u32 height);
+bool pWindowIsRunning(const pWindow* self);
+void pWindowPollEvents(const pWindow* self);
 /* returns a pointer to an api-specific structure.
  * you should cast it, depending on the `self->type`.
  */

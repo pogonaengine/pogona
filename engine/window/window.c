@@ -47,12 +47,41 @@ i32 pWindowCreate(pWindow* self, const char* title, u32 width, u32 height)
 	self->height = height;
 
 	switch (self->type) {
+#ifdef pWAYLAND
 	case pWINDOW_TYPE_WAYLAND:
+		self->api = calloc(1, sizeof(pWaylandWindow));
+		pWaylandWindowCreate(self->api, self);
 		break;
+#endif
 	default:
 		assert(false && "unreachable");
 	}
 	return 0;
+}
+
+bool pWindowIsRunning(const pWindow* self)
+{
+	switch (self->type) {
+#ifdef pWAYLAND
+	case pWINDOW_TYPE_WAYLAND:
+		return pWaylandWindowIsRunning((pWaylandWindow*) self->api);
+#endif
+	default:
+		assert(false && "unreachable");
+	}
+}
+
+void pWindowPollEvents(const pWindow* self)
+{
+	switch (self->type) {
+#ifdef pWAYLAND
+	case pWINDOW_TYPE_WAYLAND:
+		pWaylandWindowPollEvents((pWaylandWindow*) self->api);
+		return;
+#endif
+	default:
+		assert(false && "unreachable");
+	}
 }
 
 const void* pWindowGetApi(const pWindow* self)
@@ -65,5 +94,16 @@ void pWindowDestroy(pWindow* self)
 	memset(self->title, 0, pWINDOW_TITLE_SIZE);
 	self->width  = 0;
 	self->height = 0;
+
+	switch (self->type) {
+#ifdef pWAYLAND
+	case pWINDOW_TYPE_WAYLAND:
+		pWaylandWindowDestroy((pWaylandWindow*) self->api);
+		break;
+#endif
+	default:
+		assert(false && "unreachable");
+	}
+
 	free(self->api);
 }
