@@ -5,9 +5,13 @@
  */
 
 #include "../logger.h"
-#include "wayland.h"
 #include "window.h"
+#include <config.h>
 #include <pch/pch.h>
+
+#ifdef pWAYLAND
+# include "wayland.h"
+#endif
 
 typedef bool (*PFN_support)(void);
 typedef struct {
@@ -16,7 +20,9 @@ typedef struct {
 } SupportTable;
 
 static const SupportTable sTypePriority[pWINDOW_MAX_TYPES] = {
+#ifdef pWAYLAND
 	{ pWaylandSupport, pWINDOW_TYPE_WAYLAND },
+#endif
 };
 
 static i8 sPickType(void)
