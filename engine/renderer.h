@@ -8,10 +8,13 @@
 
 #include "defines.h"
 #include "window/window.h"
+#include <config.h>
 
 enum {
 	pRENDERER_TYPE_INVALID = -1,
-	pRENDERER_TYPE_VULKAN  = 0,
+#ifdef pVULKAN
+	pRENDERER_TYPE_VULKAN,
+#endif
 
 	pRENDERER_MAX_TYPES,
 };

@@ -7,12 +7,15 @@
 #pragma once
 
 #include "../defines.h"
+#include <config.h>
 
 #define pWINDOW_TITLE_SIZE 64
 
 enum {
 	pWINDOW_TYPE_INVALID = -1,
-	pWINDOW_TYPE_WAYLAND = 0,
+#ifdef pWAYLAND
+	pWINDOW_TYPE_WAYLAND,
+#endif
 
 	pWINDOW_MAX_TYPES,
 };
