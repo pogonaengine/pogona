@@ -11,4 +11,7 @@
 #ifdef pOS_WINDOWS
 # define VK_USE_PLATFORM_WIN32_KHR
 #endif
+#ifdef pWAYLAND
+# define VK_USE_PLATFORM_WAYLAND_KHR
+#endif
 #include <volk.h>
