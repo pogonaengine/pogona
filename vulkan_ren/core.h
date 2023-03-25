@@ -6,6 +6,9 @@
 
 #pragma once
 
+#include <engine/defines.h>
+#include <volk.h>
+
 typedef struct {
 	VkPhysicalDevice physicalDevice;
 	u32 queueFamilyIndex;
