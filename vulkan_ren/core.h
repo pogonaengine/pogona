@@ -9,6 +9,7 @@
 #include <engine/defines.h>
 #include <engine/window/window.h>
 #include "vulkan.h"
+#include "vulkan/vulkan_core.h"
 
 typedef struct {
 	VkPhysicalDevice physicalDevice;
@@ -33,6 +34,7 @@ typedef struct {
 		u32 presentModesCount;
 		VkPresentModeKHR* presentModes;
 	} surface;
+	VkRenderPass renderPass;
 } rVkCore;
 
 extern rVkCore gCore;

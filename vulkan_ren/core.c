@@ -6,7 +6,9 @@
 
 #include "core.h"
 #include "defines.h"
+#include "render_pass.h"
 #include "surface.h"
+#include "swapchain.h"
 #include <engine/engine.h>
 #include <pch/pch.h>
 
@@ -289,6 +291,30 @@ i32 rVkCreate(pWindow* window)
 		goto exit;
 	}
 
+	error = rVkCreateSwapchain();
+	if (error < 0) {
+		pLoggerError("Could not create swapchain\n");
+		goto exit;
+	}
+
+	error = rVkCreateRenderPass();
+	if (error < 0) {
+		pLoggerError("Could not create render pass\n");
+		goto exit;
+	}
+
+	error = rVkInitImageViews();
+	if (error < 0) {
+		pLoggerError("Could not create image views\n");
+		goto exit;
+	}
+
+	error = rVkInitFramebuffers();
+	if (error < 0) {
+		pLoggerError("Could not create frame buffers\n");
+		goto exit;
+	}
+
 exit:
 	return error;
 }
@@ -305,6 +331,8 @@ i32 rVkEndFrame(void)
 
 void rVkDestroy(void)
 {
+	vkDestroyRenderPass(gCore.device, gCore.renderPass, NULL);
+	rVkDestroySwapchain();
 	rVkDestroySurface();
 	vkDestroyCommandPool(gCore.device, gCore.commandPool, NULL);
 	vkDestroyDevice(gCore.device, NULL);
