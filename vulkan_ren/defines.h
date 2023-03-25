@@ -8,7 +8,7 @@
 
 #include <engine/logger.h>
 
-#define RVK_CHECK(x)																																																	 \
+#define rCHECK(x)																																																	 \
 	do {																																																								 \
 		if ((x) < 0) {																																																		 \
 			pLoggerError("Vulkan call '%s' failed: %d\n", #x);																															 \

@@ -21,15 +21,15 @@ static i32 sCreateWaylandSurface(struct wl_display* wlDisplay, struct wl_surface
 		.display = wlDisplay,
 		.surface = wlSurface,
 	};
-	RVK_CHECK(vkCreateWaylandSurfaceKHR(gCore.instance, &waylandSurfaceCreateInfo, NULL, &gCore.surface.surface));
+	rCHECK(vkCreateWaylandSurfaceKHR(gCore.instance, &waylandSurfaceCreateInfo, NULL, &gCore.surface.surface));
 
-	RVK_CHECK(vkGetPhysicalDeviceSurfaceFormatsKHR(gCore.physicalDevice.physicalDevice, gCore.surface.surface, &gCore.surface.surfaceFormatsCount, NULL));
+	rCHECK(vkGetPhysicalDeviceSurfaceFormatsKHR(gCore.physicalDevice.physicalDevice, gCore.surface.surface, &gCore.surface.surfaceFormatsCount, NULL));
 	gCore.surface.surfaceFormats = calloc(gCore.surface.surfaceFormatsCount, sizeof(VkSurfaceFormatKHR));
-	RVK_CHECK(vkGetPhysicalDeviceSurfaceFormatsKHR(gCore.physicalDevice.physicalDevice, gCore.surface.surface, &gCore.surface.surfaceFormatsCount, gCore.surface.surfaceFormats));
+	rCHECK(vkGetPhysicalDeviceSurfaceFormatsKHR(gCore.physicalDevice.physicalDevice, gCore.surface.surface, &gCore.surface.surfaceFormatsCount, gCore.surface.surfaceFormats));
 
-	RVK_CHECK(vkGetPhysicalDeviceSurfacePresentModesKHR(gCore.physicalDevice.physicalDevice, gCore.surface.surface, &gCore.surface.presentModesCount, NULL));
+	rCHECK(vkGetPhysicalDeviceSurfacePresentModesKHR(gCore.physicalDevice.physicalDevice, gCore.surface.surface, &gCore.surface.presentModesCount, NULL));
 	gCore.surface.presentModes = calloc(gCore.surface.presentModesCount, sizeof(VkPresentModeKHR));
-	RVK_CHECK(vkGetPhysicalDeviceSurfacePresentModesKHR(gCore.physicalDevice.physicalDevice, gCore.surface.surface, &gCore.surface.presentModesCount, gCore.surface.presentModes));
+	rCHECK(vkGetPhysicalDeviceSurfacePresentModesKHR(gCore.physicalDevice.physicalDevice, gCore.surface.surface, &gCore.surface.presentModesCount, gCore.surface.presentModes));
 	return 0;
 }
 

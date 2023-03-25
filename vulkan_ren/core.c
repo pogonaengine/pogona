@@ -35,7 +35,7 @@ static VkBool32 VKAPI_PTR sDebugCallback(
 i32 rVkInstanceCreate(void)
 {
 	uint32_t supportedApiVersion = 0;
-	RVK_CHECK(vkEnumerateInstanceVersion(&supportedApiVersion));
+	rCHECK(vkEnumerateInstanceVersion(&supportedApiVersion));
 	if (supportedApiVersion < VK_API_VERSION_1_3) {
 		pLoggerError("Vulkan instance does not support 1.3\n");
 		return -1;
@@ -81,11 +81,11 @@ i32 rVkInstanceCreate(void)
 	instanceCreateInfo.pNext = &debugUtilsMessengerCreateInfo;
 #endif
 
-	RVK_CHECK(vkCreateInstance(&instanceCreateInfo, NULL, &gCore.instance));
+	rCHECK(vkCreateInstance(&instanceCreateInfo, NULL, &gCore.instance));
 	volkLoadInstance(gCore.instance);
 
 #ifndef NDEBUG
-	RVK_CHECK(vkCreateDebugUtilsMessengerEXT(gCore.instance, &debugUtilsMessengerCreateInfo, NULL, &gCore.debugUtilsMessenger));
+	rCHECK(vkCreateDebugUtilsMessengerEXT(gCore.instance, &debugUtilsMessengerCreateInfo, NULL, &gCore.debugUtilsMessenger));
 #endif
 
 	pVectorDestroy(&layers);
@@ -104,9 +104,9 @@ void rVkInstanceDestroy(void)
 i32 rVkPickPhysicalDevice(void)
 {
 	u32 groupCount = 0;
-	RVK_CHECK(vkEnumeratePhysicalDeviceGroups(gCore.instance, &groupCount, NULL));
+	rCHECK(vkEnumeratePhysicalDeviceGroups(gCore.instance, &groupCount, NULL));
 	VkPhysicalDeviceGroupProperties* groupProperties = calloc(groupCount, sizeof(*groupProperties));
-	RVK_CHECK(vkEnumeratePhysicalDeviceGroups(gCore.instance, &groupCount, groupProperties));
+	rCHECK(vkEnumeratePhysicalDeviceGroups(gCore.instance, &groupCount, groupProperties));
 
 	VkPhysicalDevice pickedPhysicalDevice = NULL;
 	u32 pickedQueueFamily = VK_QUEUE_FAMILY_IGNORED;
@@ -223,7 +223,7 @@ i32 rVkCreateDevice(void)
 		.ppEnabledExtensionNames = extensions,
 		.pEnabledFeatures = NULL,
 	};
-	RVK_CHECK(vkCreateDevice(gCore.physicalDevice.physicalDevice, &deviceCreateInfo, NULL, &gCore.device));
+	rCHECK(vkCreateDevice(gCore.physicalDevice.physicalDevice, &deviceCreateInfo, NULL, &gCore.device));
 	volkLoadDevice(gCore.device);
 	vkGetDeviceQueue(gCore.device, gCore.physicalDevice.queueFamilyIndex, 0, &gCore.queue);
 	return 0;
@@ -237,7 +237,7 @@ i32 rVkCreateCommandPool(void)
 		.flags = VK_COMMAND_POOL_CREATE_TRANSIENT_BIT
 		       | VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT,
 	};
-	RVK_CHECK(vkCreateCommandPool(gCore.device, &commandPoolCreateInfo, NULL, &gCore.commandPool));
+	rCHECK(vkCreateCommandPool(gCore.device, &commandPoolCreateInfo, NULL, &gCore.commandPool));
 
 	VkCommandBufferAllocateInfo commandBufferAllocateInfo = {
 		.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,
@@ -245,7 +245,7 @@ i32 rVkCreateCommandPool(void)
 		.commandPool = gCore.commandPool,
 		.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY,
 	};
-	RVK_CHECK(vkAllocateCommandBuffers(gCore.device, &commandBufferAllocateInfo, gCore.commandBuffers));
+	rCHECK(vkAllocateCommandBuffers(gCore.device, &commandBufferAllocateInfo, gCore.commandBuffers));
 	return 0;
 }
 
@@ -253,7 +253,7 @@ i32 rVkCreate(pWindow* window)
 {
 	i32 error = 0;
 
-	RVK_CHECK(volkInitialize());
+	rCHECK(volkInitialize());
 
 	error = rVkInstanceCreate();
 	if (error < 0) {
