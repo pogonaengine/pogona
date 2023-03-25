@@ -8,7 +8,7 @@
 
 #include <engine/defines.h>
 #include <engine/window/window.h>
-#include <volk.h>
+#include "vulkan.h"
 
 typedef struct {
 	VkPhysicalDevice physicalDevice;
@@ -25,6 +25,14 @@ typedef struct {
 	VkQueue queue;
 	VkCommandPool commandPool;
 	VkCommandBuffer commandBuffers[1];
+	struct {
+		VkSurfaceKHR surface;
+
+		u32 surfaceFormatsCount;
+		VkSurfaceFormatKHR* surfaceFormats;
+		u32 presentModesCount;
+		VkPresentModeKHR* presentModes;
+	} surface;
 } rVkCore;
 
 extern rVkCore gCore;

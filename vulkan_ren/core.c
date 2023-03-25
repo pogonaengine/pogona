@@ -6,6 +6,7 @@
 
 #include "core.h"
 #include "defines.h"
+#include "surface.h"
 #include <engine/engine.h>
 #include <pch/pch.h>
 
@@ -53,6 +54,9 @@ i32 rVkInstanceCreate(void)
 	pVectorCreate(&extensions);
 
 	pVectorPush(&extensions, VK_KHR_SURFACE_EXTENSION_NAME);
+#ifdef pWAYLAND
+	pVectorPush(&extensions, VK_KHR_WAYLAND_SURFACE_EXTENSION_NAME);
+#endif
 #ifndef NDEBUG
 	pVectorPush(&extensions, VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
 	pVectorPush(&layers, "VK_LAYER_KHRONOS_validation");
@@ -247,8 +251,6 @@ i32 rVkCreateCommandPool(void)
 
 i32 rVkCreate(pWindow* window)
 {
-	(void) window;
-
 	i32 error = 0;
 
 	RVK_CHECK(volkInitialize());
@@ -281,6 +283,12 @@ i32 rVkCreate(pWindow* window)
 		goto exit;
 	}
 
+	error = rVkCreateSurface(window);
+	if (error < 0) {
+		pLoggerError("Could not create surface\n");
+		goto exit;
+	}
+
 exit:
 	return error;
 }
@@ -297,6 +305,7 @@ i32 rVkEndFrame(void)
 
 void rVkDestroy(void)
 {
+	rVkDestroySurface();
 	vkDestroyCommandPool(gCore.device, gCore.commandPool, NULL);
 	vkDestroyDevice(gCore.device, NULL);
 	rVkInstanceDestroy();
