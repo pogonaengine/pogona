@@ -1,11 +1,11 @@
-libpogona_src = [
+libpogona_src = files(
 	'window/window.c',
   'engine.c',
   'logger.c',
   'renderer.c',
   'util.c',
   'vector.c',
-]
+)
 
 libpogona_include = [
   include_directories('..'),
@@ -24,9 +24,9 @@ if libwayland_client.found()
   xdg_shell = wayland_module.scan_xml(wayland_module.find_protocol('xdg-shell'))
   libpogona_custom_targets += xdg_shell
 
-  libpogona_src += [
+  libpogona_src += files(
     'window/wayland.c',
-  ]
+  )
   config.set('pWAYLAND', 1)
 endif
 
