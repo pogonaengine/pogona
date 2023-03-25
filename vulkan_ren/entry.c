@@ -8,12 +8,15 @@
 #include "defines.h"
 #include <engine/logger.h>
 #include <engine/renderer.h>
+#include <engine/window/window.h>
 #include <pch/vulkan.h>
 
 pEngine* gEngine = NULL;
 
-i32 rCreate(pEngine* engine)
+i32 rCreate(pEngine* engine, pWindow* window)
 {
+	(void) window;
+
 	i32 error = 0;
 	gEngine = engine;
 

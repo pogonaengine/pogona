@@ -100,10 +100,15 @@ extern PAPI i32 pEngineEntry(int argc, char** argv)
 	if (error < 0)
 		goto exit;
 
-	gRenderer.entry->create(&gEngine);
+	pWindow window = { 0 };
+	pWindowCreate(&window, "pogona", 800, 600);
+
+	gRenderer.entry->create(&gEngine, &window);
+	/* while isRunning { ... } */
 	gRenderer.entry->destroy();
 
 	pUnloadRenderer();
+	pWindowDestroy(&window);
 
 exit:
 	return error;

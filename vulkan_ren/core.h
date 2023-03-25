@@ -6,7 +6,6 @@
 
 #pragma once
 
-
 typedef struct {
 	VkPhysicalDevice physicalDevice;
 	u32 queueFamilyIndex;

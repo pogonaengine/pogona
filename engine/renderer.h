@@ -8,10 +8,11 @@
 
 #include "defines.h"
 #include "engine.h"
+#include "window/window.h"
 
 /* It is stored in the renderer's library as 'gEntry' */
 typedef struct {
-	i32 (*create)(pEngine* engine);
+	i32 (*create)(pEngine* engine, pWindow* window);
 	i32 (*destroy)(void);
 } pRendererEntry;
 
