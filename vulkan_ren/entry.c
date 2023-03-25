@@ -54,6 +54,16 @@ exit:
 	return error;
 }
 
+i32 rBeginFrame(void)
+{
+	return 0;
+}
+
+i32 rEndFrame(void)
+{
+	return 0;
+}
+
 i32 rDestroy(void)
 {
 	vkDestroyCommandPool(gCore.device, gCore.commandPool, NULL);
@@ -63,6 +73,8 @@ i32 rDestroy(void)
 }
 
 pRendererEntry gEntry = {
-	.create  = rCreate,
-	.destroy = rDestroy,
+	.create     = rCreate,
+	.beginFrame = rBeginFrame,
+	.endFrame   = rEndFrame,
+	.destroy    = rDestroy,
 };

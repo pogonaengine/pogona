@@ -13,6 +13,8 @@
 /* It is stored in the renderer's library as 'gEntry' */
 typedef struct {
 	i32 (*create)(pEngine* engine, pWindow* window);
+	i32 (*beginFrame)(void);
+	i32 (*endFrame)(void);
 	i32 (*destroy)(void);
 } pRendererEntry;
 
