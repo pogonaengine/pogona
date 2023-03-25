@@ -12,17 +12,17 @@
 
 typedef struct pVector {
 	void* data;
-	u64 size;
-	u64 typeSize;
-	u64 capacity;
+	u64   size;
+	u64   typeSize;
+	u64   capacity;
 } pVector;
 
 i32 _pVectorCreate(pVector* self, u64 typeSize)
 {
-	self->size = 0;
+	self->size     = 0;
 	self->typeSize = typeSize;
 	self->capacity = START_CAPACITY;
-	self->data = calloc(START_CAPACITY, typeSize);
+	self->data     = calloc(START_CAPACITY, typeSize);
 	return self->data != NULL; /* -ENOMEM then */
 }
 
@@ -73,7 +73,7 @@ i32 _pVectorResize(pVector* self, u64 size)
 	if (size < self->size)
 		self->size = size;
 	self->capacity = size; /* HMM: maybe preallocate some space (RESIZE_BY)? */
-	self->data = ptr;
+	self->data     = ptr;
 	return 0;
 }
 
@@ -87,7 +87,7 @@ i32 _pVectorShrinkToFit(pVector* self)
 		return -1;
 
 	self->capacity = self->size; /* HMM: maybe preallocate some space (RESIZE_BY)? */
-	self->data = ptr;
+	self->data     = ptr;
 	return 0;
 }
 
