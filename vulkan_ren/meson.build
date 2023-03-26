@@ -6,3 +6,7 @@ vulkan_ren_src = files(
   'swapchain.c',
   'vulkan.c',
 )
+
+vulkan_ren_custom_targets = []
+
+subdir('shaders')

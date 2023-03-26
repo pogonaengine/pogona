@@ -37,6 +37,7 @@ if get_option('vulkan').enabled()
     subproject('vulkan-headers').get_variable('vulkan_headers_dep'),
     subproject('volk').get_variable('volk_dep'),
   ]
+  libpogona_custom_targets += vulkan_ren_custom_targets
   config.set('pVULKAN', 1)
 endif
 
