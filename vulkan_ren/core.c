@@ -6,14 +6,19 @@
 
 #include "core.h"
 #include "defines.h"
+#include "logger.h"
 #include "pipeline.h"
 #include "render_pass.h"
+#include "shader.h"
 #include "surface.h"
 #include "swapchain.h"
 #include <engine/engine.h>
 #include <pch/pch.h>
 
 rVkCore gCore = { 0 };
+
+static VkShaderModule sVertexShaderModule   = { 0 };
+static VkShaderModule sFragmentShaderModule = { 0 };
 
 bool pVulkanSupport(void)
 {
@@ -322,6 +327,34 @@ i32 rVkCreate(pWindow* window)
 		goto exit;
 	}
 
+	rVkShader vertexShader = { 0 };
+	error = rVkReadShader(&vertexShader, "shaders/shader.vert.spv");
+	if (error < 0) {
+		pLoggerError("Could not read vertex shader file\n");
+		goto exit;
+	}
+
+	rVkShader fragmentShader = { 0 };
+	error = rVkReadShader(&fragmentShader, "shaders/shader.frag.spv");
+	if (error < 0) {
+		pLoggerError("Could not read fragment shader file\n");
+		goto exit;
+	}
+
+	error = rVkCreateShaderModule(&sVertexShaderModule, &vertexShader);
+	if (error < 0) {
+		pLoggerError("Could not create vertex shader module\n");
+		goto exit;
+	}
+	rVkFreeShader(&vertexShader);
+
+	error = rVkCreateShaderModule(&sFragmentShaderModule, &fragmentShader);
+	if (error < 0) {
+		pLoggerError("Could not create fragment shader module\n");
+		goto exit;
+	}
+	rVkFreeShader(&fragmentShader);
+
 exit:
 	return error;
 }
@@ -338,6 +371,8 @@ i32 rVkEndFrame(void)
 
 void rVkDestroy(void)
 {
+	vkDestroyShaderModule(gCore.device, sFragmentShaderModule, NULL);
+	vkDestroyShaderModule(gCore.device, sVertexShaderModule, NULL);
 	vkDestroyPipelineCache(gCore.device, gCore.pipeline.cache, NULL);
 	vkDestroyPipelineLayout(gCore.device, gCore.pipeline.layout, NULL);
 	vkDestroyRenderPass(gCore.device, gCore.renderPass, NULL);
