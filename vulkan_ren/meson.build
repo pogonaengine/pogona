@@ -5,6 +5,7 @@ vulkan_ren_src = files(
   'shader.c',
   'surface.c',
   'swapchain.c',
+  'synchronization.c',
   'vulkan.c',
 )
 
