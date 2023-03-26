@@ -6,6 +6,7 @@
 
 #include "core.h"
 #include "defines.h"
+#include "pipeline.h"
 #include "render_pass.h"
 #include "surface.h"
 #include "swapchain.h"
@@ -315,6 +316,12 @@ i32 rVkCreate(pWindow* window)
 		goto exit;
 	}
 
+	error = rVkCreatePipelineLayoutAndCache();
+	if (error < 0) {
+		pLoggerError("Could not create pipeline layout and cache\n");
+		goto exit;
+	}
+
 exit:
 	return error;
 }
@@ -331,6 +338,8 @@ i32 rVkEndFrame(void)
 
 void rVkDestroy(void)
 {
+	vkDestroyPipelineCache(gCore.device, gCore.pipeline.cache, NULL);
+	vkDestroyPipelineLayout(gCore.device, gCore.pipeline.layout, NULL);
 	vkDestroyRenderPass(gCore.device, gCore.renderPass, NULL);
 	rVkDestroySwapchain();
 	rVkDestroySurface();

@@ -35,6 +35,11 @@ typedef struct {
 		VkPresentModeKHR* presentModes;
 	} surface;
 	VkRenderPass renderPass;
+	struct {
+		VkPipeline pipeline;
+		VkPipelineLayout layout;
+		VkPipelineCache cache;
+	} pipeline;
 } rVkCore;
 
 extern rVkCore gCore;
