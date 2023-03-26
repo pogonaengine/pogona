@@ -355,6 +355,12 @@ i32 rVkCreate(pWindow* window)
 	}
 	rVkFreeShader(&fragmentShader);
 
+	error = rVkCreateGraphicsPipeline(sVertexShaderModule, sFragmentShaderModule);
+	if (error < 0) {
+		pLoggerError("Could not create graphics pipeline\n");
+		goto exit;
+	}
+
 exit:
 	return error;
 }
@@ -371,6 +377,7 @@ i32 rVkEndFrame(void)
 
 void rVkDestroy(void)
 {
+	vkDestroyPipeline(gCore.device, gCore.pipeline.pipeline, NULL);
 	vkDestroyShaderModule(gCore.device, sFragmentShaderModule, NULL);
 	vkDestroyShaderModule(gCore.device, sVertexShaderModule, NULL);
 	vkDestroyPipelineCache(gCore.device, gCore.pipeline.cache, NULL);

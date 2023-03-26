@@ -10,3 +10,4 @@
 #include "vulkan.h"
 
 i32 rVkCreatePipelineLayoutAndCache(void);
+i32 rVkCreateGraphicsPipeline(VkShaderModule vertexShader, VkShaderModule fragmentShader);
