@@ -40,7 +40,6 @@ extern PAPI i32 pEngineEntry(int argc, char** argv)
 	}
 
 	while (pWindowIsRunning(&window)) {
-		pWindowPollEvents(&window);
 		error = renderer.beginFrame();
 		if (error < 0) {
 			pLoggerError("Couldn't begin a frame. Dying\n");
@@ -51,6 +50,7 @@ extern PAPI i32 pEngineEntry(int argc, char** argv)
 			pLoggerWarning("Couldn't end frame\n");
 			goto exit;
 		}
+		pWindowPollEvents(&window);
 	}
 
 	renderer.destroy();
