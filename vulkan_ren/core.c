@@ -12,6 +12,7 @@
 #include "shader.h"
 #include "surface.h"
 #include "swapchain.h"
+#include "synchronization.h"
 #include <engine/engine.h>
 #include <pch/pch.h>
 
@@ -19,6 +20,12 @@ rVkCore gCore = { 0 };
 
 static VkShaderModule sVertexShaderModule   = { 0 };
 static VkShaderModule sFragmentShaderModule = { 0 };
+
+static VkSemaphore sImageAvailableSemaphore = NULL;
+static VkSemaphore sRenderFinishedSemaphore = NULL;
+static VkFence     sInFlightFence           = NULL;
+
+static u32         sImageIndex              = 0;
 
 bool pVulkanSupport(void)
 {
@@ -361,22 +368,100 @@ i32 rVkCreate(pWindow* window)
 		goto exit;
 	}
 
+	assert(!rVkCreateSemaphore(&sImageAvailableSemaphore));
+	assert(!rVkCreateSemaphore(&sRenderFinishedSemaphore));
+	assert(!rVkCreateFence(&sInFlightFence, true));
+
 exit:
 	return error;
 }
 
 i32 rVkBeginFrame(void)
 {
+	rCHECK(vkWaitForFences(gCore.device, 1, &sInFlightFence, VK_TRUE, UINT64_MAX));
+	rCHECK(vkResetFences(gCore.device, 1, &sInFlightFence));
+
+	rCHECK(rVkAcquireNextImage(&sImageIndex, sImageAvailableSemaphore));
+
+	vkResetCommandBuffer(gCore.commandBuffers[0], 0);
+	VkCommandBufferBeginInfo commandBufferBeginInfo = {
+		.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
+	};
+	rCHECK(vkBeginCommandBuffer(gCore.commandBuffers[0], &commandBufferBeginInfo));
+
+	VkClearValue clearValue = { { { 0.f, 1.f, 0.f, 1.f } } };
+	VkRenderPassBeginInfo renderPassBeginInfo = {
+		.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO,
+		.renderPass = gCore.renderPass,
+		.framebuffer = gSwapchain.framebuffers[sImageIndex],
+		.renderArea = {
+			.offset = { 0, 0 },
+			.extent = { gSwapchain.width, gSwapchain.height },
+		},
+		.clearValueCount = 1,
+		.pClearValues = &clearValue,
+	};
+	vkCmdBeginRenderPass(gCore.commandBuffers[0], &renderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);
+
+	vkCmdBindPipeline(gCore.commandBuffers[0], VK_PIPELINE_BIND_POINT_GRAPHICS, gCore.pipeline.pipeline);
+	VkViewport viewport = {
+		.x        = 0.f,
+		.y        = 0.f,
+		.width    = (f32) gSwapchain.width,
+		.height   = (f32) gSwapchain.height,
+		.minDepth = 0.f,
+		.maxDepth = 1.f,
+	};
+	vkCmdSetViewport(gCore.commandBuffers[0], 0, 1, &viewport);
+
+	VkRect2D scissor = {
+		.offset = { 0, 0 },
+		.extent = {
+			.width  = gSwapchain.width,
+			.height = gSwapchain.height,
+		},
+	};
+	vkCmdSetScissor(gCore.commandBuffers[0], 0, 1, &scissor);
 	return 0;
 }
 
 i32 rVkEndFrame(void)
 {
+	vkCmdDraw(gCore.commandBuffers[0], 3, 1, 0, 0);
+
+	vkCmdEndRenderPass(gCore.commandBuffers[0]);
+	rCHECK(vkEndCommandBuffer(gCore.commandBuffers[0]));
+
+	VkPipelineStageFlags waitStages[] = { VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
+	VkSubmitInfo submitInfo = {
+		.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO,
+		.waitSemaphoreCount = 1,
+		.pWaitSemaphores = &sImageAvailableSemaphore,
+		.pWaitDstStageMask = waitStages,
+		.commandBufferCount = 1,
+		.pCommandBuffers = gCore.commandBuffers,
+		.signalSemaphoreCount = 1,
+		.pSignalSemaphores = &sRenderFinishedSemaphore,
+	};
+	rCHECK(vkQueueSubmit(gCore.queue, 1, &submitInfo, sInFlightFence));
+
+	VkPresentInfoKHR presentInfo = {
+		.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR,
+		.swapchainCount = 1,
+		.pSwapchains = &gSwapchain.swapchain,
+		.pImageIndices = &sImageIndex,
+		.waitSemaphoreCount = 1,
+		.pWaitSemaphores = &sRenderFinishedSemaphore,
+	};
+	rCHECK(vkQueuePresentKHR(gCore.queue, &presentInfo));
 	return 0;
 }
 
 void rVkDestroy(void)
 {
+	vkDestroyFence(gCore.device, sInFlightFence, NULL);
+	vkDestroySemaphore(gCore.device, sRenderFinishedSemaphore, NULL);
+	vkDestroySemaphore(gCore.device, sImageAvailableSemaphore, NULL);
 	vkDestroyPipeline(gCore.device, gCore.pipeline.pipeline, NULL);
 	vkDestroyShaderModule(gCore.device, sFragmentShaderModule, NULL);
 	vkDestroyShaderModule(gCore.device, sVertexShaderModule, NULL);
