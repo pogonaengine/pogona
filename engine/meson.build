@@ -31,6 +31,14 @@ if libwayland_client.found()
   config.set('pWAYLAND', 1)
 endif
 
+libX11 = dependency('X11', required: get_option('x11'))
+if libX11.found()
+  libpogona_deps += libX11
+  libpogona_src += files(
+    'window/x11.c',
+  )
+  config.set('pX11', 1)
+endif
 
 if get_option('vulkan').enabled()
   libpogona_src += vulkan_ren_src
