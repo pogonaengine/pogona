@@ -22,14 +22,9 @@ static i32 sCreateWaylandSurface(struct wl_display* wlDisplay, struct wl_surface
 		.surface = wlSurface,
 	};
 	rCHECK(vkCreateWaylandSurfaceKHR(gCore.instance, &waylandSurfaceCreateInfo, NULL, &gCore.surface.surface));
+	return 0;
+}
 
-	rCHECK(vkGetPhysicalDeviceSurfaceFormatsKHR(gCore.physicalDevice.physicalDevice, gCore.surface.surface, &gCore.surface.surfaceFormatsCount, NULL));
-	gCore.surface.surfaceFormats = calloc(gCore.surface.surfaceFormatsCount, sizeof(VkSurfaceFormatKHR));
-	rCHECK(vkGetPhysicalDeviceSurfaceFormatsKHR(gCore.physicalDevice.physicalDevice, gCore.surface.surface, &gCore.surface.surfaceFormatsCount, gCore.surface.surfaceFormats));
-
-	rCHECK(vkGetPhysicalDeviceSurfacePresentModesKHR(gCore.physicalDevice.physicalDevice, gCore.surface.surface, &gCore.surface.presentModesCount, NULL));
-	gCore.surface.presentModes = calloc(gCore.surface.presentModesCount, sizeof(VkPresentModeKHR));
-	rCHECK(vkGetPhysicalDeviceSurfacePresentModesKHR(gCore.physicalDevice.physicalDevice, gCore.surface.surface, &gCore.surface.presentModesCount, gCore.surface.presentModes));
 	return 0;
 }
 
@@ -82,6 +77,14 @@ i32 rVkCreateSurface(pWindow* window)
 	default:
 		assert(false && "unreachable");
 	}
+
+	rCHECK(vkGetPhysicalDeviceSurfaceFormatsKHR(gCore.physicalDevice.physicalDevice, gCore.surface.surface, &gCore.surface.surfaceFormatsCount, NULL));
+	gCore.surface.surfaceFormats = calloc(gCore.surface.surfaceFormatsCount, sizeof(VkSurfaceFormatKHR));
+	rCHECK(vkGetPhysicalDeviceSurfaceFormatsKHR(gCore.physicalDevice.physicalDevice, gCore.surface.surface, &gCore.surface.surfaceFormatsCount, gCore.surface.surfaceFormats));
+
+	rCHECK(vkGetPhysicalDeviceSurfacePresentModesKHR(gCore.physicalDevice.physicalDevice, gCore.surface.surface, &gCore.surface.presentModesCount, NULL));
+	gCore.surface.presentModes = calloc(gCore.surface.presentModesCount, sizeof(VkPresentModeKHR));
+	rCHECK(vkGetPhysicalDeviceSurfacePresentModesKHR(gCore.physicalDevice.physicalDevice, gCore.surface.surface, &gCore.surface.presentModesCount, gCore.surface.presentModes));
 
 	gCore.surface.pickedFormat     = sPickImageFormat();
 	gCore.surface.pickedColorSpace = sPickColorSpace();
