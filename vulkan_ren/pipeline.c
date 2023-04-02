@@ -24,7 +24,7 @@ i32 rVkCreatePipelineLayoutAndCache(void)
 
 i32 rVkCreateGraphicsPipeline(VkShaderModule vertexShader, VkShaderModule fragmentShader)
 {
-	VkPipelineShaderStageCreateInfo pipelineShaderStageCreateInfo[2] = {
+	VkPipelineShaderStageCreateInfo pipelineShaderStageCreateInfos[2] = {
 		[0] = {
 			.sType	= VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,
 			.stage	= VK_SHADER_STAGE_VERTEX_BIT,
@@ -76,15 +76,15 @@ i32 rVkCreateGraphicsPipeline(VkShaderModule vertexShader, VkShaderModule fragme
 	VkDynamicState dynamicStates[] = { VK_DYNAMIC_STATE_VIEWPORT, VK_DYNAMIC_STATE_SCISSOR };
 	VkPipelineDynamicStateCreateInfo dynamicStateCreateInfo = {
 		.sType						 = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO,
-		.dynamicStateCount = sizeof(dynamicStates) / sizeof(dynamicStates[0]),
+		.dynamicStateCount = pARRAY_SIZE(dynamicStates),
 		.pDynamicStates		 = dynamicStates,
 	};
 	VkGraphicsPipelineCreateInfo graphicsPipelineCreateInfo = {
 		.sType							 = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO,
 		.layout							 = gCore.pipeline.layout,
 		.renderPass					 = gCore.renderPass,
-		.stageCount					 = sizeof(pipelineShaderStageCreateInfo) / sizeof(pipelineShaderStageCreateInfo[0]),
-		.pStages						 = pipelineShaderStageCreateInfo,
+		.stageCount					 = pARRAY_SIZE(pipelineShaderStageCreateInfos),
+		.pStages						 = pipelineShaderStageCreateInfos,
 		.pVertexInputState	 = &vertexInputStateCreateInfo,
 		.pInputAssemblyState = &inputAssemblyStateCreateInfo,
 		.pViewportState			 = &viewportStateCreateInfo,

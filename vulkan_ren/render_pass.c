@@ -29,15 +29,15 @@ i32 rVkCreateRenderPass(void)
 	VkSubpassDescription subpassDescriptions[1] = {
 		[0] = {
 			.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS,
-			.colorAttachmentCount = sizeof(colourAttachments) / sizeof(colourAttachments[0]),
+			.colorAttachmentCount = pARRAY_SIZE(colourAttachments),
 			.pColorAttachments = colourAttachments,
 		},
 	};
 	VkRenderPassCreateInfo renderPassCreateInfo = {
 		.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO,
-		.attachmentCount = sizeof(attachmentDescriptions) / sizeof(attachmentDescriptions[0]),
+		.attachmentCount = pARRAY_SIZE(attachmentDescriptions),
 		.pAttachments = attachmentDescriptions,
-		.subpassCount = sizeof(subpassDescriptions) / sizeof(subpassDescriptions[0]),
+		.subpassCount = pARRAY_SIZE(subpassDescriptions),
 		.pSubpasses = subpassDescriptions,
 	};
 	rCHECK(vkCreateRenderPass(gCore.device, &renderPassCreateInfo, NULL, &gCore.renderPass));

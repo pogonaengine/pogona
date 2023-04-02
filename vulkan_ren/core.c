@@ -234,7 +234,7 @@ i32 rVkCreateDevice(void)
 		.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO,
 		.queueCreateInfoCount = 1,
 		.pQueueCreateInfos = &queueCreateInfo,
-		.enabledExtensionCount = sizeof(extensions) / sizeof(extensions[0]),
+		.enabledExtensionCount = pARRAY_SIZE(extensions),
 		.ppEnabledExtensionNames = extensions,
 		.pEnabledFeatures = NULL,
 	};
