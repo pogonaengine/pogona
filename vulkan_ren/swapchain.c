@@ -47,9 +47,15 @@ i32 rVkCreateSwapchain(void)
 	VkSurfaceCapabilitiesKHR surfaceCapabilities;
 	rCHECK(vkGetPhysicalDeviceSurfaceCapabilitiesKHR(gCore.physicalDevice.physicalDevice, gCore.surface.surface, &surfaceCapabilities));
 
-	/* FIXME: don't hardcode. get it from the window */
-	gSwapchain.width  = 800;
-	gSwapchain.height = 600;
+	VkExtent2D swapchainExtent = surfaceCapabilities.currentExtent;
+	if (swapchainExtent.width == 0xffffffff || swapchainExtent.height == 0xffffffff) {
+		/* FIXME: don't hardcode. get it from the window */
+		swapchainExtent.width  = pCLAMP(800, surfaceCapabilities.minImageExtent.width, surfaceCapabilities.maxImageExtent.width);
+		swapchainExtent.height = pCLAMP(600, surfaceCapabilities.minImageExtent.height, surfaceCapabilities.maxImageExtent.height);
+	}
+
+	gSwapchain.width  = swapchainExtent.width;
+	gSwapchain.height = swapchainExtent.height;
 
 	VkSwapchainCreateInfoKHR swapchainCreateInfo = {
 		.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR,
