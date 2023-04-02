@@ -5,10 +5,17 @@
  */
 
 #include "engine.h"
+#include "event.h"
 #include "logger.h"
 #include "renderer.h"
 #include <config.h>
 #include <pch/pch.h>
+
+static bool sFrameCallback(pEventData data)
+{
+	printf("Frame callback: %p\n", data);
+	return true;
+}
 
 extern i32 pEngineEntry(int argc, char** argv)
 {
@@ -16,6 +23,14 @@ extern i32 pEngineEntry(int argc, char** argv)
 	(void) argv;
 
 	i32 error = 0;
+
+	error = pEventSystemCreate();
+	if (error < 0) {
+		pLoggerError("Couldn't create event system\n");
+		goto exit;
+	}
+	error = pEventRegister(pEVENT_FRAME, sFrameCallback);
+	assert(error >= 0);
 
 	pWindow window = { 0 };
 	error = pWindowCreate(&window, "pogona", 800, 600);
@@ -51,10 +66,13 @@ extern i32 pEngineEntry(int argc, char** argv)
 			goto exit;
 		}
 		pWindowPollEvents(&window);
+
+		pEventSend(pEVENT_FRAME, NULL);
 	}
 
 	renderer.destroy();
 	pWindowDestroy(&window);
+	pEventSystemDestroy();
 
 exit:
 	return error;
