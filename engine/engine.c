@@ -10,7 +10,7 @@
 #include <config.h>
 #include <pch/pch.h>
 
-extern PAPI i32 pEngineEntry(int argc, char** argv)
+extern i32 pEngineEntry(int argc, char** argv)
 {
 	(void) argc;
 	(void) argv;

@@ -18,12 +18,12 @@ typedef struct pVector pVector;
 		u64 capacity;																																																			 \
 	}
 
-PAPI i32 _pVectorCreate(pVector* self, u64 typeSize);
-PAPI i32 _pVectorPush(pVector* self, void* data);
-PAPI i32 _pVectorPop(pVector* self);
-PAPI i32 _pVectorResize(pVector* self, u64 size);
-PAPI i32 _pVectorShrinkToFit(pVector* self);
-PAPI void _pVectorDestroy(pVector* self);
+i32 _pVectorCreate(pVector* self, u64 typeSize);
+i32 _pVectorPush(pVector* self, void* data);
+i32 _pVectorPop(pVector* self);
+i32 _pVectorResize(pVector* self, u64 size);
+i32 _pVectorShrinkToFit(pVector* self);
+void _pVectorDestroy(pVector* self);
 
 #define pVectorCreate(self) (_pVectorCreate((pVector*) self, sizeof(**self.data)))
 #define pVectorPushPtr(self, data) (_pVectorPush((pVector*) self, (void*) data))

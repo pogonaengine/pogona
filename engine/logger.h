@@ -17,7 +17,7 @@ enum {
 	pLOGGER_LEVEL_COUNT, /* do not use this as a level */
 };
 
-PAPI void _pLoggerLog(i8 level, const char* fmt, ...);
+void _pLoggerLog(i8 level, const char* fmt, ...);
 
 #define pLoggerDebug(...)   _pLoggerLog(pLOGGER_DEBUG,   __VA_ARGS__)
 #define pLoggerInfo(...)    _pLoggerLog(pLOGGER_INFO,    __VA_ARGS__)
