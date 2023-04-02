@@ -107,6 +107,9 @@ i32 rVkInstanceCreate(void)
 #ifdef pWAYLAND
 	pVectorPush(&extensions, VK_KHR_WAYLAND_SURFACE_EXTENSION_NAME);
 #endif
+#ifdef pX11
+	pVectorPush(&extensions, VK_KHR_XLIB_SURFACE_EXTENSION_NAME);
+#endif
 #ifndef NDEBUG
 	pVectorPush(&extensions, VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
 	pVectorPush(&layers, "VK_LAYER_KHRONOS_validation");
