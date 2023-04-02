@@ -8,6 +8,7 @@
 
 #include "defines.h"
 #include "vulkan.h"
+#include <engine/window/window.h>
 
 typedef struct {
 	u32 width, height;
@@ -24,7 +25,7 @@ typedef struct {
 
 extern rSwapchain gSwapchain;
 
-i32 rVkCreateSwapchain(void);
+i32 rVkCreateSwapchain(pWindow* window);
 i32 rVkAcquireNextImage(u32* imageIndex, VkSemaphore semaphore);
 void rVkDestroySwapchain(void);
 

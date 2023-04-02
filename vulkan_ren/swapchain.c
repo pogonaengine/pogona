@@ -39,7 +39,7 @@ static VkColorSpaceKHR sPickColorSpace(void)
 	return formats[0].colorSpace;
 }
 
-i32 rVkCreateSwapchain(void)
+i32 rVkCreateSwapchain(pWindow* window)
 {
 	gSwapchain.imageFormat = sPickImageFormat();
 	gSwapchain.colorSpace  = sPickColorSpace();
@@ -49,9 +49,8 @@ i32 rVkCreateSwapchain(void)
 
 	VkExtent2D swapchainExtent = surfaceCapabilities.currentExtent;
 	if (swapchainExtent.width == 0xffffffff || swapchainExtent.height == 0xffffffff) {
-		/* FIXME: don't hardcode. get it from the window */
-		swapchainExtent.width  = pCLAMP(800, surfaceCapabilities.minImageExtent.width, surfaceCapabilities.maxImageExtent.width);
-		swapchainExtent.height = pCLAMP(600, surfaceCapabilities.minImageExtent.height, surfaceCapabilities.maxImageExtent.height);
+		swapchainExtent.width  = pCLAMP(window->width, surfaceCapabilities.minImageExtent.width, surfaceCapabilities.maxImageExtent.width);
+		swapchainExtent.height = pCLAMP(window->height, surfaceCapabilities.minImageExtent.height, surfaceCapabilities.maxImageExtent.height);
 	}
 
 	gSwapchain.width  = swapchainExtent.width;
@@ -64,11 +63,7 @@ i32 rVkCreateSwapchain(void)
 		.imageColorSpace = gSwapchain.colorSpace,
 		.presentMode = VK_PRESENT_MODE_FIFO_KHR,
 		.oldSwapchain = gSwapchain.swapchain,
-		.imageExtent = {
-			/* FIXME: don't hardcode. get it from the window */
-			.width  = 800,
-			.height = 600,
-		},
+		.imageExtent = swapchainExtent,
 		.minImageCount = surfaceCapabilities.minImageCount + 1,
 		.imageArrayLayers = 1,
 		.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT

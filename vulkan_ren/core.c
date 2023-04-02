@@ -304,7 +304,7 @@ i32 rVkCreate(pWindow* window)
 		goto exit;
 	}
 
-	error = rVkCreateSwapchain();
+	error = rVkCreateSwapchain(window);
 	if (error < 0) {
 		pLoggerError("Could not create swapchain\n");
 		goto exit;
