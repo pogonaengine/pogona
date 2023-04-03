@@ -6,24 +6,16 @@
 
 #include "core.h"
 #include "swapchain.h"
+#include <engine/event.h>
 #include <pch/pch.h>
 
 rSwapchain gSwapchain = { 0 };
 
-static VkFormat sPickImageFormat(void)
+static bool sRegisteredEvent = false;
+static bool sOnResize(pEventData data)
 {
-	u32 formatsCount = gCore.surface.surfaceFormatsCount;
-	VkSurfaceFormatKHR* formats = gCore.surface.surfaceFormats;
-
-	if (formatsCount == 1 && formats[0].format == VK_FORMAT_UNDEFINED)
-		return VK_FORMAT_R8G8B8A8_SRGB;
-
-	for (u32 i = 0; i < formatsCount; ++i) {
-		if (formats[i].format == VK_FORMAT_R8G8B8A8_SRGB || formats[i].format == VK_FORMAT_B8G8R8A8_SRGB)
-			return formats[i].format;
-	}
-
-	return formats[0].format;
+	rVkCreateSwapchain((pWindow*) data);
+	return true;
 }
 
 static i32 sDestroySwapchain(VkSwapchainKHR swapchain)
@@ -39,6 +31,9 @@ static i32 sDestroySwapchain(VkSwapchainKHR swapchain)
 
 i32 rVkCreateSwapchain(pWindow* window)
 {
+	if (!sRegisteredEvent)
+		pEventRegister(pEVENT_RESIZED, sOnResize);
+
 	gSwapchain.imageFormat = gCore.surface.pickedFormat;
 	gSwapchain.colorSpace  = gCore.surface.pickedColorSpace;
 

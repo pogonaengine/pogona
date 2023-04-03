@@ -4,6 +4,7 @@
  * Copyright (c) 2023, Nikita Romanyuk
  */
 
+#include "../event.h"
 #include "../logger.h"
 #include "wayland.h"
 #include <pch/pch.h>
@@ -38,11 +39,17 @@ static void sXdgSurfaceConfigure(void* data, struct xdg_surface* xdgSurface, u32
 
 static void sXdgToplevelConfigure(void* data, struct xdg_toplevel* xdgToplevel, i32 width, i32 height, struct wl_array* states)
 {
-	(void) data;
 	(void) xdgToplevel;
-	(void) width;
-	(void) height;
 	(void) states;
+
+	if (width == 0 && height == 0)
+		return;
+
+	pWaylandWindow* self = (pWaylandWindow*) data;
+	self->parent->width  = width;
+	self->parent->height = height;
+
+	pEventSend(pEVENT_RESIZED, self->parent);
 }
 
 static void sXdgToplevelClose(void* data, struct xdg_toplevel* xdgToplevel)
@@ -131,8 +138,6 @@ i32 pWaylandWindowCreate(pWaylandWindow* self, pWindow* parent)
 
 	xdg_toplevel_set_title(self->xdgToplevel, self->parent->title);
 	xdg_toplevel_set_app_id(self->xdgToplevel, "pogona");
-	xdg_toplevel_set_min_size(self->xdgToplevel, self->parent->width, self->parent->height);
-	xdg_toplevel_set_max_size(self->xdgToplevel, self->parent->width, self->parent->height);
 
 	wl_surface_commit(self->surface);
 	wl_display_roundtrip(self->display);
