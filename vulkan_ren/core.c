@@ -323,14 +323,14 @@ i32 rVkCreate(pWindow* window)
 	}
 
 	rVkShader vertexShader = { 0 };
-	error = rVkReadShader(&vertexShader, "shaders/shader.vert.spv");
+	error = rVkReadShader(&vertexShader, "shaders/2d.vert.spv");
 	if (error < 0) {
 		pLoggerError("Could not read vertex shader file\n");
 		goto exit;
 	}
 
 	rVkShader fragmentShader = { 0 };
-	error = rVkReadShader(&fragmentShader, "shaders/shader.frag.spv");
+	error = rVkReadShader(&fragmentShader, "shaders/2d.frag.spv");
 	if (error < 0) {
 		pLoggerError("Could not read fragment shader file\n");
 		goto exit;

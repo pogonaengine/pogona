@@ -1,6 +1,6 @@
 shaders = files(
-  'shader.vert.glsl',
-  'shader.frag.glsl',
+  '2d.vert.glsl',
+  '2d.frag.glsl',
 )
 
 glslang_validator = find_program('glslangValidator', required: true)
