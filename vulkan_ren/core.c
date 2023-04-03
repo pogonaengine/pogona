@@ -442,6 +442,8 @@ i32 rVkEndFrame(void)
 		.pWaitSemaphores = &sRenderFinishedSemaphore,
 	};
 	rCHECK(vkQueuePresentKHR(gCore.queue, &presentInfo));
+
+	rCHECK(vkQueueWaitIdle(gCore.queue));
 	return 0;
 }
 
