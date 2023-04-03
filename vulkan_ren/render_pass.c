@@ -13,7 +13,7 @@ i32 rVkCreateRenderPass(void)
 {
 	VkAttachmentDescription attachmentDescriptions[1] = {
 		[0] = {
-			.format = gSwapchain.imageFormat,
+			.format = gCore.surface.pickedFormat,
 			.samples = VK_SAMPLE_COUNT_1_BIT,
 			.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR,
 			.storeOp = VK_ATTACHMENT_STORE_OP_STORE,

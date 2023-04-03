@@ -28,6 +28,3 @@ extern rSwapchain gSwapchain;
 i32 rVkCreateSwapchain(pWindow* window);
 i32 rVkAcquireNextImage(u32* imageIndex, VkSemaphore semaphore);
 void rVkDestroySwapchain(void);
-
-i32 rVkInitImageViews(void);
-i32 rVkInitFramebuffers(void);

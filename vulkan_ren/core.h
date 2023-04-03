@@ -29,10 +29,13 @@ typedef struct {
 	struct {
 		VkSurfaceKHR surface;
 
-		u32 surfaceFormatsCount;
+		u32                 surfaceFormatsCount;
 		VkSurfaceFormatKHR* surfaceFormats;
-		u32 presentModesCount;
-		VkPresentModeKHR* presentModes;
+		u32                 presentModesCount;
+		VkPresentModeKHR*   presentModes;
+
+		VkFormat        pickedFormat;
+		VkColorSpaceKHR pickedColorSpace;
 	} surface;
 	VkRenderPass renderPass;
 	struct {

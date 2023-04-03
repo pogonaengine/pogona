@@ -26,27 +26,24 @@ static VkFormat sPickImageFormat(void)
 	return formats[0].format;
 }
 
-static VkColorSpaceKHR sPickColorSpace(void)
+static i32 sDestroySwapchain(VkSwapchainKHR swapchain)
 {
-	u32 formatsCount = gCore.surface.surfaceFormatsCount;
-	VkSurfaceFormatKHR* formats = gCore.surface.surfaceFormats;
-
-	for (u32 i = 0; i < formatsCount; ++i) {
-		if (formats[i].colorSpace == VK_COLOR_SPACE_SRGB_NONLINEAR_KHR)
-			return formats[i].colorSpace;
+	rCHECK(vkQueueWaitIdle(gCore.queue));
+	for (u32 i = 0; i < gSwapchain.imagesCount; ++i) {
+		vkDestroyImageView(gCore.device, gSwapchain.imageViews[i], NULL);
+		vkDestroyFramebuffer(gCore.device, gSwapchain.framebuffers[i], NULL);
 	}
-
-	return formats[0].colorSpace;
+	vkDestroySwapchainKHR(gCore.device, swapchain, NULL);
+	return 0;
 }
 
 i32 rVkCreateSwapchain(pWindow* window)
 {
-	gSwapchain.imageFormat = sPickImageFormat();
-	gSwapchain.colorSpace  = sPickColorSpace();
+	gSwapchain.imageFormat = gCore.surface.pickedFormat;
+	gSwapchain.colorSpace  = gCore.surface.pickedColorSpace;
 
 	VkSurfaceCapabilitiesKHR surfaceCapabilities;
 	rCHECK(vkGetPhysicalDeviceSurfaceCapabilitiesKHR(gCore.physicalDevice.physicalDevice, gCore.surface.surface, &surfaceCapabilities));
-
 	VkExtent2D swapchainExtent = surfaceCapabilities.currentExtent;
 	if (swapchainExtent.width == 0xffffffff || swapchainExtent.height == 0xffffffff) {
 		swapchainExtent.width  = pCLAMP(window->width, surfaceCapabilities.minImageExtent.width, surfaceCapabilities.maxImageExtent.width);
@@ -75,32 +72,13 @@ i32 rVkCreateSwapchain(pWindow* window)
 	};
 	rCHECK(vkCreateSwapchainKHR(gCore.device, &swapchainCreateInfo, NULL, &gSwapchain.swapchain));
 
+	if (swapchainCreateInfo.oldSwapchain)
+		rCHECK(sDestroySwapchain(swapchainCreateInfo.oldSwapchain));
+
 	rCHECK(vkGetSwapchainImagesKHR(gCore.device, gSwapchain.swapchain, &gSwapchain.imagesCount, NULL));
 	gSwapchain.images = calloc(gSwapchain.imagesCount, sizeof(VkImage));
 	rCHECK(vkGetSwapchainImagesKHR(gCore.device, gSwapchain.swapchain, &gSwapchain.imagesCount, gSwapchain.images));
-	return 0;
-}
 
-i32 rVkAcquireNextImage(u32* imageIndex, VkSemaphore semaphore)
-{
-	rCHECK(vkAcquireNextImageKHR(gCore.device, gSwapchain.swapchain, UINT64_MAX, semaphore, VK_NULL_HANDLE, imageIndex));
-	return 0;
-}
-
-void rVkDestroySwapchain(void)
-{
-	for (u32 i = 0; i < gSwapchain.imagesCount; ++i) {
-		vkDestroyFramebuffer(gCore.device, gSwapchain.framebuffers[i], NULL);
-		vkDestroyImageView(gCore.device, gSwapchain.imageViews[i], NULL);
-	}
-	vkDestroySwapchainKHR(gCore.device, gSwapchain.swapchain, NULL);
-	free(gSwapchain.framebuffers);
-	free(gSwapchain.imageViews);
-	free(gSwapchain.images);
-}
-
-i32 rVkInitImageViews(void)
-{
 	gSwapchain.imageViews = calloc(gSwapchain.imagesCount, sizeof(VkImageView));
 	for (u32 i = 0; i < gSwapchain.imagesCount; ++i) {
 		VkImageViewCreateInfo imageViewCreateInfo = {
@@ -116,11 +94,7 @@ i32 rVkInitImageViews(void)
 		};
 		rCHECK(vkCreateImageView(gCore.device, &imageViewCreateInfo, NULL, gSwapchain.imageViews + i));
 	}
-	return 0;
-}
 
-i32 rVkInitFramebuffers(void)
-{
 	gSwapchain.framebuffers = calloc(gSwapchain.imagesCount, sizeof(VkFramebuffer));
 	for (u32 i = 0; i < gSwapchain.imagesCount; ++i) {
 		VkFramebufferCreateInfo framebufferCreateInfo = {
@@ -128,12 +102,25 @@ i32 rVkInitFramebuffers(void)
 			.renderPass = gCore.renderPass,
 			.pAttachments = &gSwapchain.imageViews[i],
 			.attachmentCount = 1,
-			/* FIXME: don't hardcode */
-			.width = 800,
-			.height = 600,
+			.width = swapchainExtent.width,
+			.height = swapchainExtent.height,
 			.layers = 1,
 		};
 		rCHECK(vkCreateFramebuffer(gCore.device, &framebufferCreateInfo, NULL, gSwapchain.framebuffers + i));
 	}
 	return 0;
+}
+
+i32 rVkAcquireNextImage(u32* imageIndex, VkSemaphore semaphore)
+{
+	rCHECK(vkAcquireNextImageKHR(gCore.device, gSwapchain.swapchain, UINT64_MAX, semaphore, VK_NULL_HANDLE, imageIndex));
+	return 0;
+}
+
+void rVkDestroySwapchain(void)
+{
+	sDestroySwapchain(gSwapchain.swapchain);
+	free(gSwapchain.framebuffers);
+	free(gSwapchain.imageViews);
+	free(gSwapchain.images);
 }

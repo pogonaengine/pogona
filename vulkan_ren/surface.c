@@ -35,6 +35,35 @@ static i32 sCreateWaylandSurface(struct wl_display* wlDisplay, struct wl_surface
 
 #endif
 
+static VkFormat sPickImageFormat(void)
+{
+	u32 formatsCount = gCore.surface.surfaceFormatsCount;
+	VkSurfaceFormatKHR* formats = gCore.surface.surfaceFormats;
+
+	if (formatsCount == 1 && formats[0].format == VK_FORMAT_UNDEFINED)
+		return VK_FORMAT_R8G8B8A8_SRGB;
+
+	for (u32 i = 0; i < formatsCount; ++i) {
+		if (formats[i].format == VK_FORMAT_R8G8B8A8_SRGB || formats[i].format == VK_FORMAT_B8G8R8A8_SRGB)
+			return formats[i].format;
+	}
+
+	return formats[0].format;
+}
+
+static VkColorSpaceKHR sPickColorSpace(void)
+{
+	u32 formatsCount = gCore.surface.surfaceFormatsCount;
+	VkSurfaceFormatKHR* formats = gCore.surface.surfaceFormats;
+
+	for (u32 i = 0; i < formatsCount; ++i) {
+		if (formats[i].colorSpace == VK_COLOR_SPACE_SRGB_NONLINEAR_KHR)
+			return formats[i].colorSpace;
+	}
+
+	return formats[0].colorSpace;
+}
+
 i32 rVkCreateSurface(pWindow* window)
 {
 	i32 error = 0;
@@ -53,6 +82,9 @@ i32 rVkCreateSurface(pWindow* window)
 	default:
 		assert(false && "unreachable");
 	}
+
+	gCore.surface.pickedFormat     = sPickImageFormat();
+	gCore.surface.pickedColorSpace = sPickColorSpace();
 exit:
 	return error;
 }

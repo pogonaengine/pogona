@@ -304,27 +304,15 @@ i32 rVkCreate(pWindow* window)
 		goto exit;
 	}
 
-	error = rVkCreateSwapchain(window);
-	if (error < 0) {
-		pLoggerError("Could not create swapchain\n");
-		goto exit;
-	}
-
 	error = rVkCreateRenderPass();
 	if (error < 0) {
 		pLoggerError("Could not create render pass\n");
 		goto exit;
 	}
 
-	error = rVkInitImageViews();
+	error = rVkCreateSwapchain(window);
 	if (error < 0) {
-		pLoggerError("Could not create image views\n");
-		goto exit;
-	}
-
-	error = rVkInitFramebuffers();
-	if (error < 0) {
-		pLoggerError("Could not create frame buffers\n");
+		pLoggerError("Could not create swapchain\n");
 		goto exit;
 	}
 
