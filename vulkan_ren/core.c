@@ -322,33 +322,17 @@ i32 rVkCreate(pWindow* window)
 		goto exit;
 	}
 
-	rVkShader vertexShader = { 0 };
-	error = rVkReadShader(&vertexShader, "shaders/2d.vert.spv");
-	if (error < 0) {
-		pLoggerError("Could not read vertex shader file\n");
-		goto exit;
-	}
-
-	rVkShader fragmentShader = { 0 };
-	error = rVkReadShader(&fragmentShader, "shaders/2d.frag.spv");
-	if (error < 0) {
-		pLoggerError("Could not read fragment shader file\n");
-		goto exit;
-	}
-
-	error = rVkCreateShaderModule(&sVertexShaderModule, &vertexShader);
+	error = rVkReadShader(&sVertexShaderModule, "shaders/2d.vert.spv");
 	if (error < 0) {
 		pLoggerError("Could not create vertex shader module\n");
 		goto exit;
 	}
-	rVkFreeShader(&vertexShader);
 
-	error = rVkCreateShaderModule(&sFragmentShaderModule, &fragmentShader);
+	error = rVkReadShader(&sFragmentShaderModule, "shaders/2d.frag.spv");
 	if (error < 0) {
 		pLoggerError("Could not create fragment shader module\n");
 		goto exit;
 	}
-	rVkFreeShader(&fragmentShader);
 
 	rVkShaderStage shaderStages[2] = {
 		[0] = {
