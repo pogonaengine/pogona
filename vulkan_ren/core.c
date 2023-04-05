@@ -350,7 +350,20 @@ i32 rVkCreate(pWindow* window)
 	}
 	rVkFreeShader(&fragmentShader);
 
-	error = rVkCreateGraphicsPipeline(sVertexShaderModule, sFragmentShaderModule);
+	rVkShaderStage shaderStages[2] = {
+		[0] = {
+			.stage = VK_SHADER_STAGE_VERTEX_BIT,
+			.module = sVertexShaderModule,
+		},
+		[1] = {
+			.stage = VK_SHADER_STAGE_FRAGMENT_BIT,
+			.module = sFragmentShaderModule,
+		},
+	};
+	error = rVkCreateGraphicsPipeline((rVkGraphicsPipelineCreateInfo) {
+		.stagesCount = 2,
+		.stages = shaderStages,
+	});
 	if (error < 0) {
 		pLoggerError("Could not create graphics pipeline\n");
 		goto exit;

@@ -22,22 +22,20 @@ i32 rVkCreatePipelineLayoutAndCache(void)
 	return 0;
 }
 
-i32 rVkCreateGraphicsPipeline(VkShaderModule vertexShader, VkShaderModule fragmentShader)
+i32 rVkCreateGraphicsPipeline(const rVkGraphicsPipelineCreateInfo createInfo)
 {
-	VkPipelineShaderStageCreateInfo pipelineShaderStageCreateInfos[2] = {
-		[0] = {
+	assert(createInfo.stages && createInfo.stagesCount > 0);
+
+	VkPipelineShaderStageCreateInfo* pipelineShaderStageCreateInfos
+		= calloc(createInfo.stagesCount, sizeof(*pipelineShaderStageCreateInfos));
+	for (u16 i = 0; i < createInfo.stagesCount; ++i) {
+		pipelineShaderStageCreateInfos[i] = (VkPipelineShaderStageCreateInfo) {
 			.sType	= VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,
-			.stage	= VK_SHADER_STAGE_VERTEX_BIT,
-			.module = vertexShader,
+			.stage	= createInfo.stages[i].stage,
+			.module = createInfo.stages[i].module,
 			.pName	= "main",
-		},
-		[1]	= {
-			.sType	= VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,
-			.stage	= VK_SHADER_STAGE_FRAGMENT_BIT,
-			.module = fragmentShader,
-			.pName	= "main",
-		},
-	};
+		};
+	}
 
 	VkPipelineVertexInputStateCreateInfo vertexInputStateCreateInfo = {
 		.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO,
@@ -83,7 +81,7 @@ i32 rVkCreateGraphicsPipeline(VkShaderModule vertexShader, VkShaderModule fragme
 		.sType							 = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO,
 		.layout							 = gCore.pipeline.layout,
 		.renderPass					 = gCore.renderPass,
-		.stageCount					 = pARRAY_SIZE(pipelineShaderStageCreateInfos),
+		.stageCount					 = createInfo.stagesCount,
 		.pStages						 = pipelineShaderStageCreateInfos,
 		.pVertexInputState	 = &vertexInputStateCreateInfo,
 		.pInputAssemblyState = &inputAssemblyStateCreateInfo,
@@ -95,5 +93,7 @@ i32 rVkCreateGraphicsPipeline(VkShaderModule vertexShader, VkShaderModule fragme
 		.pDynamicState			 = &dynamicStateCreateInfo,
 	};
 	rCHECK(vkCreateGraphicsPipelines(gCore.device, gCore.pipeline.cache, 1, &graphicsPipelineCreateInfo, NULL, &gCore.pipeline.pipeline));
+
+	free(pipelineShaderStageCreateInfos);
 	return 0;
 }
