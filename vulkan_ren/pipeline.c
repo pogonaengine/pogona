@@ -37,8 +37,18 @@ i32 rVkCreateGraphicsPipeline(const rVkGraphicsPipelineCreateInfo createInfo)
 		};
 	}
 
+  VkVertexInputBindingDescription vertexInputBindingDescription = {
+    .binding   = 0,
+    .inputRate = VK_VERTEX_INPUT_RATE_VERTEX,
+    .stride    = createInfo.vertexStride,
+  };
+
 	VkPipelineVertexInputStateCreateInfo vertexInputStateCreateInfo = {
 		.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO,
+    .vertexBindingDescriptionCount   = 1,
+    .pVertexBindingDescriptions      = &vertexInputBindingDescription,
+    .vertexAttributeDescriptionCount = createInfo.vertexAttributesCount,
+    .pVertexAttributeDescriptions    = createInfo.vertexAttributes,
 	};
 	VkPipelineInputAssemblyStateCreateInfo inputAssemblyStateCreateInfo = {
 		.sType    = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO,

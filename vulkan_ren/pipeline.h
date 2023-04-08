@@ -18,6 +18,10 @@ typedef struct {
 typedef struct {
 	const rVkShaderStage* stages;
 	u16 stagesCount;
+
+  VkVertexInputAttributeDescription* vertexAttributes;
+  u16 vertexAttributesCount;
+  u32 vertexStride;
 } rVkGraphicsPipelineCreateInfo;
 
 i32 rVkCreatePipelineLayoutAndCache(void);

@@ -1,12 +1,12 @@
 #version 450
 
-const vec2 vertices[] = {
-	vec2(-0.8, -0.8),
-	vec2( 0.0,  0.8),
-	vec2( 0.8, -0.8),
-};
+layout(location = 0) in  vec3 iPosition;
+layout(location = 1) in  vec4 iColour;
+
+layout(location = 0) out vec4 oColour;
 
 void main()
 {
-	gl_Position = vec4(vertices[gl_VertexIndex], 0.0, 1.0);
+	gl_Position = vec4(iPosition, 1.0f);
+  oColour = iColour;
 }
