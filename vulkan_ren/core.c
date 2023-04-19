@@ -62,8 +62,14 @@ static i32 sCreateVertexBuffer(void)
 
 bool pVulkanSupport(void)
 {
-	/* FIXME: implement */
-	return true;
+	/* This only tries to load the symbols from libvulkan.so and doesn't try to create an instance, check the devices, or anything like that.
+	 * It should be replaced with a better algorithm in the future. */
+	VkResult error = volkInitialize();
+	if (error != VK_SUCCESS) {
+	  pLoggerError("Vulkan isn't supported: %u\n", error);
+	  return false;
+	}
+	return error == VK_SUCCESS;
 }
 
 #ifndef NDEBUG
@@ -306,7 +312,8 @@ i32 rVkCreate(pWindow* window)
 {
 	i32 error = 0;
 
-	rCHECK(volkInitialize());
+	/* volkInitialize() is already called in pVulkanSupport,
+	 * so there is no need to call it again. */
 
 	error = rVkInstanceCreate();
 	if (error < 0) {
