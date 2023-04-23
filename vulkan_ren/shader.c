@@ -17,7 +17,7 @@ i32 rVkReadShader(VkShaderModule* module, const char* path)
 
 	file = fopen(path, "rb");
 	if (!file) {
-		pLoggerError("could not open shader: %s\n", path);
+		pLoggerError("Couldn't open shader: %s\n", path);
 		return -1;
 	}
 
@@ -28,13 +28,13 @@ i32 rVkReadShader(VkShaderModule* module, const char* path)
 	data = malloc(fileSize);
 	fread(data, fileSize, 1, file);
 	if (ferror(file) != 0 && feof(file) != 0) {
-		pLoggerError("could not read shader: %s\n", path);
+		pLoggerError("Couldn't read shader: %s\n", path);
 		fclose(file);
 		return -1;
 	}
 
 	if (fileSize % sizeof(u32) != 0) {
-		pLoggerError("invalid shader data\n");
+		pLoggerError("Invalid shader data\n");
 		return -1;
 	}
 

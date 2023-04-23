@@ -317,7 +317,7 @@ i32 rVkCreate(pWindow* window)
 
 	error = rVkInstanceCreate();
 	if (error < 0) {
-		pLoggerError("Could not create Vulkan instance: %d\n", error);
+		pLoggerError("Couldn't create Vulkan instance: %d\n", error);
 		goto exit;
 	}
 	pLoggerInfo("Supported Vulkan version: %u.%u.%u\n",
@@ -327,13 +327,13 @@ i32 rVkCreate(pWindow* window)
 
 	error = rVkPickPhysicalDevice();
 	if (error < 0) {
-		pLoggerError("Could not pick physical device or queue family\n");
+		pLoggerError("Couldn't pick physical device or queue family\n");
 		goto exit;
 	}
 
 	error = rVkCreateDevice();
 	if (error < 0) {
-		pLoggerError("Could not create device\n");
+		pLoggerError("Couldn't create device\n");
 		goto exit;
 	}
 
@@ -345,43 +345,43 @@ i32 rVkCreate(pWindow* window)
 
 	error = rVkCreateCommandPool();
 	if (error < 0) {
-		pLoggerError("Could not create command pool\n");
+		pLoggerError("Couldn't create command pool\n");
 		goto exit;
 	}
 
 	error = rVkCreateSurface(window);
 	if (error < 0) {
-		pLoggerError("Could not create surface\n");
+		pLoggerError("Couldn't create surface\n");
 		goto exit;
 	}
 
 	error = rVkCreateRenderPass();
 	if (error < 0) {
-		pLoggerError("Could not create render pass\n");
+		pLoggerError("Couldn't create render pass\n");
 		goto exit;
 	}
 
 	error = rVkCreateSwapchain(window);
 	if (error < 0) {
-		pLoggerError("Could not create swapchain\n");
+		pLoggerError("Couldn't create swapchain\n");
 		goto exit;
 	}
 
 	error = rVkCreatePipelineLayoutAndCache();
 	if (error < 0) {
-		pLoggerError("Could not create pipeline layout and cache\n");
+		pLoggerError("Couldn't create pipeline layout and cache\n");
 		goto exit;
 	}
 
 	error = rVkReadShader(&sVertexShaderModule, "shaders/2d.vert.spv");
 	if (error < 0) {
-		pLoggerError("Could not create vertex shader module\n");
+		pLoggerError("Couldn't create vertex shader module\n");
 		goto exit;
 	}
 
 	error = rVkReadShader(&sFragmentShaderModule, "shaders/2d.frag.spv");
 	if (error < 0) {
-		pLoggerError("Could not create fragment shader module\n");
+		pLoggerError("Couldn't create fragment shader module\n");
 		goto exit;
 	}
 
@@ -418,7 +418,7 @@ i32 rVkCreate(pWindow* window)
 			.vertexStride = sizeof(rVkVertex),
 	});
 	if (error < 0) {
-		pLoggerError("Could not create graphics pipeline\n");
+		pLoggerError("Couldn't create graphics pipeline\n");
 		goto exit;
 	}
 
