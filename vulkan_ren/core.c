@@ -448,7 +448,7 @@ i32 rVkBeginFrame(void)
 	};
 	rCHECK(vkBeginCommandBuffer(gCore.commandBuffers[0], &commandBufferBeginInfo));
 
-	VkClearValue clearValue = { { { 0.f, 1.f, 0.f, 1.f } } };
+	VkClearValue clearValue = { { { 0.f, 0.f, 0.f, 1.f } } };
 	VkRenderPassBeginInfo renderPassBeginInfo = {
 		.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO,
 		.renderPass = gCore.renderPass,
