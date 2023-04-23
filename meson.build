@@ -14,8 +14,8 @@ project(
 )
 
 cc = meson.get_compiler('c')
-libm = cc.find_library('m', required: target_machine.system() == 'linux')
-libdl = cc.find_library('dl', required: target_machine.system() == 'linux')
+libm = cc.find_library('m', required: host_machine.system() == 'linux')
+libdl = cc.find_library('dl', required: host_machine.system() == 'linux')
 
 config = configuration_data()
 
@@ -26,43 +26,43 @@ config.set('pVERSION_MINOR', '@0@'.format(version_parts[1]))
 config.set('pVERSION_PATCH', '@0@'.format(version_parts[2]))
 
 # Endianness detection
-if target_machine.endian() == 'big'
+if host_machine.endian() == 'big'
   config.set('pENDIANNESS_BIG', 1)
 else
   config.set('pENDIANNESS_LITTLE', 1)
 endif
-config.set('pENDIANNESS_NAME', target_machine.endian())
+config.set('pENDIANNESS_NAME', host_machine.endian())
 
 # OS detection
-if target_machine.system() == 'linux'
+if host_machine.system() == 'linux'
   config.set('pOS_LINUX', 1)
   config.set('pOS_UNIX', 1)
-elif target_machine.system() == 'freebsd'
+elif host_machine.system() == 'freebsd'
   config.set('pOS_FREEBSD', 1)
   config.set('pOS_BSD', 1)
   config.set('pOS_UNIX', 1)
-elif target_machine.system() == 'netbsd'
+elif host_machine.system() == 'netbsd'
   config.set('pOS_NETBSD', 1)
   config.set('pOS_BSD', 1)
   config.set('pOS_UNIX', 1)
-elif target_machine.system() == 'openbsd'
+elif host_machine.system() == 'openbsd'
   config.set('pOS_OPENBSD', 1)
   config.set('pOS_BSD', 1)
   config.set('pOS_UNIX', 1)
-elif target_machine.system() == 'dragonfly'
+elif host_machine.system() == 'dragonfly'
   config.set('pOS_DRAGONFLY', 1)
   config.set('pOS_BSD', 1)
   config.set('pOS_UNIX', 1)
-elif target_machine.system() == 'darwin'
+elif host_machine.system() == 'darwin'
   config.set('pOS_DARWIN', 1)
   config.set('pOS_BSD', 1)
   config.set('pOS_UNIX', 1)
-elif target_machine.system() == 'windows'
+elif host_machine.system() == 'windows'
   config.set('pOS_WINDOWS', 1)
 else
   message('Your OS is not supported, be aware of compilation/runtime bugs!')
 endif
-config.set('pOS_NAME', target_machine.system())
+config.set('pOS_NAME', host_machine.system())
 
 # Compiler detection
 if cc.get_id() == 'clang'
