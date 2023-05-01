@@ -4,8 +4,9 @@
  * Copyright (c) 2023, Nikita Romanyuk
  */
 
-#include "x11.h"
 #include "config.h"
+#include "x11.h"
+#include <engine/event.h>
 #include <engine/logger.h>
 #include <pch/pch.h>
 
@@ -39,6 +40,12 @@ i32 pX11WindowCreate(pX11Window* self, pWindow* parent)
 		goto exit;
 	}
 
+	/* I've also tried to use ResizeRedirectMask (ResizeRequestEvent).
+	 * It was sending resize events, but the resolution remained the same.
+	 * This caused weird artifacts and lags, at least on a Wayland compositor.
+	 *
+	 * I thought it was more specific to our use case. TBH it was the first variant I've found on Google. */
+	XSelectInput(self->display, self->window, StructureNotifyMask);
 	XMapWindow(self->display, self->window);
 
 	self->isRunning = true;
@@ -55,7 +62,21 @@ void pX11WindowPollEvents(const pX11Window* self)
 {
 	XEvent event;
 	XNextEvent(self->display, &event);
-	/* TODO: implement event handling */
+	switch (event.type) {
+	case ConfigureNotify: {
+		XConfigureEvent xconfigure = event.xconfigure;
+
+		/* X server sends XConfigureEvent for multiple purposes.
+		 * But we are only interested in resize. */
+		if ((u32) xconfigure.width != self->parent->width || (u32) xconfigure.height != self->parent->height) {
+			/* this is resize: confirmed */
+			self->parent->width  = xconfigure.width;
+			self->parent->height = xconfigure.height;
+			pEventSend(pEVENT_RESIZED, self->parent);
+		}
+	} break;
+	default: break;
+	}
 }
 
 Display* pX11WindowGetDisplay(const pX11Window* self)
