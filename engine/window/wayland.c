@@ -64,6 +64,11 @@ bool pWaylandSupport(void)
 	return true;
 }
 
+static void sPollEvents(struct pWindow* self)
+{
+	wl_display_dispatch(((pWaylandWindow*) self->api)->display);
+}
+
 i32 pWaylandWindowCreate(pWaylandWindow* self, pWindow* parent)
 {
 	i32 error = 0;
@@ -142,15 +147,11 @@ i32 pWaylandWindowCreate(pWaylandWindow* self, pWindow* parent)
 	wl_surface_commit(self->surface);
 	wl_display_roundtrip(self->display);
 
+	self->parent->pollEvents = sPollEvents;
 	self->parent->isRunning = true;
 
 exit:
 	return error;
-}
-
-void pWaylandWindowPollEvents(const pWaylandWindow* self)
-{
-	wl_display_dispatch(self->display);
 }
 
 void pWaylandWindowDestroy(pWaylandWindow* self)

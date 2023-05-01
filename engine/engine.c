@@ -57,7 +57,7 @@ extern i32 pEngineEntry(int argc, char** argv)
 			pLoggerWarning("Couldn't end frame\n");
 			goto exit;
 		}
-		pWindowPollEvents(&window);
+		window.pollEvents(&window);
 
 		pEventSend(pEVENT_FRAME, NULL);
 	}

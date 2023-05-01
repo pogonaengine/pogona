@@ -26,5 +26,4 @@ typedef struct {
 bool pWaylandSupport(void);
 
 i32 pWaylandWindowCreate(pWaylandWindow* self, pWindow* parent);
-void pWaylandWindowPollEvents(const pWaylandWindow* self);
 void pWaylandWindowDestroy(pWaylandWindow* self);

@@ -85,29 +85,6 @@ i32 pWindowCreate(pWindow* self, const char* title, u32 width, u32 height)
 	return 0;
 }
 
-void pWindowPollEvents(const pWindow* self)
-{
-	switch (self->type) {
-#ifdef pWAYLAND
-	case pWINDOW_TYPE_WAYLAND:
-		pWaylandWindowPollEvents((pWaylandWindow*) self->api);
-		return;
-#endif
-#ifdef pXCB
-	case pWINDOW_TYPE_XCB:
-		pXCBWindowPollEvents((pXCBWindow*) self->api);
-		return;
-#endif
-#ifdef pXLIB
-	case pWINDOW_TYPE_XLIB:
-		pXlibWindowPollEvents((pXlibWindow*) self->api);
-		return;
-#endif
-	default:
-		assert(false && "unreachable");
-	}
-}
-
 void pWindowDestroy(pWindow* self)
 {
 	memset(self->title, 0, pWINDOW_TITLE_SIZE);

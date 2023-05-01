@@ -15,6 +15,23 @@ bool pXCBSupport(void)
 	return getenv("DISPLAY") != NULL;
 }
 
+static void sPollEvents(struct pWindow* self)
+{
+	xcb_generic_event_t* event = xcb_wait_for_event(((pXCBWindow*) self->api)->connection);
+	switch (event->response_type & ~0x80) {
+	case XCB_CONFIGURE_NOTIFY: {
+		const xcb_configure_notify_event_t* configureNotify = (const xcb_configure_notify_event_t*) event;
+		if (configureNotify->width != self->width || configureNotify->height != self->height) {
+			/* this is resize: confirmed */
+			self->width = configureNotify->width;
+			self->height = configureNotify->height;
+			pEventSend(pEVENT_RESIZED, self);
+		}
+	} break;
+	default: break;
+	}
+}
+
 i32 pXCBWindowCreate(pXCBWindow* self, pWindow* parent)
 {
 	i32 error = 0;
@@ -55,26 +72,10 @@ i32 pXCBWindowCreate(pXCBWindow* self, pWindow* parent)
 	xcb_map_window(self->connection, self->window);
 	xcb_flush(self->connection);
 
+	self->parent->pollEvents = sPollEvents;
 	self->parent->isRunning = true;
 exit:
 	return error;
-}
-
-void pXCBWindowPollEvents(const pXCBWindow* self)
-{
-	xcb_generic_event_t* event = xcb_wait_for_event(self->connection);
-	switch (event->response_type & ~0x80) {
-	case XCB_CONFIGURE_NOTIFY: {
-		const xcb_configure_notify_event_t* configureNotify = (const xcb_configure_notify_event_t*) event;
-		if (configureNotify->width != self->parent->width || configureNotify->height != self->parent->height) {
-			/* this is resize: confirmed */
-			self->parent->width = configureNotify->width;
-			self->parent->height = configureNotify->height;
-			pEventSend(pEVENT_RESIZED, self->parent);
-		}
-	} break;
-	default: break;
-	}
 }
 
 void pXCBWindowDestroy(pXCBWindow* self)

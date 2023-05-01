@@ -21,5 +21,4 @@ typedef struct {
 bool pXCBSupport(void);
 
 i32 pXCBWindowCreate(pXCBWindow* self, pWindow* parent);
-void pXCBWindowPollEvents(const pXCBWindow* self);
 void pXCBWindowDestroy(pXCBWindow* self);

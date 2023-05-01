@@ -16,6 +16,27 @@ bool pXlibSupport(void)
 	return getenv("DISPLAY") != NULL;
 }
 
+static void sPollEvents(struct pWindow* self)
+{
+	XEvent event;
+	XNextEvent(((pXlibWindow*) self->api)->display, &event);
+	switch (event.type) {
+	case ConfigureNotify: {
+		XConfigureEvent xconfigure = event.xconfigure;
+
+		/* X server sends XConfigureEvent for multiple purposes.
+		 * But we are only interested in resize. */
+		if ((u32) xconfigure.width != self->width || (u32) xconfigure.height != self->height) {
+			/* this is resize: confirmed */
+			self->width  = xconfigure.width;
+			self->height = xconfigure.height;
+			pEventSend(pEVENT_RESIZED, self);
+		}
+	} break;
+	default: break;
+	}
+}
+
 i32 pXlibWindowCreate(pXlibWindow* self, pWindow* parent)
 {
 	i32 error = 0;
@@ -54,30 +75,11 @@ i32 pXlibWindowCreate(pXlibWindow* self, pWindow* parent)
 	XSelectInput(self->display, self->window, StructureNotifyMask);
 	XMapWindow(self->display, self->window);
 
+	self->parent->pollEvents = sPollEvents;
 	self->parent->isRunning = true;
+
 exit:
 	return error;
-}
-
-void pXlibWindowPollEvents(const pXlibWindow* self)
-{
-	XEvent event;
-	XNextEvent(self->display, &event);
-	switch (event.type) {
-	case ConfigureNotify: {
-		XConfigureEvent xconfigure = event.xconfigure;
-
-		/* X server sends XConfigureEvent for multiple purposes.
-		 * But we are only interested in resize. */
-		if ((u32) xconfigure.width != self->parent->width || (u32) xconfigure.height != self->parent->height) {
-			/* this is resize: confirmed */
-			self->parent->width  = xconfigure.width;
-			self->parent->height = xconfigure.height;
-			pEventSend(pEVENT_RESIZED, self->parent);
-		}
-	} break;
-	default: break;
-	}
 }
 
 void pXlibWindowDestroy(pXlibWindow* self)

@@ -21,5 +21,4 @@ typedef struct {
 bool pXlibSupport(void);
 
 i32 pXlibWindowCreate(pXlibWindow* self, pWindow* parent);
-void pXlibWindowPollEvents(const pXlibWindow* self);
 void pXlibWindowDestroy(pXlibWindow* self);

@@ -26,14 +26,15 @@ enum {
 	pWINDOW_MAX_TYPES,
 };
 
-typedef struct {
+typedef struct pWindow {
 	char title[pWINDOW_TITLE_SIZE];
 	u32 width, height;
 	bool isRunning;
 	i8 type;
 	void* api; /* managed by the window itself */
+
+	void (*pollEvents)(struct pWindow* self);
 } pWindow;
 
 i32 pWindowCreate(pWindow* self, const char* title, u32 width, u32 height);
-void pWindowPollEvents(const pWindow* self);
 void pWindowDestroy(pWindow* self);
