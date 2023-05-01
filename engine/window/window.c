@@ -13,6 +13,10 @@
 # include "wayland.h"
 #endif
 
+#ifdef pXCB
+# include "xcb.h"
+#endif
+
 #ifdef pXLIB
 # include "xlib.h"
 #endif
@@ -26,6 +30,9 @@ typedef struct {
 static const SupportTable sTypePriority[pWINDOW_MAX_TYPES] = {
 #ifdef pWAYLAND
 	{ pWaylandSupport, pWINDOW_TYPE_WAYLAND },
+#endif
+#ifdef pXCB
+	{ pXCBSupport, pWINDOW_TYPE_XCB },
 #endif
 #ifdef pXLIB
 	{ pXlibSupport, pWINDOW_TYPE_XLIB },
@@ -60,6 +67,12 @@ i32 pWindowCreate(pWindow* self, const char* title, u32 width, u32 height)
 		pWaylandWindowCreate(self->api, self);
 		break;
 #endif
+#ifdef pXCB
+	case pWINDOW_TYPE_XCB:
+		self->api = calloc(1, sizeof(pXCBWindow));
+		pXCBWindowCreate(self->api, self);
+		break;
+#endif
 #ifdef pXLIB
 	case pWINDOW_TYPE_XLIB:
 		self->api = calloc(1, sizeof(pXlibWindow));
@@ -79,6 +92,10 @@ bool pWindowIsRunning(const pWindow* self)
 	case pWINDOW_TYPE_WAYLAND:
 		return pWaylandWindowIsRunning((pWaylandWindow*) self->api);
 #endif
+#ifdef pXCB
+	case pWINDOW_TYPE_XCB:
+		return pXCBWindowIsRunning((pXCBWindow*) self->api);
+#endif
 #ifdef pXLIB
 	case pWINDOW_TYPE_XLIB:
 		return pXlibWindowIsRunning((pXlibWindow*) self->api);
@@ -94,6 +111,11 @@ void pWindowPollEvents(const pWindow* self)
 #ifdef pWAYLAND
 	case pWINDOW_TYPE_WAYLAND:
 		pWaylandWindowPollEvents((pWaylandWindow*) self->api);
+		return;
+#endif
+#ifdef pXCB
+	case pWINDOW_TYPE_XCB:
+		pXCBWindowPollEvents((pXCBWindow*) self->api);
 		return;
 #endif
 #ifdef pXLIB
@@ -121,6 +143,11 @@ void pWindowDestroy(pWindow* self)
 #ifdef pWAYLAND
 	case pWINDOW_TYPE_WAYLAND:
 		pWaylandWindowDestroy((pWaylandWindow*) self->api);
+		break;
+#endif
+#ifdef pXCB
+	case pWINDOW_TYPE_XCB:
+		pXCBWindowDestroy((pXCBWindow*) self->api);
 		break;
 #endif
 #ifdef pXLIB

@@ -1,5 +1,7 @@
 option('wayland', type: 'feature', value: 'auto',
        description: 'Build with Wayland support')
+option('xcb', type: 'feature', value: 'auto',
+       description: 'Build with XCB support')
 option('xlib', type: 'feature', value: 'auto',
        description: 'Build with Xlib support')
 

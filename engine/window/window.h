@@ -16,6 +16,9 @@ enum {
 #ifdef pWAYLAND
 	pWINDOW_TYPE_WAYLAND,
 #endif
+#ifdef pXCB
+	pWINDOW_TYPE_XCB,
+#endif
 #ifdef pXLIB
 	pWINDOW_TYPE_XLIB,
 #endif

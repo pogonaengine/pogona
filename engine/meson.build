@@ -40,6 +40,15 @@ if libXlib.found()
   config.set('pXLIB', 1)
 endif
 
+libXCB = dependency('xcb', required: get_option('xcb'))
+if libXCB.found()
+  libpogona_deps += libXCB
+  libpogona_src += files(
+    'window/xcb.c',
+  )
+  config.set('pXCB', 1)
+endif
+
 if get_option('vulkan').enabled()
   libpogona_src += vulkan_ren_src
   libpogona_deps += [
