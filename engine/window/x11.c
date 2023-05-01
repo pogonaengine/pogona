@@ -6,6 +6,7 @@
 
 #include "config.h"
 #include "x11.h"
+#include <X11/Xutil.h>
 #include <engine/event.h>
 #include <engine/logger.h>
 #include <pch/pch.h>
@@ -39,6 +40,12 @@ i32 pX11WindowCreate(pX11Window* self, pWindow* parent)
 		error = -2;
 		goto exit;
 	}
+
+	/* set the title of the window */
+	/* FIXME: superseded by XSetWMProperties, but I'm too lazy to bother about X */
+	XSetStandardProperties(self->display, self->window,
+	                       self->parent->title,
+			       NULL, None, NULL, 0, NULL);
 
 	/* I've also tried to use ResizeRedirectMask (ResizeRequestEvent).
 	 * It was sending resize events, but the resolution remained the same.
