@@ -37,18 +37,18 @@ i32 rVkCreateGraphicsPipeline(const rVkGraphicsPipelineCreateInfo createInfo)
 		};
 	}
 
-  VkVertexInputBindingDescription vertexInputBindingDescription = {
-    .binding   = 0,
-    .inputRate = VK_VERTEX_INPUT_RATE_VERTEX,
-    .stride    = createInfo.vertexStride,
-  };
+	VkVertexInputBindingDescription vertexInputBindingDescription = {
+	  .binding   = 0,
+	  .inputRate = VK_VERTEX_INPUT_RATE_VERTEX,
+	  .stride    = createInfo.vertexStride,
+	};
 
 	VkPipelineVertexInputStateCreateInfo vertexInputStateCreateInfo = {
 		.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO,
-    .vertexBindingDescriptionCount   = 1,
-    .pVertexBindingDescriptions      = &vertexInputBindingDescription,
-    .vertexAttributeDescriptionCount = createInfo.vertexAttributesCount,
-    .pVertexAttributeDescriptions    = createInfo.vertexAttributes,
+		.vertexBindingDescriptionCount   = 1,
+		.pVertexBindingDescriptions      = &vertexInputBindingDescription,
+		.vertexAttributeDescriptionCount = createInfo.vertexAttributesCount,
+		.pVertexAttributeDescriptions    = createInfo.vertexAttributes,
 	};
 	VkPipelineInputAssemblyStateCreateInfo inputAssemblyStateCreateInfo = {
 		.sType    = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO,
@@ -72,35 +72,35 @@ i32 rVkCreateGraphicsPipeline(const rVkGraphicsPipelineCreateInfo createInfo)
 	};
 	VkPipelineColorBlendAttachmentState colorBlendAttachmentState = {
 		.colorWriteMask = VK_COLOR_COMPONENT_R_BIT
-										| VK_COLOR_COMPONENT_G_BIT
-										| VK_COLOR_COMPONENT_B_BIT
-										| VK_COLOR_COMPONENT_A_BIT,
+			| VK_COLOR_COMPONENT_G_BIT
+			| VK_COLOR_COMPONENT_B_BIT
+			| VK_COLOR_COMPONENT_A_BIT,
 	};
 	VkPipelineColorBlendStateCreateInfo colorBlendStateCreateInfo = {
-		.sType					 = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO,
+		.sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO,
 		.attachmentCount = 1,
-		.pAttachments		 = &colorBlendAttachmentState,
+		.pAttachments = &colorBlendAttachmentState,
 	};
 	VkDynamicState dynamicStates[] = { VK_DYNAMIC_STATE_VIEWPORT, VK_DYNAMIC_STATE_SCISSOR };
 	VkPipelineDynamicStateCreateInfo dynamicStateCreateInfo = {
-		.sType						 = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO,
+		.sType = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO,
 		.dynamicStateCount = pARRAY_SIZE(dynamicStates),
-		.pDynamicStates		 = dynamicStates,
+		.pDynamicStates = dynamicStates,
 	};
 	VkGraphicsPipelineCreateInfo graphicsPipelineCreateInfo = {
-		.sType							 = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO,
-		.layout							 = gCore.pipeline.layout,
-		.renderPass					 = gCore.renderPass,
-		.stageCount					 = createInfo.stagesCount,
-		.pStages						 = pipelineShaderStageCreateInfos,
-		.pVertexInputState	 = &vertexInputStateCreateInfo,
+		.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO,
+		.layout	= gCore.pipeline.layout,
+		.renderPass = gCore.renderPass,
+		.stageCount = createInfo.stagesCount,
+		.pStages = pipelineShaderStageCreateInfos,
+		.pVertexInputState = &vertexInputStateCreateInfo,
 		.pInputAssemblyState = &inputAssemblyStateCreateInfo,
-		.pViewportState			 = &viewportStateCreateInfo,
+		.pViewportState = &viewportStateCreateInfo,
 		.pRasterizationState = &rasterizationStateCreateInfo,
-		.pMultisampleState	 = &multisampleStateCreateInfo,
-		.pDepthStencilState	 = &depthStencilStateCreateInfo,
-		.pColorBlendState		 = &colorBlendStateCreateInfo,
-		.pDynamicState			 = &dynamicStateCreateInfo,
+		.pMultisampleState = &multisampleStateCreateInfo,
+		.pDepthStencilState = &depthStencilStateCreateInfo,
+		.pColorBlendState = &colorBlendStateCreateInfo,
+		.pDynamicState	= &dynamicStateCreateInfo,
 	};
 	rCHECK(vkCreateGraphicsPipelines(gCore.device, gCore.pipeline.cache, 1, &graphicsPipelineCreateInfo, NULL, &gCore.pipeline.pipeline));
 

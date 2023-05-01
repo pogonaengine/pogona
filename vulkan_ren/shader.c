@@ -14,7 +14,7 @@ i32 rVkReadShader(VkShaderModule* module, const char* path)
 	FILE* file;
 	uint64_t fileSize;
 	uint8_t* data;
-	
+
 	file = fopen(path, "rb");
 	if (!file) {
 		pLoggerError("could not open shader: %s\n", path);

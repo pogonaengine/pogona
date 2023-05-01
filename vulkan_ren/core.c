@@ -32,32 +32,32 @@ static VkDeviceMemory sVertexBufferMemory = NULL;
 static u32            sImageIndex              = 0;
 
 static const rVkVertex sVertices[3] = {
-  { {{ 0.0f, -0.5f, 0.0f}}, {{1.0f, 0.0f, 0.0f, 1.0f}} },
-  { {{ 0.5f,  0.5f, 0.0f}}, {{0.0f, 1.0f, 0.0f, 1.0f}} },
-  { {{-0.5f,  0.5f, 0.0f}}, {{0.0f, 0.0f, 1.0f, 1.0f}} },
+	{ {{ 0.0f, -0.5f, 0.0f}}, {{1.0f, 0.0f, 0.0f, 1.0f}} },
+	{ {{ 0.5f,  0.5f, 0.0f}}, {{0.0f, 1.0f, 0.0f, 1.0f}} },
+	{ {{-0.5f,  0.5f, 0.0f}}, {{0.0f, 0.0f, 1.0f, 1.0f}} },
 };
 
 static i32 sCreateVertexBuffer(void)
 {
-  VkBufferCreateInfo bufferCreateInfo = {
-    .sType       = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO,
-    .size        = sizeof(sVertices),
-    .usage       = VK_BUFFER_USAGE_VERTEX_BUFFER_BIT,
-    .sharingMode = VK_SHARING_MODE_EXCLUSIVE,
-  };
-  rCHECK(vkCreateBuffer(gCore.device, &bufferCreateInfo, NULL, &sVertexBuffer));
+	VkBufferCreateInfo bufferCreateInfo = {
+	  .sType       = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO,
+	  .size        = sizeof(sVertices),
+	  .usage       = VK_BUFFER_USAGE_VERTEX_BUFFER_BIT,
+	  .sharingMode = VK_SHARING_MODE_EXCLUSIVE,
+	};
+	rCHECK(vkCreateBuffer(gCore.device, &bufferCreateInfo, NULL, &sVertexBuffer));
 
-  VkMemoryRequirements memoryRequirements;
-  vkGetBufferMemoryRequirements(gCore.device, sVertexBuffer, &memoryRequirements);
+	VkMemoryRequirements memoryRequirements;
+	vkGetBufferMemoryRequirements(gCore.device, sVertexBuffer, &memoryRequirements);
 
-  VkMemoryAllocateInfo memoryAllocateInfo = {
-    .sType           = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO,
-    .allocationSize  = memoryRequirements.size,
-    .memoryTypeIndex = 0,
-  };
-  rCHECK(vkAllocateMemory(gCore.device, &memoryAllocateInfo, NULL, &sVertexBufferMemory));
-  vkBindBufferMemory(gCore.device, sVertexBuffer, sVertexBufferMemory, 0);
-  return 0;
+	VkMemoryAllocateInfo memoryAllocateInfo = {
+	  .sType           = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO,
+	  .allocationSize  = memoryRequirements.size,
+	  .memoryTypeIndex = 0,
+	};
+	rCHECK(vkAllocateMemory(gCore.device, &memoryAllocateInfo, NULL, &sVertexBufferMemory));
+	vkBindBufferMemory(gCore.device, sVertexBuffer, sVertexBufferMemory, 0);
+	return 0;
 }
 
 bool pVulkanSupport(void)
@@ -327,11 +327,11 @@ i32 rVkCreate(pWindow* window)
 		goto exit;
 	}
 
-  error = sCreateVertexBuffer();
-  if (error < 0) {
-    pLoggerError("Could not create vertex buffer\n");
-    goto exit;
-  }
+	error = sCreateVertexBuffer();
+	if (error < 0) {
+	  pLoggerError("Could not create vertex buffer\n");
+	  goto exit;
+	}
 
 	error = rVkCreateCommandPool();
 	if (error < 0) {
@@ -385,27 +385,27 @@ i32 rVkCreate(pWindow* window)
 			.module = sFragmentShaderModule,
 		},
 	};
-  VkVertexInputAttributeDescription vertexAttributes[2] = {
-    [0] = {
-      .binding  = 0,
-      .location = 0,
-      .format   = VK_FORMAT_R32G32B32_SFLOAT,
-      .offset   = offsetof(rVkVertex, pos),
-    },
-    [1] = {
-      .binding  = 0,
-      .location = 1,
-      .format   = VK_FORMAT_R32G32B32A32_SFLOAT,
-      .offset   = offsetof(rVkVertex, colour),
-    },
-  };
+	VkVertexInputAttributeDescription vertexAttributes[2] = {
+		[0] = {
+			.binding  = 0,
+			.location = 0,
+			.format   = VK_FORMAT_R32G32B32_SFLOAT,
+			.offset   = offsetof(rVkVertex, pos),
+		},
+		[1] = {
+			.binding  = 0,
+			.location = 1,
+			.format   = VK_FORMAT_R32G32B32A32_SFLOAT,
+			.offset   = offsetof(rVkVertex, colour),
+		},
+	};
 	error = rVkCreateGraphicsPipeline((rVkGraphicsPipelineCreateInfo) {
-		.stages = shaderStages,
-    .stagesCount = pARRAY_SIZE(shaderStages),
+			.stages = shaderStages,
+			.stagesCount = pARRAY_SIZE(shaderStages),
 
-    .vertexAttributes = vertexAttributes,
-    .vertexAttributesCount = pARRAY_SIZE(vertexAttributes),
-    .vertexStride = sizeof(rVkVertex),
+			.vertexAttributes = vertexAttributes,
+			.vertexAttributesCount = pARRAY_SIZE(vertexAttributes),
+			.vertexStride = sizeof(rVkVertex),
 	});
 	if (error < 0) {
 		pLoggerError("Could not create graphics pipeline\n");
@@ -427,11 +427,11 @@ i32 rVkBeginFrame(void)
 
 	rCHECK(rVkAcquireNextImage(&sImageIndex, sImageAvailableSemaphore));
 
-  void* vertexData;
-  vkMapMemory(gCore.device, sVertexBufferMemory, 0, sizeof(sVertices), 0, &vertexData);
-  memcpy(vertexData, sVertices, sizeof(sVertices));
-  vkUnmapMemory(gCore.device, sVertexBufferMemory);
-  
+	void* vertexData;
+	vkMapMemory(gCore.device, sVertexBufferMemory, 0, sizeof(sVertices), 0, &vertexData);
+	memcpy(vertexData, sVertices, sizeof(sVertices));
+	vkUnmapMemory(gCore.device, sVertexBufferMemory);
+
 	vkResetCommandBuffer(gCore.commandBuffers[0], 0);
 	VkCommandBufferBeginInfo commandBufferBeginInfo = {
 		.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
@@ -476,9 +476,9 @@ i32 rVkBeginFrame(void)
 
 i32 rVkEndFrame(void)
 {
-  VkBuffer vertexBuffers[] = { sVertexBuffer };
-  VkDeviceSize vertexOffsets[] = { 0 };
-  vkCmdBindVertexBuffers(gCore.commandBuffers[0], 0, 1, vertexBuffers, vertexOffsets);
+	VkBuffer vertexBuffers[] = { sVertexBuffer };
+	VkDeviceSize vertexOffsets[] = { 0 };
+	vkCmdBindVertexBuffers(gCore.commandBuffers[0], 0, 1, vertexBuffers, vertexOffsets);
 	vkCmdDraw(gCore.commandBuffers[0], 3, 1, 0, 0);
 
 	vkCmdEndRenderPass(gCore.commandBuffers[0]);
@@ -523,8 +523,8 @@ void rVkDestroy(void)
 	vkDestroyPipelineLayout(gCore.device, gCore.pipeline.layout, NULL);
 	vkDestroyRenderPass(gCore.device, gCore.renderPass, NULL);
 	rVkDestroySwapchain();
-  vkDestroyBuffer(gCore.device, sVertexBuffer, NULL);
-  vkFreeMemory(gCore.device, sVertexBufferMemory, NULL);
+	vkDestroyBuffer(gCore.device, sVertexBuffer, NULL);
+	vkFreeMemory(gCore.device, sVertexBufferMemory, NULL);
 	rVkDestroySurface();
 	vkDestroyCommandPool(gCore.device, gCore.commandPool, NULL);
 	vkDestroyDevice(gCore.device, NULL);

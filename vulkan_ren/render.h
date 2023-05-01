@@ -9,6 +9,6 @@
 #include <engine/math.h>
 
 typedef struct {
-  pVec3 pos;
-  pVec4 colour;
+	pVec3 pos;
+	pVec4 colour;
 } rVkVertex;
