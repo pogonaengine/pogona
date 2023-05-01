@@ -100,3 +100,16 @@ subdir('runner')
 subdir('tests')
 
 configure_file(output: 'config.h', configuration: config)
+
+if host_machine.system() != 'windows'
+  configure_file(
+    output: 'run.sh',
+    input: 'run.sh.in',
+    install: true,
+    install_dir: '.', # required not to be empty
+    install_mode: 'rwxr-xr-x',
+    configuration: configuration_data({
+      'INSTALL_PREFIX': get_option('prefix'),
+    })
+  )
+endif
