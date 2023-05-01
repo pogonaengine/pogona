@@ -35,21 +35,21 @@ i32 pXCBWindowCreate(pXCBWindow* self, pWindow* parent)
 	u32 values[1] = { XCB_EVENT_MASK_STRUCTURE_NOTIFY };
 	xcb_create_window(self->connection,
 	                  XCB_COPY_FROM_PARENT,
-			  self->window,
-			  self->screen->root,
-			  0, 0,
-			  self->parent->width, self->parent->height,
-			  0,
-			  XCB_WINDOW_CLASS_INPUT_OUTPUT,
-			  self->screen->root_visual,
+	                  self->window,
+	                  self->screen->root,
+	                  0, 0,
+	                  self->parent->width, self->parent->height,
+	                  0,
+	                  XCB_WINDOW_CLASS_INPUT_OUTPUT,
+	                  self->screen->root_visual,
 	                  XCB_CW_EVENT_MASK, values
 	);
 
 	xcb_change_property(self->connection,
 	                    XCB_PROP_MODE_REPLACE,
-			    self->window,
-			    XCB_ATOM_WM_NAME, XCB_ATOM_STRING, 8,
-			    strlen(self->parent->title), self->parent->title
+	                    self->window,
+	                    XCB_ATOM_WM_NAME, XCB_ATOM_STRING, 8,
+	                    strlen(self->parent->title), self->parent->title
 	);
 
 	xcb_map_window(self->connection, self->window);
