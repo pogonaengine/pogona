@@ -27,14 +27,21 @@ static VkSemaphore    sRenderFinishedSemaphore = NULL;
 static VkFence        sInFlightFence           = NULL;
 
 static VkBuffer       sVertexBuffer            = NULL;
-static VkDeviceMemory sVertexBufferMemory = NULL;
+static VkDeviceMemory sVertexBufferMemory      = NULL;
+static VkBuffer       sIndexBuffer             = NULL;
+static VkDeviceMemory sIndexBufferMemory       = NULL;
 
 static u32            sImageIndex              = 0;
 
-static const rVkVertex sVertices[3] = {
-	{ {{ 0.0f, -0.5f, 0.0f}}, {{1.0f, 0.0f, 0.0f, 1.0f}} },
-	{ {{ 0.5f,  0.5f, 0.0f}}, {{0.0f, 1.0f, 0.0f, 1.0f}} },
-	{ {{-0.5f,  0.5f, 0.0f}}, {{0.0f, 0.0f, 1.0f, 1.0f}} },
+static const rVkVertex sVertices[4] = {
+	{ {{-0.5f, -0.5f, 0.0f}}, {{1.0f, 0.0f, 0.0f, 1.0f}} },
+	{ {{ 0.5f, -0.5f, 0.0f}}, {{0.0f, 1.0f, 0.0f, 1.0f}} },
+	{ {{ 0.5f,  0.5f, 0.0f}}, {{0.0f, 0.0f, 1.0f, 1.0f}} },
+	{ {{-0.5f,  0.5f, 0.0f}}, {{1.0f, 1.0f, 1.0f, 1.0f}} },
+};
+
+static const u16 sIndices[] = {
+	0, 1, 2, 2, 3, 0,
 };
 
 static i32 sCreateVertexBuffer(void)
@@ -57,6 +64,29 @@ static i32 sCreateVertexBuffer(void)
 	};
 	rCHECK(vkAllocateMemory(gCore.device, &memoryAllocateInfo, NULL, &sVertexBufferMemory));
 	vkBindBufferMemory(gCore.device, sVertexBuffer, sVertexBufferMemory, 0);
+	return 0;
+}
+
+static i32 sCreateIndexBuffer(void)
+{
+	VkBufferCreateInfo bufferCreateInfo = {
+	  .sType       = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO,
+	  .size        = sizeof(sIndices),
+	  .usage       = VK_BUFFER_USAGE_INDEX_BUFFER_BIT,
+	  .sharingMode = VK_SHARING_MODE_EXCLUSIVE,
+	};
+	rCHECK(vkCreateBuffer(gCore.device, &bufferCreateInfo, NULL, &sIndexBuffer));
+
+	VkMemoryRequirements memoryRequirements;
+	vkGetBufferMemoryRequirements(gCore.device, sIndexBuffer, &memoryRequirements);
+
+	VkMemoryAllocateInfo memoryAllocateInfo = {
+	  .sType           = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO,
+	  .allocationSize  = memoryRequirements.size,
+	  .memoryTypeIndex = 0,
+	};
+	rCHECK(vkAllocateMemory(gCore.device, &memoryAllocateInfo, NULL, &sIndexBufferMemory));
+	vkBindBufferMemory(gCore.device, sIndexBuffer, sIndexBufferMemory, 0);
 	return 0;
 }
 
@@ -346,6 +376,12 @@ i32 rVkCreate(pWindow* window)
 	  goto exit;
 	}
 
+	error = sCreateIndexBuffer();
+	if (error < 0) {
+	  pLoggerError("Could not create index buffer\n");
+	  goto exit;
+	}
+
 	error = rVkCreateCommandPool();
 	if (error < 0) {
 		pLoggerError("Couldn't create command pool\n");
@@ -445,6 +481,11 @@ i32 rVkBeginFrame(void)
 	memcpy(vertexData, sVertices, sizeof(sVertices));
 	vkUnmapMemory(gCore.device, sVertexBufferMemory);
 
+	void* indexData;
+	vkMapMemory(gCore.device, sIndexBufferMemory, 0, sizeof(sIndices), 0, &indexData);
+	memcpy(indexData, sIndices, sizeof(sIndices));
+	vkUnmapMemory(gCore.device, sIndexBufferMemory);
+
 	vkResetCommandBuffer(gCore.commandBuffers[0], 0);
 	VkCommandBufferBeginInfo commandBufferBeginInfo = {
 		.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
@@ -492,7 +533,8 @@ i32 rVkEndFrame(void)
 	VkBuffer vertexBuffers[] = { sVertexBuffer };
 	VkDeviceSize vertexOffsets[] = { 0 };
 	vkCmdBindVertexBuffers(gCore.commandBuffers[0], 0, 1, vertexBuffers, vertexOffsets);
-	vkCmdDraw(gCore.commandBuffers[0], 3, 1, 0, 0);
+	vkCmdBindIndexBuffer(gCore.commandBuffers[0], sIndexBuffer, 0, VK_INDEX_TYPE_UINT16);
+	vkCmdDrawIndexed(gCore.commandBuffers[0], pARRAY_SIZE(sIndices), 1, 0, 0, 0);
 
 	vkCmdEndRenderPass(gCore.commandBuffers[0]);
 	rCHECK(vkEndCommandBuffer(gCore.commandBuffers[0]));
@@ -536,7 +578,9 @@ void rVkDestroy(void)
 	vkDestroyPipelineLayout(gCore.device, gCore.pipeline.layout, NULL);
 	vkDestroyRenderPass(gCore.device, gCore.renderPass, NULL);
 	rVkDestroySwapchain();
+	vkDestroyBuffer(gCore.device, sIndexBuffer, NULL);
 	vkDestroyBuffer(gCore.device, sVertexBuffer, NULL);
+	vkFreeMemory(gCore.device, sIndexBufferMemory, NULL);
 	vkFreeMemory(gCore.device, sVertexBufferMemory, NULL);
 	rVkDestroySurface();
 	vkDestroyCommandPool(gCore.device, gCore.commandPool, NULL);
