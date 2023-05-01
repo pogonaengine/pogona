@@ -376,13 +376,13 @@ i32 rVkCreate(pWindow* window)
 		goto exit;
 	}
 
-	error = rVkReadShader(&sVertexShaderModule, "shaders/2d.vert.spv");
+	error = rVkReadShader(&sVertexShaderModule, "2d.vert.spv");
 	if (error < 0) {
 		pLoggerError("Couldn't create vertex shader module\n");
 		goto exit;
 	}
 
-	error = rVkReadShader(&sFragmentShaderModule, "shaders/2d.frag.spv");
+	error = rVkReadShader(&sFragmentShaderModule, "2d.frag.spv");
 	if (error < 0) {
 		pLoggerError("Couldn't create fragment shader module\n");
 		goto exit;

@@ -11,13 +11,20 @@
 
 i32 rVkReadShader(VkShaderModule* module, const char* path)
 {
+	char pathBuffer[512] = { 0 };
+	const char* envShaderDir = getenv("POGONA_SHADER_DIR");
+	if (envShaderDir)
+		snprintf(pathBuffer, sizeof(pathBuffer), "%s/%s", envShaderDir, path);
+	else
+		snprintf(pathBuffer, sizeof(pathBuffer), "shaders/%s", path);
+
 	FILE* file;
 	uint64_t fileSize;
 	uint8_t* data;
 
-	file = fopen(path, "rb");
+	file = fopen(pathBuffer, "rb");
 	if (!file) {
-		pLoggerError("Couldn't open shader: %s\n", path);
+		pLoggerError("Couldn't open shader: %s\n", pathBuffer);
 		return -1;
 	}
 
