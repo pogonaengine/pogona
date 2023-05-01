@@ -12,8 +12,7 @@
 
 bool pXCBSupport(void)
 {
-	/* FIXME: implement */
-	return true;
+	return getenv("DISPLAY") != NULL;
 }
 
 i32 pXCBWindowCreate(pXCBWindow* self, pWindow* parent)

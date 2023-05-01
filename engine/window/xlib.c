@@ -13,8 +13,7 @@
 
 bool pXlibSupport(void)
 {
-	/* FIXME: implement */
-	return true;
+	return getenv("DISPLAY") != NULL;
 }
 
 i32 pXlibWindowCreate(pXlibWindow* self, pWindow* parent)
