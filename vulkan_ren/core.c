@@ -113,6 +113,9 @@ i32 rVkInstanceCreate(void)
 #ifdef pWAYLAND
 	pVectorPush(&extensions, VK_KHR_WAYLAND_SURFACE_EXTENSION_NAME);
 #endif
+#ifdef pXCB
+	pVectorPush(&extensions, VK_KHR_XCB_SURFACE_EXTENSION_NAME);
+#endif
 #ifdef pXLIB
 	pVectorPush(&extensions, VK_KHR_XLIB_SURFACE_EXTENSION_NAME);
 #endif

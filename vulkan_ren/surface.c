@@ -27,6 +27,23 @@ static i32 sCreateWaylandSurface(struct wl_display* wlDisplay, struct wl_surface
 
 #endif
 
+#ifdef pXCB
+
+#include <engine/window/xcb.h>
+
+static i32 sCreateXCBSurface(xcb_connection_t* xcbConnection, xcb_window_t xcbWindow)
+{
+	VkXcbSurfaceCreateInfoKHR xcbSurfaceCreateInfo = {
+		.sType      = VK_STRUCTURE_TYPE_XCB_SURFACE_CREATE_INFO_KHR,
+		.connection = xcbConnection,
+		.window     = xcbWindow,
+	};
+	rCHECK(vkCreateXcbSurfaceKHR(gCore.instance, &xcbSurfaceCreateInfo, NULL, &gCore.surface.surface));
+	return 0;
+}
+
+#endif
+
 #ifdef pXLIB
 
 #include <engine/window/xlib.h>
@@ -84,6 +101,17 @@ i32 rVkCreateSurface(pWindow* window)
 		error = sCreateWaylandSurface(wlDisplay, wlSurface);
 		if (error < 0) {
 			pLoggerError("Couldn't create VkSurfaceKHR for Wayland\n");
+			goto exit;
+		}
+	} break;
+#endif
+#ifdef pXCB
+	case pWINDOW_TYPE_XCB: {
+		xcb_connection_t* xcbConnection = pXCBWindowGetConnection(window->api);
+		xcb_window_t xcbWindow  = pXCBWindowGetWindow(window->api);
+		error = sCreateXCBSurface(xcbConnection, xcbWindow);
+		if (error < 0) {
+			pLoggerError("Couldn't create VkSurfaceKHR for XCB\n");
 			goto exit;
 		}
 	} break;

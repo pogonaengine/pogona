@@ -14,6 +14,9 @@
 #ifdef pWAYLAND
 # define VK_USE_PLATFORM_WAYLAND_KHR
 #endif
+#ifdef pXCB
+# define VK_USE_PLATFORM_XCB_KHR
+#endif
 #ifdef pXLIB
 # define VK_USE_PLATFORM_XLIB_KHR
 #endif
