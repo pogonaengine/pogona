@@ -66,6 +66,7 @@ bool pVulkanSupport(void)
 	return true;
 }
 
+#ifndef NDEBUG
 static VkBool32 VKAPI_PTR sDebugCallback(
 		VkDebugUtilsMessageSeverityFlagsEXT severity,
 		VkDebugUtilsMessageTypeFlagsEXT type,
@@ -79,6 +80,7 @@ static VkBool32 VKAPI_PTR sDebugCallback(
 	pLoggerDebug("%s\n", callbackData->pMessage);
 	return VK_FALSE;
 }
+#endif
 
 i32 rVkInstanceCreate(void)
 {
