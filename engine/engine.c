@@ -46,7 +46,7 @@ extern i32 pEngineEntry(int argc, char** argv)
 		goto exit;
 	}
 
-	while (pWindowIsRunning(&window)) {
+	while (window.isRunning) {
 		error = renderer.beginFrame();
 		if (error < 0) {
 			pLoggerError("Couldn't begin a frame. Dying\n");

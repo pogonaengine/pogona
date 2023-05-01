@@ -55,14 +55,9 @@ i32 pXCBWindowCreate(pXCBWindow* self, pWindow* parent)
 	xcb_map_window(self->connection, self->window);
 	xcb_flush(self->connection);
 
-	self->isRunning = true;
+	self->parent->isRunning = true;
 exit:
 	return error;
-}
-
-bool pXCBWindowIsRunning(const pXCBWindow* self)
-{
-	return self->isRunning;
 }
 
 void pXCBWindowPollEvents(const pXCBWindow* self)
@@ -80,16 +75,6 @@ void pXCBWindowPollEvents(const pXCBWindow* self)
 	} break;
 	default: break;
 	}
-}
-
-xcb_connection_t* pXCBWindowGetConnection(const pXCBWindow* self)
-{
-	return self->connection;
-}
-
-xcb_window_t pXCBWindowGetWindow(const pXCBWindow* self)
-{
-	return (xcb_window_t) self->window;
 }
 
 void pXCBWindowDestroy(pXCBWindow* self)

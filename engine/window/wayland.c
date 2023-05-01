@@ -55,7 +55,7 @@ static void sXdgToplevelConfigure(void* data, struct xdg_toplevel* xdgToplevel, 
 static void sXdgToplevelClose(void* data, struct xdg_toplevel* xdgToplevel)
 {
 	(void) xdgToplevel;
-	((pWaylandWindow*) data)->isRunning = false;
+	((pWaylandWindow*) data)->parent->isRunning = false;
 }
 
 bool pWaylandSupport(void)
@@ -142,30 +142,15 @@ i32 pWaylandWindowCreate(pWaylandWindow* self, pWindow* parent)
 	wl_surface_commit(self->surface);
 	wl_display_roundtrip(self->display);
 
-	self->isRunning = true;
+	self->parent->isRunning = true;
 
 exit:
 	return error;
 }
 
-bool pWaylandWindowIsRunning(const pWaylandWindow* self)
-{
-	return self->isRunning;
-}
-
 void pWaylandWindowPollEvents(const pWaylandWindow* self)
 {
 	wl_display_dispatch(self->display);
-}
-
-struct wl_display* pWaylandWindowGetDisplay(const pWaylandWindow* self)
-{
-	return self->display;
-}
-
-struct wl_surface* pWaylandWindowGetSurface(const pWaylandWindow* self)
-{
-	return self->surface;
 }
 
 void pWaylandWindowDestroy(pWaylandWindow* self)

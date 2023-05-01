@@ -13,7 +13,6 @@
 
 typedef struct {
 	pWindow* parent;
-	bool isRunning;
 
 	struct wl_display* display;
 	struct wl_registry* registry;
@@ -27,8 +26,5 @@ typedef struct {
 bool pWaylandSupport(void);
 
 i32 pWaylandWindowCreate(pWaylandWindow* self, pWindow* parent);
-bool pWaylandWindowIsRunning(const pWaylandWindow* self);
 void pWaylandWindowPollEvents(const pWaylandWindow* self);
-struct wl_display* pWaylandWindowGetDisplay(const pWaylandWindow* self);
-struct wl_surface* pWaylandWindowGetSurface(const pWaylandWindow* self);
 void pWaylandWindowDestroy(pWaylandWindow* self);

@@ -54,14 +54,9 @@ i32 pXlibWindowCreate(pXlibWindow* self, pWindow* parent)
 	XSelectInput(self->display, self->window, StructureNotifyMask);
 	XMapWindow(self->display, self->window);
 
-	self->isRunning = true;
+	self->parent->isRunning = true;
 exit:
 	return error;
-}
-
-bool pXlibWindowIsRunning(const pXlibWindow* self)
-{
-	return self->isRunning;
 }
 
 void pXlibWindowPollEvents(const pXlibWindow* self)
@@ -83,16 +78,6 @@ void pXlibWindowPollEvents(const pXlibWindow* self)
 	} break;
 	default: break;
 	}
-}
-
-Display* pXlibWindowGetDisplay(const pXlibWindow* self)
-{
-	return self->display;
-}
-
-Window pXlibWindowGetWindow(const pXlibWindow* self)
-{
-	return self->window;
 }
 
 void pXlibWindowDestroy(pXlibWindow* self)

@@ -96,8 +96,8 @@ i32 rVkCreateSurface(pWindow* window)
 	switch (window->type) {
 #ifdef pWAYLAND
 	case pWINDOW_TYPE_WAYLAND: {
-		struct wl_display* wlDisplay = pWaylandWindowGetDisplay(window->api);
-		struct wl_surface* wlSurface = pWaylandWindowGetSurface(window->api);
+		struct wl_display* wlDisplay = ((pWaylandWindow*) window->api)->display;
+		struct wl_surface* wlSurface = ((pWaylandWindow*) window->api)->surface;
 		error = sCreateWaylandSurface(wlDisplay, wlSurface);
 		if (error < 0) {
 			pLoggerError("Couldn't create VkSurfaceKHR for Wayland\n");
@@ -107,8 +107,8 @@ i32 rVkCreateSurface(pWindow* window)
 #endif
 #ifdef pXCB
 	case pWINDOW_TYPE_XCB: {
-		xcb_connection_t* xcbConnection = pXCBWindowGetConnection(window->api);
-		xcb_window_t xcbWindow  = pXCBWindowGetWindow(window->api);
+		xcb_connection_t* xcbConnection = ((pXCBWindow*) window->api)->connection;
+		xcb_window_t xcbWindow = ((pXCBWindow*) window->api)->window;
 		error = sCreateXCBSurface(xcbConnection, xcbWindow);
 		if (error < 0) {
 			pLoggerError("Couldn't create VkSurfaceKHR for XCB\n");
@@ -118,8 +118,8 @@ i32 rVkCreateSurface(pWindow* window)
 #endif
 #ifdef pXLIB
 	case pWINDOW_TYPE_XLIB: {
-		Display* xlibDisplay = pXlibWindowGetDisplay(window->api);
-		Window   xlibWindow  = pXlibWindowGetWindow(window->api);
+		Display* xlibDisplay = ((pXlibWindow*) window->api)->display;
+		Window   xlibWindow  = ((pXlibWindow*) window->api)->window;
 		error = sCreateXlibSurface(xlibDisplay, xlibWindow);
 		if (error < 0) {
 			pLoggerError("Couldn't create VkSurfaceKHR for Xlib\n");

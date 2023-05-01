@@ -12,7 +12,6 @@
 
 typedef struct {
 	pWindow* parent;
-	bool isRunning;
 
 	xcb_connection_t* connection;
 	xcb_screen_t*     screen;
@@ -22,8 +21,5 @@ typedef struct {
 bool pXCBSupport(void);
 
 i32 pXCBWindowCreate(pXCBWindow* self, pWindow* parent);
-bool pXCBWindowIsRunning(const pXCBWindow* self);
 void pXCBWindowPollEvents(const pXCBWindow* self);
-xcb_connection_t* pXCBWindowGetConnection(const pXCBWindow* self);
-xcb_window_t pXCBWindowGetWindow(const pXCBWindow* self);
 void pXCBWindowDestroy(pXCBWindow* self);

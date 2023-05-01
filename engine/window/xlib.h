@@ -12,7 +12,6 @@
 
 typedef struct {
 	pWindow* parent;
-	bool isRunning;
 
 	Display* display;
 	Window   window;
@@ -22,8 +21,5 @@ typedef struct {
 bool pXlibSupport(void);
 
 i32 pXlibWindowCreate(pXlibWindow* self, pWindow* parent);
-bool pXlibWindowIsRunning(const pXlibWindow* self);
 void pXlibWindowPollEvents(const pXlibWindow* self);
-Display* pXlibWindowGetDisplay(const pXlibWindow* self);
-Window pXlibWindowGetWindow(const pXlibWindow* self);
 void pXlibWindowDestroy(pXlibWindow* self);
