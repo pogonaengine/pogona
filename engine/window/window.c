@@ -13,8 +13,8 @@
 # include "wayland.h"
 #endif
 
-#ifdef pX11
-# include "x11.h"
+#ifdef pXLIB
+# include "xlib.h"
 #endif
 
 typedef bool (*PFN_support)(void);
@@ -27,8 +27,8 @@ static const SupportTable sTypePriority[pWINDOW_MAX_TYPES] = {
 #ifdef pWAYLAND
 	{ pWaylandSupport, pWINDOW_TYPE_WAYLAND },
 #endif
-#ifdef pX11
-	{ pX11Support, pWINDOW_TYPE_X11 },
+#ifdef pXLIB
+	{ pXlibSupport, pWINDOW_TYPE_XLIB },
 #endif
 };
 
@@ -60,10 +60,10 @@ i32 pWindowCreate(pWindow* self, const char* title, u32 width, u32 height)
 		pWaylandWindowCreate(self->api, self);
 		break;
 #endif
-#ifdef pX11
-	case pWINDOW_TYPE_X11:
-		self->api = calloc(1, sizeof(pX11Window));
-		pX11WindowCreate(self->api, self);
+#ifdef pXLIB
+	case pWINDOW_TYPE_XLIB:
+		self->api = calloc(1, sizeof(pXlibWindow));
+		pXlibWindowCreate(self->api, self);
 		break;
 #endif
 	default:
@@ -79,9 +79,9 @@ bool pWindowIsRunning(const pWindow* self)
 	case pWINDOW_TYPE_WAYLAND:
 		return pWaylandWindowIsRunning((pWaylandWindow*) self->api);
 #endif
-#ifdef pX11
-	case pWINDOW_TYPE_X11:
-		return pX11WindowIsRunning((pX11Window*) self->api);
+#ifdef pXLIB
+	case pWINDOW_TYPE_XLIB:
+		return pXlibWindowIsRunning((pXlibWindow*) self->api);
 #endif
 	default:
 		assert(false && "unreachable");
@@ -96,9 +96,9 @@ void pWindowPollEvents(const pWindow* self)
 		pWaylandWindowPollEvents((pWaylandWindow*) self->api);
 		return;
 #endif
-#ifdef pX11
-	case pWINDOW_TYPE_X11:
-		pX11WindowPollEvents((pX11Window*) self->api);
+#ifdef pXLIB
+	case pWINDOW_TYPE_XLIB:
+		pXlibWindowPollEvents((pXlibWindow*) self->api);
 		return;
 #endif
 	default:
@@ -123,9 +123,9 @@ void pWindowDestroy(pWindow* self)
 		pWaylandWindowDestroy((pWaylandWindow*) self->api);
 		break;
 #endif
-#ifdef pX11
-	case pWINDOW_TYPE_X11:
-		pX11WindowDestroy((pX11Window*) self->api);
+#ifdef pXLIB
+	case pWINDOW_TYPE_XLIB:
+		pXlibWindowDestroy((pXlibWindow*) self->api);
 		break;
 #endif
 	default:

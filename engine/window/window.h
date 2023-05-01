@@ -16,8 +16,8 @@ enum {
 #ifdef pWAYLAND
 	pWINDOW_TYPE_WAYLAND,
 #endif
-#ifdef pX11
-	pWINDOW_TYPE_X11,
+#ifdef pXLIB
+	pWINDOW_TYPE_XLIB,
 #endif
 
 	pWINDOW_MAX_TYPES,

@@ -27,16 +27,16 @@ static i32 sCreateWaylandSurface(struct wl_display* wlDisplay, struct wl_surface
 
 #endif
 
-#ifdef pX11
+#ifdef pXLIB
 
-#include <engine/window/x11.h>
+#include <engine/window/xlib.h>
 
-static i32 sCreateX11Surface(Display* x11Display, Window x11Window)
+static i32 sCreateXlibSurface(Display* xlibDisplay, Window xlibWindow)
 {
 	VkXlibSurfaceCreateInfoKHR xlibSurfaceCreateInfo = {
 		.sType  = VK_STRUCTURE_TYPE_XLIB_SURFACE_CREATE_INFO_KHR,
-		.dpy    = x11Display,
-		.window = x11Window,
+		.dpy    = xlibDisplay,
+		.window = xlibWindow,
 	};
 	rCHECK(vkCreateXlibSurfaceKHR(gCore.instance, &xlibSurfaceCreateInfo, NULL, &gCore.surface.surface));
 	return 0;
@@ -88,13 +88,13 @@ i32 rVkCreateSurface(pWindow* window)
 		}
 	} break;
 #endif
-#ifdef pX11
-	case pWINDOW_TYPE_X11: {
-		Display* x11Display = pX11WindowGetDisplay(window->api);
-		Window   x11Window  = pX11WindowGetWindow(window->api);
-		error = sCreateX11Surface(x11Display, x11Window);
+#ifdef pXLIB
+	case pWINDOW_TYPE_XLIB: {
+		Display* xlibDisplay = pXlibWindowGetDisplay(window->api);
+		Window   xlibWindow  = pXlibWindowGetWindow(window->api);
+		error = sCreateXlibSurface(xlibDisplay, xlibWindow);
 		if (error < 0) {
-			pLoggerError("Couldn't create VkSurfaceKHR for X11\n");
+			pLoggerError("Couldn't create VkSurfaceKHR for Xlib\n");
 			goto exit;
 		}
 	} break;

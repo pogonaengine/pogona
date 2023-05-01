@@ -5,26 +5,26 @@
  */
 
 #include "config.h"
-#include "x11.h"
+#include "xlib.h"
 #include <X11/Xutil.h>
 #include <engine/event.h>
 #include <engine/logger.h>
 #include <pch/pch.h>
 
-bool pX11Support(void)
+bool pXlibSupport(void)
 {
 	/* FIXME: implement */
 	return true;
 }
 
-i32 pX11WindowCreate(pX11Window* self, pWindow* parent)
+i32 pXlibWindowCreate(pXlibWindow* self, pWindow* parent)
 {
 	i32 error = 0;
 	self->parent = parent;
 
 	self->display = XOpenDisplay(NULL);
 	if (!self->display) {
-		pLoggerError("Could not open X11 display\n");
+		pLoggerError("Could not open Xlib display\n");
 		error = -1;
 		goto exit;
 	}
@@ -36,7 +36,7 @@ i32 pX11WindowCreate(pX11Window* self, pWindow* parent)
 	                                   0, 0,
 	                                   0);
 	if (!self->window) {
-		pLoggerError("Could not create X11 window\n");
+		pLoggerError("Could not create Xlib window\n");
 		error = -2;
 		goto exit;
 	}
@@ -60,12 +60,12 @@ exit:
 	return error;
 }
 
-bool pX11WindowIsRunning(const pX11Window* self)
+bool pXlibWindowIsRunning(const pXlibWindow* self)
 {
 	return self->isRunning;
 }
 
-void pX11WindowPollEvents(const pX11Window* self)
+void pXlibWindowPollEvents(const pXlibWindow* self)
 {
 	XEvent event;
 	XNextEvent(self->display, &event);
@@ -86,17 +86,17 @@ void pX11WindowPollEvents(const pX11Window* self)
 	}
 }
 
-Display* pX11WindowGetDisplay(const pX11Window* self)
+Display* pXlibWindowGetDisplay(const pXlibWindow* self)
 {
 	return self->display;
 }
 
-Window pX11WindowGetWindow(const pX11Window* self)
+Window pXlibWindowGetWindow(const pXlibWindow* self)
 {
 	return self->window;
 }
 
-void pX11WindowDestroy(pX11Window* self)
+void pXlibWindowDestroy(pXlibWindow* self)
 {
 	XDestroyWindow(self->display, self->window);
 	XCloseDisplay(self->display);
