@@ -10,8 +10,9 @@
 
 #define rCHECK(x) \
 	do { \
-		if ((x) < 0) { \
-			pLoggerError("Vulkan call '%s' failed: %d\n", #x); \
+		u32 result = (x); \
+		if (result < 0) { \
+			pLoggerError("Vulkan call '%s' failed: %d\n", #x, result); \
 			return -1; \
 		} \
 	} while (false);
