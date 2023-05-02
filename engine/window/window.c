@@ -41,6 +41,22 @@ static const SupportTable sTypePriority[pWINDOW_MAX_TYPES] = {
 
 static i8 sPickType(void)
 {
+	const char* envvar = getenv("POGONA_WINDOW_TYPE");
+	if (envvar) {
+#ifdef pWAYLAND
+		if (!strcmp(envvar, "wayland"))
+			return pWINDOW_TYPE_WAYLAND;
+#endif
+#ifdef pXCB
+		if (!strcmp(envvar, "xcb"))
+			return pWINDOW_TYPE_XCB;
+#endif
+#ifdef pXLIB
+		if (!strcmp(envvar, "xlib"))
+			return pWINDOW_TYPE_XLIB;
+#endif
+	}
+
 	for (u32 i = 0; i < pWINDOW_MAX_TYPES; ++i) {
 		if (sTypePriority[i].pfn())
 			return sTypePriority[i].type;
