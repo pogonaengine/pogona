@@ -41,7 +41,7 @@ extern i32 pEngineEntry(int argc, char** argv)
 
 	error = renderer.create(&window);
 	if (error < 0) {
-		pLoggerDebug("Couldn't create renderer\n");
+		pLoggerError("Couldn't create renderer\n");
 		pWindowDestroy(&window);
 		goto exit;
 	}
