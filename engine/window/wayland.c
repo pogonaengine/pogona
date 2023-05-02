@@ -60,8 +60,7 @@ static void sXdgToplevelClose(void* data, struct xdg_toplevel* xdgToplevel)
 
 bool pWaylandSupport(void)
 {
-	/* FIXME: implement */
-	return true;
+	return getenv("WAYLAND_DISPLAY") != NULL;
 }
 
 static void sPollEvents(struct pWindow* self)
