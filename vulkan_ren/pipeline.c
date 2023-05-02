@@ -38,9 +38,9 @@ i32 rVkCreateGraphicsPipeline(const rVkGraphicsPipelineCreateInfo createInfo)
 	}
 
 	VkVertexInputBindingDescription vertexInputBindingDescription = {
-	  .binding   = 0,
-	  .inputRate = VK_VERTEX_INPUT_RATE_VERTEX,
-	  .stride    = createInfo.vertexStride,
+		.binding   = 0,
+		.inputRate = VK_VERTEX_INPUT_RATE_VERTEX,
+		.stride    = createInfo.vertexStride,
 	};
 
 	VkPipelineVertexInputStateCreateInfo vertexInputStateCreateInfo = {

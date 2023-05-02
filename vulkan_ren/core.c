@@ -47,10 +47,10 @@ static const u16 sIndices[] = {
 static i32 sCreateVertexBuffer(void)
 {
 	VkBufferCreateInfo bufferCreateInfo = {
-	  .sType       = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO,
-	  .size        = sizeof(sVertices),
-	  .usage       = VK_BUFFER_USAGE_VERTEX_BUFFER_BIT,
-	  .sharingMode = VK_SHARING_MODE_EXCLUSIVE,
+		.sType       = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO,
+		.size        = sizeof(sVertices),
+		.usage       = VK_BUFFER_USAGE_VERTEX_BUFFER_BIT,
+		.sharingMode = VK_SHARING_MODE_EXCLUSIVE,
 	};
 	rCHECK(vkCreateBuffer(gCore.device, &bufferCreateInfo, NULL, &sVertexBuffer));
 
@@ -58,9 +58,9 @@ static i32 sCreateVertexBuffer(void)
 	vkGetBufferMemoryRequirements(gCore.device, sVertexBuffer, &memoryRequirements);
 
 	VkMemoryAllocateInfo memoryAllocateInfo = {
-	  .sType           = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO,
-	  .allocationSize  = memoryRequirements.size,
-	  .memoryTypeIndex = 0,
+		.sType           = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO,
+		.allocationSize  = memoryRequirements.size,
+		.memoryTypeIndex = 0,
 	};
 	rCHECK(vkAllocateMemory(gCore.device, &memoryAllocateInfo, NULL, &sVertexBufferMemory));
 	vkBindBufferMemory(gCore.device, sVertexBuffer, sVertexBufferMemory, 0);
@@ -70,10 +70,10 @@ static i32 sCreateVertexBuffer(void)
 static i32 sCreateIndexBuffer(void)
 {
 	VkBufferCreateInfo bufferCreateInfo = {
-	  .sType       = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO,
-	  .size        = sizeof(sIndices),
-	  .usage       = VK_BUFFER_USAGE_INDEX_BUFFER_BIT,
-	  .sharingMode = VK_SHARING_MODE_EXCLUSIVE,
+		.sType       = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO,
+		.size        = sizeof(sIndices),
+		.usage       = VK_BUFFER_USAGE_INDEX_BUFFER_BIT,
+		.sharingMode = VK_SHARING_MODE_EXCLUSIVE,
 	};
 	rCHECK(vkCreateBuffer(gCore.device, &bufferCreateInfo, NULL, &sIndexBuffer));
 
@@ -81,9 +81,9 @@ static i32 sCreateIndexBuffer(void)
 	vkGetBufferMemoryRequirements(gCore.device, sIndexBuffer, &memoryRequirements);
 
 	VkMemoryAllocateInfo memoryAllocateInfo = {
-	  .sType           = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO,
-	  .allocationSize  = memoryRequirements.size,
-	  .memoryTypeIndex = 0,
+		.sType           = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO,
+		.allocationSize  = memoryRequirements.size,
+		.memoryTypeIndex = 0,
 	};
 	rCHECK(vkAllocateMemory(gCore.device, &memoryAllocateInfo, NULL, &sIndexBufferMemory));
 	vkBindBufferMemory(gCore.device, sIndexBuffer, sIndexBufferMemory, 0);
