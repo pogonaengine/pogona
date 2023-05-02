@@ -25,6 +25,14 @@ static const SupportTable sTypePriority[pRENDERER_MAX_TYPES] = {
 
 static i8 sPickType(void)
 {
+	const char* envvar = getenv("POGONA_RENDERER_TYPE");
+	if (envvar) {
+#ifdef pVULKAN
+		if (!strcmp(envvar, "vulkan"))
+			return pRENDERER_TYPE_VULKAN;
+#endif
+	}
+
 	for (u32 i = 0; i < pRENDERER_MAX_TYPES; ++i) {
 		if (sTypePriority[i].pfn()) {
 			return sTypePriority[i].type;
