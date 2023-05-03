@@ -50,7 +50,7 @@ i32 rVkReadShader(VkShaderModule* module, const char* path)
 		.pCode    = (const u32*) data,
 		.codeSize = fileSize,
 	};
-	rCHECK(vkCreateShaderModule(gVkCore.device, &shaderModuleCreateInfo, NULL, module));
+	rVK_CHECK(vkCreateShaderModule(gVkCore.device, &shaderModuleCreateInfo, NULL, module));
 
 	free(data);
 	fclose(file);

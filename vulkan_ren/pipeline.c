@@ -13,12 +13,12 @@ i32 rVkCreatePipelineLayoutAndCache(void)
 	VkPipelineLayoutCreateInfo pipelineLayoutCreateInfo = {
 		.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO,
 	};
-	rCHECK(vkCreatePipelineLayout(gVkCore.device, &pipelineLayoutCreateInfo, NULL, &gVkCore.pipeline.layout));
+	rVK_CHECK(vkCreatePipelineLayout(gVkCore.device, &pipelineLayoutCreateInfo, NULL, &gVkCore.pipeline.layout));
 
 	VkPipelineCacheCreateInfo pipelineCacheCreateInfo = {
 		.sType = VK_STRUCTURE_TYPE_PIPELINE_CACHE_CREATE_INFO,
 	};
-	rCHECK(vkCreatePipelineCache(gVkCore.device, &pipelineCacheCreateInfo, NULL, &gVkCore.pipeline.cache));
+	rVK_CHECK(vkCreatePipelineCache(gVkCore.device, &pipelineCacheCreateInfo, NULL, &gVkCore.pipeline.cache));
 	return 0;
 }
 
@@ -102,7 +102,7 @@ i32 rVkCreateGraphicsPipeline(const rVkGraphicsPipelineCreateInfo createInfo)
 		.pColorBlendState = &colorBlendStateCreateInfo,
 		.pDynamicState	= &dynamicStateCreateInfo,
 	};
-	rCHECK(vkCreateGraphicsPipelines(gVkCore.device, gVkCore.pipeline.cache, 1, &graphicsPipelineCreateInfo, NULL, &gVkCore.pipeline.pipeline));
+	rVK_CHECK(vkCreateGraphicsPipelines(gVkCore.device, gVkCore.pipeline.cache, 1, &graphicsPipelineCreateInfo, NULL, &gVkCore.pipeline.pipeline));
 
 	free(pipelineShaderStageCreateInfos);
 	return 0;

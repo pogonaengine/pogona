@@ -20,7 +20,7 @@ static bool sOnResize(pEventData data)
 
 static i32 sDestroySwapchain(VkSwapchainKHR swapchain)
 {
-	rCHECK(vkQueueWaitIdle(gVkCore.queue));
+	rVK_CHECK(vkQueueWaitIdle(gVkCore.queue));
 	for (u32 i = 0; i < gSwapchain.imagesCount; ++i) {
 		vkDestroyImageView(gVkCore.device, gSwapchain.imageViews[i], NULL);
 		vkDestroyFramebuffer(gVkCore.device, gSwapchain.framebuffers[i], NULL);
@@ -38,7 +38,7 @@ i32 rVkCreateSwapchain(pWindow* window)
 	gSwapchain.colorSpace  = gVkCore.surface.pickedColorSpace;
 
 	VkSurfaceCapabilitiesKHR surfaceCapabilities;
-	rCHECK(vkGetPhysicalDeviceSurfaceCapabilitiesKHR(gVkCore.physicalDevice.physicalDevice, gVkCore.surface.surface, &surfaceCapabilities));
+	rVK_CHECK(vkGetPhysicalDeviceSurfaceCapabilitiesKHR(gVkCore.physicalDevice.physicalDevice, gVkCore.surface.surface, &surfaceCapabilities));
 	VkExtent2D swapchainExtent = surfaceCapabilities.currentExtent;
 	if (swapchainExtent.width == 0xffffffff || swapchainExtent.height == 0xffffffff) {
 		swapchainExtent.width  = pCLAMP(window->width, surfaceCapabilities.minImageExtent.width, surfaceCapabilities.maxImageExtent.width);
@@ -65,14 +65,14 @@ i32 rVkCreateSwapchain(pWindow* window)
 		.preTransform = surfaceCapabilities.currentTransform,
 		.compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR,
 	};
-	rCHECK(vkCreateSwapchainKHR(gVkCore.device, &swapchainCreateInfo, NULL, &gSwapchain.swapchain));
+	rVK_CHECK(vkCreateSwapchainKHR(gVkCore.device, &swapchainCreateInfo, NULL, &gSwapchain.swapchain));
 
 	if (swapchainCreateInfo.oldSwapchain)
-		rCHECK(sDestroySwapchain(swapchainCreateInfo.oldSwapchain));
+		rVK_CHECK(sDestroySwapchain(swapchainCreateInfo.oldSwapchain));
 
-	rCHECK(vkGetSwapchainImagesKHR(gVkCore.device, gSwapchain.swapchain, &gSwapchain.imagesCount, NULL));
+	rVK_CHECK(vkGetSwapchainImagesKHR(gVkCore.device, gSwapchain.swapchain, &gSwapchain.imagesCount, NULL));
 	gSwapchain.images = calloc(gSwapchain.imagesCount, sizeof(VkImage));
-	rCHECK(vkGetSwapchainImagesKHR(gVkCore.device, gSwapchain.swapchain, &gSwapchain.imagesCount, gSwapchain.images));
+	rVK_CHECK(vkGetSwapchainImagesKHR(gVkCore.device, gSwapchain.swapchain, &gSwapchain.imagesCount, gSwapchain.images));
 
 	gSwapchain.imageViews = calloc(gSwapchain.imagesCount, sizeof(VkImageView));
 	for (u32 i = 0; i < gSwapchain.imagesCount; ++i) {
@@ -87,7 +87,7 @@ i32 rVkCreateSwapchain(pWindow* window)
 				.layerCount = 1,
 			},
 		};
-		rCHECK(vkCreateImageView(gVkCore.device, &imageViewCreateInfo, NULL, gSwapchain.imageViews + i));
+		rVK_CHECK(vkCreateImageView(gVkCore.device, &imageViewCreateInfo, NULL, gSwapchain.imageViews + i));
 	}
 
 	gSwapchain.framebuffers = calloc(gSwapchain.imagesCount, sizeof(VkFramebuffer));
@@ -101,14 +101,14 @@ i32 rVkCreateSwapchain(pWindow* window)
 			.height = swapchainExtent.height,
 			.layers = 1,
 		};
-		rCHECK(vkCreateFramebuffer(gVkCore.device, &framebufferCreateInfo, NULL, gSwapchain.framebuffers + i));
+		rVK_CHECK(vkCreateFramebuffer(gVkCore.device, &framebufferCreateInfo, NULL, gSwapchain.framebuffers + i));
 	}
 	return 0;
 }
 
 i32 rVkAcquireNextImage(u32* imageIndex, VkSemaphore semaphore)
 {
-	rCHECK(vkAcquireNextImageKHR(gVkCore.device, gSwapchain.swapchain, UINT64_MAX, semaphore, VK_NULL_HANDLE, imageIndex));
+	rVK_CHECK(vkAcquireNextImageKHR(gVkCore.device, gSwapchain.swapchain, UINT64_MAX, semaphore, VK_NULL_HANDLE, imageIndex));
 	return 0;
 }
 

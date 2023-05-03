@@ -13,7 +13,7 @@ i32 rVkCreateSemaphore(VkSemaphore* semaphore)
 	VkSemaphoreCreateInfo semaphoreCreateInfo = {
 		.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO,
 	};
-	rCHECK(vkCreateSemaphore(gVkCore.device, &semaphoreCreateInfo, NULL, semaphore));
+	rVK_CHECK(vkCreateSemaphore(gVkCore.device, &semaphoreCreateInfo, NULL, semaphore));
 	return 0;
 }
 
@@ -23,6 +23,6 @@ i32 rVkCreateFence(VkFence* fence, bool signaled)
 		.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO,
 		.flags = signaled ? VK_FENCE_CREATE_SIGNALED_BIT : 0,
 	};
-	rCHECK(vkCreateFence(gVkCore.device, &fenceCreateInfo, NULL, fence));
+	rVK_CHECK(vkCreateFence(gVkCore.device, &fenceCreateInfo, NULL, fence));
 	return 0;
 }

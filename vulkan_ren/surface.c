@@ -21,7 +21,7 @@ static i32 sCreateWaylandSurface(struct wl_display* wlDisplay, struct wl_surface
 		.display = wlDisplay,
 		.surface = wlSurface,
 	};
-	rCHECK(vkCreateWaylandSurfaceKHR(gVkCore.instance, &waylandSurfaceCreateInfo, NULL, &gVkCore.surface.surface));
+	rVK_CHECK(vkCreateWaylandSurfaceKHR(gVkCore.instance, &waylandSurfaceCreateInfo, NULL, &gVkCore.surface.surface));
 	return 0;
 }
 
@@ -38,7 +38,7 @@ static i32 sCreateXCBSurface(xcb_connection_t* xcbConnection, xcb_window_t xcbWi
 		.connection = xcbConnection,
 		.window     = xcbWindow,
 	};
-	rCHECK(vkCreateXcbSurfaceKHR(gVkCore.instance, &xcbSurfaceCreateInfo, NULL, &gVkCore.surface.surface));
+	rVK_CHECK(vkCreateXcbSurfaceKHR(gVkCore.instance, &xcbSurfaceCreateInfo, NULL, &gVkCore.surface.surface));
 	return 0;
 }
 
@@ -55,7 +55,7 @@ static i32 sCreateXlibSurface(Display* xlibDisplay, Window xlibWindow)
 		.dpy    = xlibDisplay,
 		.window = xlibWindow,
 	};
-	rCHECK(vkCreateXlibSurfaceKHR(gVkCore.instance, &xlibSurfaceCreateInfo, NULL, &gVkCore.surface.surface));
+	rVK_CHECK(vkCreateXlibSurfaceKHR(gVkCore.instance, &xlibSurfaceCreateInfo, NULL, &gVkCore.surface.surface));
 	return 0;
 }
 
@@ -131,13 +131,13 @@ i32 rVkCreateSurface(pWindow* window)
 		assert(false && "unreachable");
 	}
 
-	rCHECK(vkGetPhysicalDeviceSurfaceFormatsKHR(gVkCore.physicalDevice.physicalDevice, gVkCore.surface.surface, &gVkCore.surface.surfaceFormatsCount, NULL));
+	rVK_CHECK(vkGetPhysicalDeviceSurfaceFormatsKHR(gVkCore.physicalDevice.physicalDevice, gVkCore.surface.surface, &gVkCore.surface.surfaceFormatsCount, NULL));
 	gVkCore.surface.surfaceFormats = calloc(gVkCore.surface.surfaceFormatsCount, sizeof(VkSurfaceFormatKHR));
-	rCHECK(vkGetPhysicalDeviceSurfaceFormatsKHR(gVkCore.physicalDevice.physicalDevice, gVkCore.surface.surface, &gVkCore.surface.surfaceFormatsCount, gVkCore.surface.surfaceFormats));
+	rVK_CHECK(vkGetPhysicalDeviceSurfaceFormatsKHR(gVkCore.physicalDevice.physicalDevice, gVkCore.surface.surface, &gVkCore.surface.surfaceFormatsCount, gVkCore.surface.surfaceFormats));
 
-	rCHECK(vkGetPhysicalDeviceSurfacePresentModesKHR(gVkCore.physicalDevice.physicalDevice, gVkCore.surface.surface, &gVkCore.surface.presentModesCount, NULL));
+	rVK_CHECK(vkGetPhysicalDeviceSurfacePresentModesKHR(gVkCore.physicalDevice.physicalDevice, gVkCore.surface.surface, &gVkCore.surface.presentModesCount, NULL));
 	gVkCore.surface.presentModes = calloc(gVkCore.surface.presentModesCount, sizeof(VkPresentModeKHR));
-	rCHECK(vkGetPhysicalDeviceSurfacePresentModesKHR(gVkCore.physicalDevice.physicalDevice, gVkCore.surface.surface, &gVkCore.surface.presentModesCount, gVkCore.surface.presentModes));
+	rVK_CHECK(vkGetPhysicalDeviceSurfacePresentModesKHR(gVkCore.physicalDevice.physicalDevice, gVkCore.surface.surface, &gVkCore.surface.presentModesCount, gVkCore.surface.presentModes));
 
 	gVkCore.surface.pickedFormat     = sPickImageFormat();
 	gVkCore.surface.pickedColorSpace = sPickColorSpace();

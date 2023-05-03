@@ -40,6 +40,6 @@ i32 rVkCreateRenderPass(void)
 		.subpassCount = pARRAY_SIZE(subpassDescriptions),
 		.pSubpasses = subpassDescriptions,
 	};
-	rCHECK(vkCreateRenderPass(gVkCore.device, &renderPassCreateInfo, NULL, &gVkCore.renderPass));
+	rVK_CHECK(vkCreateRenderPass(gVkCore.device, &renderPassCreateInfo, NULL, &gVkCore.renderPass));
 	return 0;
 }

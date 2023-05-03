@@ -52,7 +52,7 @@ static i32 sCreateVertexBuffer(void)
 		.usage       = VK_BUFFER_USAGE_VERTEX_BUFFER_BIT,
 		.sharingMode = VK_SHARING_MODE_EXCLUSIVE,
 	};
-	rCHECK(vkCreateBuffer(gVkCore.device, &bufferCreateInfo, NULL, &sVertexBuffer));
+	rVK_CHECK(vkCreateBuffer(gVkCore.device, &bufferCreateInfo, NULL, &sVertexBuffer));
 
 	VkMemoryRequirements memoryRequirements;
 	vkGetBufferMemoryRequirements(gVkCore.device, sVertexBuffer, &memoryRequirements);
@@ -62,7 +62,7 @@ static i32 sCreateVertexBuffer(void)
 		.allocationSize  = memoryRequirements.size,
 		.memoryTypeIndex = 0,
 	};
-	rCHECK(vkAllocateMemory(gVkCore.device, &memoryAllocateInfo, NULL, &sVertexBufferMemory));
+	rVK_CHECK(vkAllocateMemory(gVkCore.device, &memoryAllocateInfo, NULL, &sVertexBufferMemory));
 	vkBindBufferMemory(gVkCore.device, sVertexBuffer, sVertexBufferMemory, 0);
 	return 0;
 }
@@ -75,7 +75,7 @@ static i32 sCreateIndexBuffer(void)
 		.usage       = VK_BUFFER_USAGE_INDEX_BUFFER_BIT,
 		.sharingMode = VK_SHARING_MODE_EXCLUSIVE,
 	};
-	rCHECK(vkCreateBuffer(gVkCore.device, &bufferCreateInfo, NULL, &sIndexBuffer));
+	rVK_CHECK(vkCreateBuffer(gVkCore.device, &bufferCreateInfo, NULL, &sIndexBuffer));
 
 	VkMemoryRequirements memoryRequirements;
 	vkGetBufferMemoryRequirements(gVkCore.device, sIndexBuffer, &memoryRequirements);
@@ -85,7 +85,7 @@ static i32 sCreateIndexBuffer(void)
 		.allocationSize  = memoryRequirements.size,
 		.memoryTypeIndex = 0,
 	};
-	rCHECK(vkAllocateMemory(gVkCore.device, &memoryAllocateInfo, NULL, &sIndexBufferMemory));
+	rVK_CHECK(vkAllocateMemory(gVkCore.device, &memoryAllocateInfo, NULL, &sIndexBufferMemory));
 	vkBindBufferMemory(gVkCore.device, sIndexBuffer, sIndexBufferMemory, 0);
 	return 0;
 }
@@ -121,7 +121,7 @@ static VkBool32 VKAPI_PTR sDebugCallback(
 i32 rVkInstanceCreate(void)
 {
 	uint32_t supportedApiVersion = 0;
-	rCHECK(vkEnumerateInstanceVersion(&supportedApiVersion));
+	rVK_CHECK(vkEnumerateInstanceVersion(&supportedApiVersion));
 	if (supportedApiVersion < VK_API_VERSION_1_3) {
 		pLoggerError("Vulkan instance does not support 1.3\n");
 		return -1;
@@ -173,11 +173,11 @@ i32 rVkInstanceCreate(void)
 	instanceCreateInfo.pNext = &debugUtilsMessengerCreateInfo;
 #endif
 
-	rCHECK(vkCreateInstance(&instanceCreateInfo, NULL, &gVkCore.instance));
+	rVK_CHECK(vkCreateInstance(&instanceCreateInfo, NULL, &gVkCore.instance));
 	volkLoadInstance(gVkCore.instance);
 
 #ifndef NDEBUG
-	rCHECK(vkCreateDebugUtilsMessengerEXT(gVkCore.instance, &debugUtilsMessengerCreateInfo, NULL, &gVkCore.debugUtilsMessenger));
+	rVK_CHECK(vkCreateDebugUtilsMessengerEXT(gVkCore.instance, &debugUtilsMessengerCreateInfo, NULL, &gVkCore.debugUtilsMessenger));
 #endif
 
 	pVectorDestroy(&layers);
@@ -196,9 +196,9 @@ void rVkInstanceDestroy(void)
 i32 rVkPickPhysicalDevice(void)
 {
 	u32 groupCount = 0;
-	rCHECK(vkEnumeratePhysicalDeviceGroups(gVkCore.instance, &groupCount, NULL));
+	rVK_CHECK(vkEnumeratePhysicalDeviceGroups(gVkCore.instance, &groupCount, NULL));
 	VkPhysicalDeviceGroupProperties* groupProperties = calloc(groupCount, sizeof(*groupProperties));
-	rCHECK(vkEnumeratePhysicalDeviceGroups(gVkCore.instance, &groupCount, groupProperties));
+	rVK_CHECK(vkEnumeratePhysicalDeviceGroups(gVkCore.instance, &groupCount, groupProperties));
 
 	VkPhysicalDevice pickedPhysicalDevice = NULL;
 	u32 pickedQueueFamily = VK_QUEUE_FAMILY_IGNORED;
@@ -315,7 +315,7 @@ i32 rVkCreateDevice(void)
 		.ppEnabledExtensionNames = extensions,
 		.pEnabledFeatures = NULL,
 	};
-	rCHECK(vkCreateDevice(gVkCore.physicalDevice.physicalDevice, &deviceCreateInfo, NULL, &gVkCore.device));
+	rVK_CHECK(vkCreateDevice(gVkCore.physicalDevice.physicalDevice, &deviceCreateInfo, NULL, &gVkCore.device));
 	volkLoadDevice(gVkCore.device);
 	vkGetDeviceQueue(gVkCore.device, gVkCore.physicalDevice.queueFamilyIndex, 0, &gVkCore.queue);
 	return 0;
@@ -329,7 +329,7 @@ i32 rVkCreateCommandPool(void)
 		.flags = VK_COMMAND_POOL_CREATE_TRANSIENT_BIT
 		       | VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT,
 	};
-	rCHECK(vkCreateCommandPool(gVkCore.device, &commandPoolCreateInfo, NULL, &gVkCore.commandPool));
+	rVK_CHECK(vkCreateCommandPool(gVkCore.device, &commandPoolCreateInfo, NULL, &gVkCore.commandPool));
 
 	VkCommandBufferAllocateInfo commandBufferAllocateInfo = {
 		.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,
@@ -337,7 +337,7 @@ i32 rVkCreateCommandPool(void)
 		.commandPool = gVkCore.commandPool,
 		.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY,
 	};
-	rCHECK(vkAllocateCommandBuffers(gVkCore.device, &commandBufferAllocateInfo, gVkCore.commandBuffers));
+	rVK_CHECK(vkAllocateCommandBuffers(gVkCore.device, &commandBufferAllocateInfo, gVkCore.commandBuffers));
 	return 0;
 }
 
@@ -471,10 +471,10 @@ exit:
 
 i32 rVkBeginFrame(void)
 {
-	rCHECK(vkWaitForFences(gVkCore.device, 1, &sInFlightFence, VK_TRUE, UINT64_MAX));
-	rCHECK(vkResetFences(gVkCore.device, 1, &sInFlightFence));
+	rVK_CHECK(vkWaitForFences(gVkCore.device, 1, &sInFlightFence, VK_TRUE, UINT64_MAX));
+	rVK_CHECK(vkResetFences(gVkCore.device, 1, &sInFlightFence));
 
-	rCHECK(rVkAcquireNextImage(&sImageIndex, sImageAvailableSemaphore));
+	rVK_CHECK(rVkAcquireNextImage(&sImageIndex, sImageAvailableSemaphore));
 
 	void* vertexData;
 	vkMapMemory(gVkCore.device, sVertexBufferMemory, 0, sizeof(sVertices), 0, &vertexData);
@@ -490,7 +490,7 @@ i32 rVkBeginFrame(void)
 	VkCommandBufferBeginInfo commandBufferBeginInfo = {
 		.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
 	};
-	rCHECK(vkBeginCommandBuffer(gVkCore.commandBuffers[0], &commandBufferBeginInfo));
+	rVK_CHECK(vkBeginCommandBuffer(gVkCore.commandBuffers[0], &commandBufferBeginInfo));
 
 	VkClearValue clearValue = { { { 0.f, 0.f, 0.f, 1.f } } };
 	VkRenderPassBeginInfo renderPassBeginInfo = {
@@ -537,7 +537,7 @@ i32 rVkEndFrame(void)
 	vkCmdDrawIndexed(gVkCore.commandBuffers[0], pARRAY_SIZE(sIndices), 1, 0, 0, 0);
 
 	vkCmdEndRenderPass(gVkCore.commandBuffers[0]);
-	rCHECK(vkEndCommandBuffer(gVkCore.commandBuffers[0]));
+	rVK_CHECK(vkEndCommandBuffer(gVkCore.commandBuffers[0]));
 
 	VkPipelineStageFlags waitStages[] = { VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
 	VkSubmitInfo submitInfo = {
@@ -550,7 +550,7 @@ i32 rVkEndFrame(void)
 		.signalSemaphoreCount = 1,
 		.pSignalSemaphores = &sRenderFinishedSemaphore,
 	};
-	rCHECK(vkQueueSubmit(gVkCore.queue, 1, &submitInfo, sInFlightFence));
+	rVK_CHECK(vkQueueSubmit(gVkCore.queue, 1, &submitInfo, sInFlightFence));
 
 	VkPresentInfoKHR presentInfo = {
 		.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR,
@@ -560,9 +560,9 @@ i32 rVkEndFrame(void)
 		.waitSemaphoreCount = 1,
 		.pWaitSemaphores = &sRenderFinishedSemaphore,
 	};
-	rCHECK(vkQueuePresentKHR(gVkCore.queue, &presentInfo));
+	rVK_CHECK(vkQueuePresentKHR(gVkCore.queue, &presentInfo));
 
-	rCHECK(vkQueueWaitIdle(gVkCore.queue));
+	rVK_CHECK(vkQueueWaitIdle(gVkCore.queue));
 	return 0;
 }
 

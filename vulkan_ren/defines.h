@@ -8,7 +8,7 @@
 
 #include <engine/logger.h>
 
-#define rCHECK(x) \
+#define rVK_CHECK(x) \
 	do { \
 		u32 result = (x); \
 		if (result < 0) { \
