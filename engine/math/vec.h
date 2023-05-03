@@ -179,3 +179,28 @@ pINLINE f32 pVec4Length(pVec4 x)
 {
 	return sqrtf(pVec4LengthSquared(x));
 }
+
+/* Normalize */
+pINLINE void pVec2Normalize(pVec2* x)
+{
+	const f32 length = pVec2Length(*x);
+	x->x /= length;
+	x->y /= length;
+}
+
+pINLINE void pVec3Normalize(pVec3* x)
+{
+	const f32 length = pVec3Length(*x);
+	x->x /= length;
+	x->y /= length;
+	x->z /= length;
+}
+
+pINLINE void pVec4Normalize(pVec4* x)
+{
+	const f32 length = pVec4Length(*x);
+	x->x /= length;
+	x->y /= length;
+	x->z /= length;
+	x->w /= length;
+}
