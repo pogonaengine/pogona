@@ -1,5 +1,6 @@
 tests = [
 	['vector', ['vector.c']],
+	['mat', ['mat.c']],
 ]
 
 foreach test_def : tests
