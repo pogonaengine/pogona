@@ -7,6 +7,7 @@
 #pragma once
 
 #include "../defines.h"
+#include <math.h>
 
 typedef union {
 	f32 data[2];
@@ -145,4 +146,36 @@ pINLINE pVec4 pVec4Div(pVec4 x, pVec4 y)
 		.z = x.z / y.z,
 		.w = x.w / y.w,
 	};
+}
+
+/* Length^2 */
+pINLINE f32 pVec2LengthSquared(pVec2 x)
+{
+	return x.x * x.x + x.y * x.y;
+}
+
+pINLINE f32 pVec3LengthSquared(pVec3 x)
+{
+	return x.x * x.x + x.y * x.y + x.z * x.z;
+}
+
+pINLINE f32 pVec4LengthSquared(pVec4 x)
+{
+	return x.x * x.x + x.y * x.y + x.z * x.z + x.w * x.w;
+}
+
+/* Length */
+pINLINE f32 pVec2Length(pVec2 x)
+{
+	return sqrtf(pVec2LengthSquared(x));
+}
+
+pINLINE f32 pVec3Length(pVec3 x)
+{
+	return sqrtf(pVec3LengthSquared(x));
+}
+
+pINLINE f32 pVec4Length(pVec4 x)
+{
+	return sqrtf(pVec4LengthSquared(x));
 }
