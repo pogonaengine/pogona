@@ -6,7 +6,7 @@
 
 #pragma once
 
-#include "defines.h"
+#include "../defines.h"
 
 typedef union {
 	f32 data[2];

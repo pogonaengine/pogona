@@ -6,7 +6,7 @@
 
 #pragma once
 
-#include <engine/math.h>
+#include <engine/math/math.h>
 
 typedef struct {
 	pVec3 pos;
