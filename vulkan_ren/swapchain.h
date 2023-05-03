@@ -21,9 +21,9 @@ typedef struct {
 	VkImage* images;
 	VkImageView* imageViews;
 	VkFramebuffer* framebuffers;
-} rSwapchain;
+} rVkSwapchain;
 
-extern rSwapchain gSwapchain;
+extern rVkSwapchain gSwapchain;
 
 i32 rVkCreateSwapchain(pWindow* window);
 i32 rVkAcquireNextImage(u32* imageIndex, VkSemaphore semaphore);

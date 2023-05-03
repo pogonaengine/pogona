@@ -9,7 +9,7 @@
 #include <engine/event.h>
 #include <pch/pch.h>
 
-rSwapchain gSwapchain = { 0 };
+rVkSwapchain gSwapchain = { 0 };
 
 static bool sRegisteredEvent = false;
 static bool sOnResize(pEventData data)
@@ -59,7 +59,7 @@ i32 rVkCreateSwapchain(pWindow* window)
 		.minImageCount = surfaceCapabilities.minImageCount + 1,
 		.imageArrayLayers = 1,
 		.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT
-								| VK_IMAGE_USAGE_TRANSFER_DST_BIT,
+		            | VK_IMAGE_USAGE_TRANSFER_DST_BIT,
 		.queueFamilyIndexCount = 1,
 		.pQueueFamilyIndices = &gCore.physicalDevice.queueFamilyIndex,
 		.preTransform = surfaceCapabilities.currentTransform,
