@@ -17,7 +17,7 @@
 #include <engine/engine.h>
 #include <pch/pch.h>
 
-rVkCore gCore = { 0 };
+rVkCore gVkCore = { 0 };
 
 static VkShaderModule sVertexShaderModule   = { 0 };
 static VkShaderModule sFragmentShaderModule = { 0 };
@@ -52,18 +52,18 @@ static i32 sCreateVertexBuffer(void)
 		.usage       = VK_BUFFER_USAGE_VERTEX_BUFFER_BIT,
 		.sharingMode = VK_SHARING_MODE_EXCLUSIVE,
 	};
-	rCHECK(vkCreateBuffer(gCore.device, &bufferCreateInfo, NULL, &sVertexBuffer));
+	rCHECK(vkCreateBuffer(gVkCore.device, &bufferCreateInfo, NULL, &sVertexBuffer));
 
 	VkMemoryRequirements memoryRequirements;
-	vkGetBufferMemoryRequirements(gCore.device, sVertexBuffer, &memoryRequirements);
+	vkGetBufferMemoryRequirements(gVkCore.device, sVertexBuffer, &memoryRequirements);
 
 	VkMemoryAllocateInfo memoryAllocateInfo = {
 		.sType           = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO,
 		.allocationSize  = memoryRequirements.size,
 		.memoryTypeIndex = 0,
 	};
-	rCHECK(vkAllocateMemory(gCore.device, &memoryAllocateInfo, NULL, &sVertexBufferMemory));
-	vkBindBufferMemory(gCore.device, sVertexBuffer, sVertexBufferMemory, 0);
+	rCHECK(vkAllocateMemory(gVkCore.device, &memoryAllocateInfo, NULL, &sVertexBufferMemory));
+	vkBindBufferMemory(gVkCore.device, sVertexBuffer, sVertexBufferMemory, 0);
 	return 0;
 }
 
@@ -75,18 +75,18 @@ static i32 sCreateIndexBuffer(void)
 		.usage       = VK_BUFFER_USAGE_INDEX_BUFFER_BIT,
 		.sharingMode = VK_SHARING_MODE_EXCLUSIVE,
 	};
-	rCHECK(vkCreateBuffer(gCore.device, &bufferCreateInfo, NULL, &sIndexBuffer));
+	rCHECK(vkCreateBuffer(gVkCore.device, &bufferCreateInfo, NULL, &sIndexBuffer));
 
 	VkMemoryRequirements memoryRequirements;
-	vkGetBufferMemoryRequirements(gCore.device, sIndexBuffer, &memoryRequirements);
+	vkGetBufferMemoryRequirements(gVkCore.device, sIndexBuffer, &memoryRequirements);
 
 	VkMemoryAllocateInfo memoryAllocateInfo = {
 		.sType           = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO,
 		.allocationSize  = memoryRequirements.size,
 		.memoryTypeIndex = 0,
 	};
-	rCHECK(vkAllocateMemory(gCore.device, &memoryAllocateInfo, NULL, &sIndexBufferMemory));
-	vkBindBufferMemory(gCore.device, sIndexBuffer, sIndexBufferMemory, 0);
+	rCHECK(vkAllocateMemory(gVkCore.device, &memoryAllocateInfo, NULL, &sIndexBufferMemory));
+	vkBindBufferMemory(gVkCore.device, sIndexBuffer, sIndexBufferMemory, 0);
 	return 0;
 }
 
@@ -173,11 +173,11 @@ i32 rVkInstanceCreate(void)
 	instanceCreateInfo.pNext = &debugUtilsMessengerCreateInfo;
 #endif
 
-	rCHECK(vkCreateInstance(&instanceCreateInfo, NULL, &gCore.instance));
-	volkLoadInstance(gCore.instance);
+	rCHECK(vkCreateInstance(&instanceCreateInfo, NULL, &gVkCore.instance));
+	volkLoadInstance(gVkCore.instance);
 
 #ifndef NDEBUG
-	rCHECK(vkCreateDebugUtilsMessengerEXT(gCore.instance, &debugUtilsMessengerCreateInfo, NULL, &gCore.debugUtilsMessenger));
+	rCHECK(vkCreateDebugUtilsMessengerEXT(gVkCore.instance, &debugUtilsMessengerCreateInfo, NULL, &gVkCore.debugUtilsMessenger));
 #endif
 
 	pVectorDestroy(&layers);
@@ -188,17 +188,17 @@ i32 rVkInstanceCreate(void)
 void rVkInstanceDestroy(void)
 {
 #ifndef NDEBUG
-	vkDestroyDebugUtilsMessengerEXT(gCore.instance, gCore.debugUtilsMessenger, NULL);
+	vkDestroyDebugUtilsMessengerEXT(gVkCore.instance, gVkCore.debugUtilsMessenger, NULL);
 #endif
-	vkDestroyInstance(gCore.instance, NULL);
+	vkDestroyInstance(gVkCore.instance, NULL);
 }
 
 i32 rVkPickPhysicalDevice(void)
 {
 	u32 groupCount = 0;
-	rCHECK(vkEnumeratePhysicalDeviceGroups(gCore.instance, &groupCount, NULL));
+	rCHECK(vkEnumeratePhysicalDeviceGroups(gVkCore.instance, &groupCount, NULL));
 	VkPhysicalDeviceGroupProperties* groupProperties = calloc(groupCount, sizeof(*groupProperties));
-	rCHECK(vkEnumeratePhysicalDeviceGroups(gCore.instance, &groupCount, groupProperties));
+	rCHECK(vkEnumeratePhysicalDeviceGroups(gVkCore.instance, &groupCount, groupProperties));
 
 	VkPhysicalDevice pickedPhysicalDevice = NULL;
 	u32 pickedQueueFamily = VK_QUEUE_FAMILY_IGNORED;
@@ -288,8 +288,8 @@ i32 rVkPickPhysicalDevice(void)
 
 	free(groupProperties);
 
-	gCore.physicalDevice.physicalDevice = pickedPhysicalDevice;
-	gCore.physicalDevice.queueFamilyIndex = pickedQueueFamily;
+	gVkCore.physicalDevice.physicalDevice = pickedPhysicalDevice;
+	gVkCore.physicalDevice.queueFamilyIndex = pickedQueueFamily;
 	return 0;
 }
 
@@ -304,7 +304,7 @@ i32 rVkCreateDevice(void)
 		.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO,
 		.pQueuePriorities = queuePriorities,
 		.queueCount = 1,
-		.queueFamilyIndex = gCore.physicalDevice.queueFamilyIndex,
+		.queueFamilyIndex = gVkCore.physicalDevice.queueFamilyIndex,
 	};
 
 	VkDeviceCreateInfo deviceCreateInfo = {
@@ -315,9 +315,9 @@ i32 rVkCreateDevice(void)
 		.ppEnabledExtensionNames = extensions,
 		.pEnabledFeatures = NULL,
 	};
-	rCHECK(vkCreateDevice(gCore.physicalDevice.physicalDevice, &deviceCreateInfo, NULL, &gCore.device));
-	volkLoadDevice(gCore.device);
-	vkGetDeviceQueue(gCore.device, gCore.physicalDevice.queueFamilyIndex, 0, &gCore.queue);
+	rCHECK(vkCreateDevice(gVkCore.physicalDevice.physicalDevice, &deviceCreateInfo, NULL, &gVkCore.device));
+	volkLoadDevice(gVkCore.device);
+	vkGetDeviceQueue(gVkCore.device, gVkCore.physicalDevice.queueFamilyIndex, 0, &gVkCore.queue);
 	return 0;
 }
 
@@ -325,19 +325,19 @@ i32 rVkCreateCommandPool(void)
 {
 	VkCommandPoolCreateInfo commandPoolCreateInfo = {
 		.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO,
-		.queueFamilyIndex = gCore.physicalDevice.queueFamilyIndex,
+		.queueFamilyIndex = gVkCore.physicalDevice.queueFamilyIndex,
 		.flags = VK_COMMAND_POOL_CREATE_TRANSIENT_BIT
 		       | VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT,
 	};
-	rCHECK(vkCreateCommandPool(gCore.device, &commandPoolCreateInfo, NULL, &gCore.commandPool));
+	rCHECK(vkCreateCommandPool(gVkCore.device, &commandPoolCreateInfo, NULL, &gVkCore.commandPool));
 
 	VkCommandBufferAllocateInfo commandBufferAllocateInfo = {
 		.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,
 		.commandBufferCount = 1,
-		.commandPool = gCore.commandPool,
+		.commandPool = gVkCore.commandPool,
 		.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY,
 	};
-	rCHECK(vkAllocateCommandBuffers(gCore.device, &commandBufferAllocateInfo, gCore.commandBuffers));
+	rCHECK(vkAllocateCommandBuffers(gVkCore.device, &commandBufferAllocateInfo, gVkCore.commandBuffers));
 	return 0;
 }
 
@@ -471,31 +471,31 @@ exit:
 
 i32 rVkBeginFrame(void)
 {
-	rCHECK(vkWaitForFences(gCore.device, 1, &sInFlightFence, VK_TRUE, UINT64_MAX));
-	rCHECK(vkResetFences(gCore.device, 1, &sInFlightFence));
+	rCHECK(vkWaitForFences(gVkCore.device, 1, &sInFlightFence, VK_TRUE, UINT64_MAX));
+	rCHECK(vkResetFences(gVkCore.device, 1, &sInFlightFence));
 
 	rCHECK(rVkAcquireNextImage(&sImageIndex, sImageAvailableSemaphore));
 
 	void* vertexData;
-	vkMapMemory(gCore.device, sVertexBufferMemory, 0, sizeof(sVertices), 0, &vertexData);
+	vkMapMemory(gVkCore.device, sVertexBufferMemory, 0, sizeof(sVertices), 0, &vertexData);
 	memcpy(vertexData, sVertices, sizeof(sVertices));
-	vkUnmapMemory(gCore.device, sVertexBufferMemory);
+	vkUnmapMemory(gVkCore.device, sVertexBufferMemory);
 
 	void* indexData;
-	vkMapMemory(gCore.device, sIndexBufferMemory, 0, sizeof(sIndices), 0, &indexData);
+	vkMapMemory(gVkCore.device, sIndexBufferMemory, 0, sizeof(sIndices), 0, &indexData);
 	memcpy(indexData, sIndices, sizeof(sIndices));
-	vkUnmapMemory(gCore.device, sIndexBufferMemory);
+	vkUnmapMemory(gVkCore.device, sIndexBufferMemory);
 
-	vkResetCommandBuffer(gCore.commandBuffers[0], 0);
+	vkResetCommandBuffer(gVkCore.commandBuffers[0], 0);
 	VkCommandBufferBeginInfo commandBufferBeginInfo = {
 		.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
 	};
-	rCHECK(vkBeginCommandBuffer(gCore.commandBuffers[0], &commandBufferBeginInfo));
+	rCHECK(vkBeginCommandBuffer(gVkCore.commandBuffers[0], &commandBufferBeginInfo));
 
 	VkClearValue clearValue = { { { 0.f, 0.f, 0.f, 1.f } } };
 	VkRenderPassBeginInfo renderPassBeginInfo = {
 		.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO,
-		.renderPass = gCore.renderPass,
+		.renderPass = gVkCore.renderPass,
 		.framebuffer = gSwapchain.framebuffers[sImageIndex],
 		.renderArea = {
 			.offset = { 0, 0 },
@@ -504,9 +504,9 @@ i32 rVkBeginFrame(void)
 		.clearValueCount = 1,
 		.pClearValues = &clearValue,
 	};
-	vkCmdBeginRenderPass(gCore.commandBuffers[0], &renderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);
+	vkCmdBeginRenderPass(gVkCore.commandBuffers[0], &renderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);
 
-	vkCmdBindPipeline(gCore.commandBuffers[0], VK_PIPELINE_BIND_POINT_GRAPHICS, gCore.pipeline.pipeline);
+	vkCmdBindPipeline(gVkCore.commandBuffers[0], VK_PIPELINE_BIND_POINT_GRAPHICS, gVkCore.pipeline.pipeline);
 	VkViewport viewport = {
 		.x        = 0.f,
 		.y        = 0.f,
@@ -515,7 +515,7 @@ i32 rVkBeginFrame(void)
 		.minDepth = 0.f,
 		.maxDepth = 1.f,
 	};
-	vkCmdSetViewport(gCore.commandBuffers[0], 0, 1, &viewport);
+	vkCmdSetViewport(gVkCore.commandBuffers[0], 0, 1, &viewport);
 
 	VkRect2D scissor = {
 		.offset = { 0, 0 },
@@ -524,7 +524,7 @@ i32 rVkBeginFrame(void)
 			.height = gSwapchain.height,
 		},
 	};
-	vkCmdSetScissor(gCore.commandBuffers[0], 0, 1, &scissor);
+	vkCmdSetScissor(gVkCore.commandBuffers[0], 0, 1, &scissor);
 	return 0;
 }
 
@@ -532,12 +532,12 @@ i32 rVkEndFrame(void)
 {
 	VkBuffer vertexBuffers[] = { sVertexBuffer };
 	VkDeviceSize vertexOffsets[] = { 0 };
-	vkCmdBindVertexBuffers(gCore.commandBuffers[0], 0, 1, vertexBuffers, vertexOffsets);
-	vkCmdBindIndexBuffer(gCore.commandBuffers[0], sIndexBuffer, 0, VK_INDEX_TYPE_UINT16);
-	vkCmdDrawIndexed(gCore.commandBuffers[0], pARRAY_SIZE(sIndices), 1, 0, 0, 0);
+	vkCmdBindVertexBuffers(gVkCore.commandBuffers[0], 0, 1, vertexBuffers, vertexOffsets);
+	vkCmdBindIndexBuffer(gVkCore.commandBuffers[0], sIndexBuffer, 0, VK_INDEX_TYPE_UINT16);
+	vkCmdDrawIndexed(gVkCore.commandBuffers[0], pARRAY_SIZE(sIndices), 1, 0, 0, 0);
 
-	vkCmdEndRenderPass(gCore.commandBuffers[0]);
-	rCHECK(vkEndCommandBuffer(gCore.commandBuffers[0]));
+	vkCmdEndRenderPass(gVkCore.commandBuffers[0]);
+	rCHECK(vkEndCommandBuffer(gVkCore.commandBuffers[0]));
 
 	VkPipelineStageFlags waitStages[] = { VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
 	VkSubmitInfo submitInfo = {
@@ -546,11 +546,11 @@ i32 rVkEndFrame(void)
 		.pWaitSemaphores = &sImageAvailableSemaphore,
 		.pWaitDstStageMask = waitStages,
 		.commandBufferCount = 1,
-		.pCommandBuffers = gCore.commandBuffers,
+		.pCommandBuffers = gVkCore.commandBuffers,
 		.signalSemaphoreCount = 1,
 		.pSignalSemaphores = &sRenderFinishedSemaphore,
 	};
-	rCHECK(vkQueueSubmit(gCore.queue, 1, &submitInfo, sInFlightFence));
+	rCHECK(vkQueueSubmit(gVkCore.queue, 1, &submitInfo, sInFlightFence));
 
 	VkPresentInfoKHR presentInfo = {
 		.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR,
@@ -560,30 +560,30 @@ i32 rVkEndFrame(void)
 		.waitSemaphoreCount = 1,
 		.pWaitSemaphores = &sRenderFinishedSemaphore,
 	};
-	rCHECK(vkQueuePresentKHR(gCore.queue, &presentInfo));
+	rCHECK(vkQueuePresentKHR(gVkCore.queue, &presentInfo));
 
-	rCHECK(vkQueueWaitIdle(gCore.queue));
+	rCHECK(vkQueueWaitIdle(gVkCore.queue));
 	return 0;
 }
 
 void rVkDestroy(void)
 {
-	vkDestroyFence(gCore.device, sInFlightFence, NULL);
-	vkDestroySemaphore(gCore.device, sRenderFinishedSemaphore, NULL);
-	vkDestroySemaphore(gCore.device, sImageAvailableSemaphore, NULL);
-	vkDestroyPipeline(gCore.device, gCore.pipeline.pipeline, NULL);
-	vkDestroyShaderModule(gCore.device, sFragmentShaderModule, NULL);
-	vkDestroyShaderModule(gCore.device, sVertexShaderModule, NULL);
-	vkDestroyPipelineCache(gCore.device, gCore.pipeline.cache, NULL);
-	vkDestroyPipelineLayout(gCore.device, gCore.pipeline.layout, NULL);
-	vkDestroyRenderPass(gCore.device, gCore.renderPass, NULL);
+	vkDestroyFence(gVkCore.device, sInFlightFence, NULL);
+	vkDestroySemaphore(gVkCore.device, sRenderFinishedSemaphore, NULL);
+	vkDestroySemaphore(gVkCore.device, sImageAvailableSemaphore, NULL);
+	vkDestroyPipeline(gVkCore.device, gVkCore.pipeline.pipeline, NULL);
+	vkDestroyShaderModule(gVkCore.device, sFragmentShaderModule, NULL);
+	vkDestroyShaderModule(gVkCore.device, sVertexShaderModule, NULL);
+	vkDestroyPipelineCache(gVkCore.device, gVkCore.pipeline.cache, NULL);
+	vkDestroyPipelineLayout(gVkCore.device, gVkCore.pipeline.layout, NULL);
+	vkDestroyRenderPass(gVkCore.device, gVkCore.renderPass, NULL);
 	rVkDestroySwapchain();
-	vkDestroyBuffer(gCore.device, sIndexBuffer, NULL);
-	vkDestroyBuffer(gCore.device, sVertexBuffer, NULL);
-	vkFreeMemory(gCore.device, sIndexBufferMemory, NULL);
-	vkFreeMemory(gCore.device, sVertexBufferMemory, NULL);
+	vkDestroyBuffer(gVkCore.device, sIndexBuffer, NULL);
+	vkDestroyBuffer(gVkCore.device, sVertexBuffer, NULL);
+	vkFreeMemory(gVkCore.device, sIndexBufferMemory, NULL);
+	vkFreeMemory(gVkCore.device, sVertexBufferMemory, NULL);
 	rVkDestroySurface();
-	vkDestroyCommandPool(gCore.device, gCore.commandPool, NULL);
-	vkDestroyDevice(gCore.device, NULL);
+	vkDestroyCommandPool(gVkCore.device, gVkCore.commandPool, NULL);
+	vkDestroyDevice(gVkCore.device, NULL);
 	rVkInstanceDestroy();
 }

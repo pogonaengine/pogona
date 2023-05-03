@@ -21,7 +21,7 @@ static i32 sCreateWaylandSurface(struct wl_display* wlDisplay, struct wl_surface
 		.display = wlDisplay,
 		.surface = wlSurface,
 	};
-	rCHECK(vkCreateWaylandSurfaceKHR(gCore.instance, &waylandSurfaceCreateInfo, NULL, &gCore.surface.surface));
+	rCHECK(vkCreateWaylandSurfaceKHR(gVkCore.instance, &waylandSurfaceCreateInfo, NULL, &gVkCore.surface.surface));
 	return 0;
 }
 
@@ -38,7 +38,7 @@ static i32 sCreateXCBSurface(xcb_connection_t* xcbConnection, xcb_window_t xcbWi
 		.connection = xcbConnection,
 		.window     = xcbWindow,
 	};
-	rCHECK(vkCreateXcbSurfaceKHR(gCore.instance, &xcbSurfaceCreateInfo, NULL, &gCore.surface.surface));
+	rCHECK(vkCreateXcbSurfaceKHR(gVkCore.instance, &xcbSurfaceCreateInfo, NULL, &gVkCore.surface.surface));
 	return 0;
 }
 
@@ -55,7 +55,7 @@ static i32 sCreateXlibSurface(Display* xlibDisplay, Window xlibWindow)
 		.dpy    = xlibDisplay,
 		.window = xlibWindow,
 	};
-	rCHECK(vkCreateXlibSurfaceKHR(gCore.instance, &xlibSurfaceCreateInfo, NULL, &gCore.surface.surface));
+	rCHECK(vkCreateXlibSurfaceKHR(gVkCore.instance, &xlibSurfaceCreateInfo, NULL, &gVkCore.surface.surface));
 	return 0;
 }
 
@@ -63,8 +63,8 @@ static i32 sCreateXlibSurface(Display* xlibDisplay, Window xlibWindow)
 
 static VkFormat sPickImageFormat(void)
 {
-	u32 formatsCount = gCore.surface.surfaceFormatsCount;
-	VkSurfaceFormatKHR* formats = gCore.surface.surfaceFormats;
+	u32 formatsCount = gVkCore.surface.surfaceFormatsCount;
+	VkSurfaceFormatKHR* formats = gVkCore.surface.surfaceFormats;
 
 	if (formatsCount == 1 && formats[0].format == VK_FORMAT_UNDEFINED)
 		return VK_FORMAT_R8G8B8A8_SRGB;
@@ -79,8 +79,8 @@ static VkFormat sPickImageFormat(void)
 
 static VkColorSpaceKHR sPickColorSpace(void)
 {
-	u32 formatsCount = gCore.surface.surfaceFormatsCount;
-	VkSurfaceFormatKHR* formats = gCore.surface.surfaceFormats;
+	u32 formatsCount = gVkCore.surface.surfaceFormatsCount;
+	VkSurfaceFormatKHR* formats = gVkCore.surface.surfaceFormats;
 
 	for (u32 i = 0; i < formatsCount; ++i) {
 		if (formats[i].colorSpace == VK_COLOR_SPACE_SRGB_NONLINEAR_KHR)
@@ -131,23 +131,23 @@ i32 rVkCreateSurface(pWindow* window)
 		assert(false && "unreachable");
 	}
 
-	rCHECK(vkGetPhysicalDeviceSurfaceFormatsKHR(gCore.physicalDevice.physicalDevice, gCore.surface.surface, &gCore.surface.surfaceFormatsCount, NULL));
-	gCore.surface.surfaceFormats = calloc(gCore.surface.surfaceFormatsCount, sizeof(VkSurfaceFormatKHR));
-	rCHECK(vkGetPhysicalDeviceSurfaceFormatsKHR(gCore.physicalDevice.physicalDevice, gCore.surface.surface, &gCore.surface.surfaceFormatsCount, gCore.surface.surfaceFormats));
+	rCHECK(vkGetPhysicalDeviceSurfaceFormatsKHR(gVkCore.physicalDevice.physicalDevice, gVkCore.surface.surface, &gVkCore.surface.surfaceFormatsCount, NULL));
+	gVkCore.surface.surfaceFormats = calloc(gVkCore.surface.surfaceFormatsCount, sizeof(VkSurfaceFormatKHR));
+	rCHECK(vkGetPhysicalDeviceSurfaceFormatsKHR(gVkCore.physicalDevice.physicalDevice, gVkCore.surface.surface, &gVkCore.surface.surfaceFormatsCount, gVkCore.surface.surfaceFormats));
 
-	rCHECK(vkGetPhysicalDeviceSurfacePresentModesKHR(gCore.physicalDevice.physicalDevice, gCore.surface.surface, &gCore.surface.presentModesCount, NULL));
-	gCore.surface.presentModes = calloc(gCore.surface.presentModesCount, sizeof(VkPresentModeKHR));
-	rCHECK(vkGetPhysicalDeviceSurfacePresentModesKHR(gCore.physicalDevice.physicalDevice, gCore.surface.surface, &gCore.surface.presentModesCount, gCore.surface.presentModes));
+	rCHECK(vkGetPhysicalDeviceSurfacePresentModesKHR(gVkCore.physicalDevice.physicalDevice, gVkCore.surface.surface, &gVkCore.surface.presentModesCount, NULL));
+	gVkCore.surface.presentModes = calloc(gVkCore.surface.presentModesCount, sizeof(VkPresentModeKHR));
+	rCHECK(vkGetPhysicalDeviceSurfacePresentModesKHR(gVkCore.physicalDevice.physicalDevice, gVkCore.surface.surface, &gVkCore.surface.presentModesCount, gVkCore.surface.presentModes));
 
-	gCore.surface.pickedFormat     = sPickImageFormat();
-	gCore.surface.pickedColorSpace = sPickColorSpace();
+	gVkCore.surface.pickedFormat     = sPickImageFormat();
+	gVkCore.surface.pickedColorSpace = sPickColorSpace();
 exit:
 	return error;
 }
 
 void rVkDestroySurface(void)
 {
-	vkDestroySurfaceKHR(gCore.instance, gCore.surface.surface, NULL);
-	free(gCore.surface.surfaceFormats);
-	free(gCore.surface.presentModes);
+	vkDestroySurfaceKHR(gVkCore.instance, gVkCore.surface.surface, NULL);
+	free(gVkCore.surface.surfaceFormats);
+	free(gVkCore.surface.presentModes);
 }

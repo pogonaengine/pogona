@@ -13,12 +13,12 @@ i32 rVkCreatePipelineLayoutAndCache(void)
 	VkPipelineLayoutCreateInfo pipelineLayoutCreateInfo = {
 		.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO,
 	};
-	rCHECK(vkCreatePipelineLayout(gCore.device, &pipelineLayoutCreateInfo, NULL, &gCore.pipeline.layout));
+	rCHECK(vkCreatePipelineLayout(gVkCore.device, &pipelineLayoutCreateInfo, NULL, &gVkCore.pipeline.layout));
 
 	VkPipelineCacheCreateInfo pipelineCacheCreateInfo = {
 		.sType = VK_STRUCTURE_TYPE_PIPELINE_CACHE_CREATE_INFO,
 	};
-	rCHECK(vkCreatePipelineCache(gCore.device, &pipelineCacheCreateInfo, NULL, &gCore.pipeline.cache));
+	rCHECK(vkCreatePipelineCache(gVkCore.device, &pipelineCacheCreateInfo, NULL, &gVkCore.pipeline.cache));
 	return 0;
 }
 
@@ -89,8 +89,8 @@ i32 rVkCreateGraphicsPipeline(const rVkGraphicsPipelineCreateInfo createInfo)
 	};
 	VkGraphicsPipelineCreateInfo graphicsPipelineCreateInfo = {
 		.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO,
-		.layout	= gCore.pipeline.layout,
-		.renderPass = gCore.renderPass,
+		.layout	= gVkCore.pipeline.layout,
+		.renderPass = gVkCore.renderPass,
 		.stageCount = createInfo.stagesCount,
 		.pStages = pipelineShaderStageCreateInfos,
 		.pVertexInputState = &vertexInputStateCreateInfo,
@@ -102,7 +102,7 @@ i32 rVkCreateGraphicsPipeline(const rVkGraphicsPipelineCreateInfo createInfo)
 		.pColorBlendState = &colorBlendStateCreateInfo,
 		.pDynamicState	= &dynamicStateCreateInfo,
 	};
-	rCHECK(vkCreateGraphicsPipelines(gCore.device, gCore.pipeline.cache, 1, &graphicsPipelineCreateInfo, NULL, &gCore.pipeline.pipeline));
+	rCHECK(vkCreateGraphicsPipelines(gVkCore.device, gVkCore.pipeline.cache, 1, &graphicsPipelineCreateInfo, NULL, &gVkCore.pipeline.pipeline));
 
 	free(pipelineShaderStageCreateInfos);
 	return 0;

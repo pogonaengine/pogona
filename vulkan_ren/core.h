@@ -45,7 +45,7 @@ typedef struct {
 	} pipeline;
 } rVkCore;
 
-extern rVkCore gCore;
+extern rVkCore gVkCore;
 
 bool pVulkanSupport(void);
 

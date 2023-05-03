@@ -13,7 +13,7 @@ i32 rVkCreateRenderPass(void)
 {
 	VkAttachmentDescription attachmentDescriptions[1] = {
 		[0] = {
-			.format = gCore.surface.pickedFormat,
+			.format = gVkCore.surface.pickedFormat,
 			.samples = VK_SAMPLE_COUNT_1_BIT,
 			.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR,
 			.storeOp = VK_ATTACHMENT_STORE_OP_STORE,
@@ -40,6 +40,6 @@ i32 rVkCreateRenderPass(void)
 		.subpassCount = pARRAY_SIZE(subpassDescriptions),
 		.pSubpasses = subpassDescriptions,
 	};
-	rCHECK(vkCreateRenderPass(gCore.device, &renderPassCreateInfo, NULL, &gCore.renderPass));
+	rCHECK(vkCreateRenderPass(gVkCore.device, &renderPassCreateInfo, NULL, &gVkCore.renderPass));
 	return 0;
 }
