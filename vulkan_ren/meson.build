@@ -1,5 +1,6 @@
 vulkan_ren_src = files(
 	'core.c',
+	'memory.c',
 	'pipeline.c',
 	'render_pass.c',
 	'shader.c',

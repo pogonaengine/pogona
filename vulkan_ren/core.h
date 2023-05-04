@@ -14,6 +14,8 @@
 typedef struct {
 	VkPhysicalDevice physicalDevice;
 	u32 queueFamilyIndex;
+
+	VkPhysicalDeviceMemoryProperties memoryProperties;
 } rVkPhysicalDevice;
 
 typedef struct {

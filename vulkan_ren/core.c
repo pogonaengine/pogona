@@ -7,6 +7,7 @@
 #include "core.h"
 #include "defines.h"
 #include "logger.h"
+#include "memory.h"
 #include "pipeline.h"
 #include "render.h"
 #include "render_pass.h"
@@ -19,17 +20,15 @@
 
 rVkCore gVkCore = { 0 };
 
-static VkShaderModule sVertexShaderModule   = { 0 };
-static VkShaderModule sFragmentShaderModule = { 0 };
+static VkShaderModule sVertexShaderModule      = { 0 };
+static VkShaderModule sFragmentShaderModule    = { 0 };
 
 static VkSemaphore    sImageAvailableSemaphore = NULL;
 static VkSemaphore    sRenderFinishedSemaphore = NULL;
 static VkFence        sInFlightFence           = NULL;
 
-static VkBuffer       sVertexBuffer            = NULL;
-static VkDeviceMemory sVertexBufferMemory      = NULL;
-static VkBuffer       sIndexBuffer             = NULL;
-static VkDeviceMemory sIndexBufferMemory       = NULL;
+static rVkBuffer      sVertexBuffer            = { 0 };
+static rVkBuffer      sIndexBuffer             = { 0 };
 
 static u32            sImageIndex              = 0;
 
@@ -43,52 +42,6 @@ static const rVkVertex sVertices[4] = {
 static const u16 sIndices[] = {
 	0, 1, 2, 2, 3, 0,
 };
-
-static i32 sCreateVertexBuffer(void)
-{
-	VkBufferCreateInfo bufferCreateInfo = {
-		.sType       = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO,
-		.size        = sizeof(sVertices),
-		.usage       = VK_BUFFER_USAGE_VERTEX_BUFFER_BIT,
-		.sharingMode = VK_SHARING_MODE_EXCLUSIVE,
-	};
-	rVK_CHECK(vkCreateBuffer(gVkCore.device, &bufferCreateInfo, NULL, &sVertexBuffer));
-
-	VkMemoryRequirements memoryRequirements;
-	vkGetBufferMemoryRequirements(gVkCore.device, sVertexBuffer, &memoryRequirements);
-
-	VkMemoryAllocateInfo memoryAllocateInfo = {
-		.sType           = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO,
-		.allocationSize  = memoryRequirements.size,
-		.memoryTypeIndex = 0,
-	};
-	rVK_CHECK(vkAllocateMemory(gVkCore.device, &memoryAllocateInfo, NULL, &sVertexBufferMemory));
-	vkBindBufferMemory(gVkCore.device, sVertexBuffer, sVertexBufferMemory, 0);
-	return 0;
-}
-
-static i32 sCreateIndexBuffer(void)
-{
-	VkBufferCreateInfo bufferCreateInfo = {
-		.sType       = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO,
-		.size        = sizeof(sIndices),
-		.usage       = VK_BUFFER_USAGE_INDEX_BUFFER_BIT,
-		.sharingMode = VK_SHARING_MODE_EXCLUSIVE,
-	};
-	rVK_CHECK(vkCreateBuffer(gVkCore.device, &bufferCreateInfo, NULL, &sIndexBuffer));
-
-	VkMemoryRequirements memoryRequirements;
-	vkGetBufferMemoryRequirements(gVkCore.device, sIndexBuffer, &memoryRequirements);
-
-	VkMemoryAllocateInfo memoryAllocateInfo = {
-		.sType           = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO,
-		.allocationSize  = memoryRequirements.size,
-		.memoryTypeIndex = 0,
-	};
-	rVK_CHECK(vkAllocateMemory(gVkCore.device, &memoryAllocateInfo, NULL, &sIndexBufferMemory));
-	vkBindBufferMemory(gVkCore.device, sIndexBuffer, sIndexBufferMemory, 0);
-	return 0;
-}
 
 bool pVulkanSupport(void)
 {
@@ -290,6 +243,7 @@ i32 rVkPickPhysicalDevice(void)
 
 	gVkCore.physicalDevice.physicalDevice = pickedPhysicalDevice;
 	gVkCore.physicalDevice.queueFamilyIndex = pickedQueueFamily;
+	vkGetPhysicalDeviceMemoryProperties(pickedPhysicalDevice, &gVkCore.physicalDevice.memoryProperties);
 	return 0;
 }
 
@@ -370,16 +324,22 @@ i32 rVkCreate(pWindow* window)
 		goto exit;
 	}
 
-	error = sCreateVertexBuffer();
+	error = rVkCreateBuffer(&sVertexBuffer,
+	                        sizeof(sVertices),
+	                        VK_BUFFER_USAGE_VERTEX_BUFFER_BIT,
+	                        VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
 	if (error < 0) {
-	  pLoggerError("Could not create vertex buffer\n");
-	  goto exit;
+		pLoggerError("Couldn't create vertex buffer\n");
+		goto exit;
 	}
 
-	error = sCreateIndexBuffer();
+	error = rVkCreateBuffer(&sIndexBuffer,
+	                        sizeof(sVertices),
+	                        VK_BUFFER_USAGE_INDEX_BUFFER_BIT,
+	                        VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
 	if (error < 0) {
-	  pLoggerError("Could not create index buffer\n");
-	  goto exit;
+		pLoggerError("Couldn't create index buffer\n");
+		goto exit;
 	}
 
 	error = rVkCreateCommandPool();
@@ -476,15 +436,8 @@ i32 rVkBeginFrame(void)
 
 	rVK_CHECK(rVkAcquireNextImage(&sImageIndex, sImageAvailableSemaphore));
 
-	void* vertexData;
-	vkMapMemory(gVkCore.device, sVertexBufferMemory, 0, sizeof(sVertices), 0, &vertexData);
-	memcpy(vertexData, sVertices, sizeof(sVertices));
-	vkUnmapMemory(gVkCore.device, sVertexBufferMemory);
-
-	void* indexData;
-	vkMapMemory(gVkCore.device, sIndexBufferMemory, 0, sizeof(sIndices), 0, &indexData);
-	memcpy(indexData, sIndices, sizeof(sIndices));
-	vkUnmapMemory(gVkCore.device, sIndexBufferMemory);
+	memcpy(sVertexBuffer.data, sVertices, sizeof(sVertices));
+	memcpy(sIndexBuffer.data, sIndices, sizeof(sIndices));
 
 	vkResetCommandBuffer(gVkCore.commandBuffers[0], 0);
 	VkCommandBufferBeginInfo commandBufferBeginInfo = {
@@ -530,10 +483,10 @@ i32 rVkBeginFrame(void)
 
 i32 rVkEndFrame(void)
 {
-	VkBuffer vertexBuffers[] = { sVertexBuffer };
+	VkBuffer vertexBuffers[] = { sVertexBuffer.buffer };
 	VkDeviceSize vertexOffsets[] = { 0 };
 	vkCmdBindVertexBuffers(gVkCore.commandBuffers[0], 0, 1, vertexBuffers, vertexOffsets);
-	vkCmdBindIndexBuffer(gVkCore.commandBuffers[0], sIndexBuffer, 0, VK_INDEX_TYPE_UINT16);
+	vkCmdBindIndexBuffer(gVkCore.commandBuffers[0], sIndexBuffer.buffer, 0, VK_INDEX_TYPE_UINT16);
 	vkCmdDrawIndexed(gVkCore.commandBuffers[0], pARRAY_SIZE(sIndices), 1, 0, 0, 0);
 
 	vkCmdEndRenderPass(gVkCore.commandBuffers[0]);
@@ -578,10 +531,8 @@ void rVkDestroy(void)
 	vkDestroyPipelineLayout(gVkCore.device, gVkCore.pipeline.layout, NULL);
 	vkDestroyRenderPass(gVkCore.device, gVkCore.renderPass, NULL);
 	rVkDestroySwapchain();
-	vkDestroyBuffer(gVkCore.device, sIndexBuffer, NULL);
-	vkDestroyBuffer(gVkCore.device, sVertexBuffer, NULL);
-	vkFreeMemory(gVkCore.device, sIndexBufferMemory, NULL);
-	vkFreeMemory(gVkCore.device, sVertexBufferMemory, NULL);
+	rVkDestroyBuffer(&sIndexBuffer);
+	rVkDestroyBuffer(&sVertexBuffer);
 	rVkDestroySurface();
 	vkDestroyCommandPool(gVkCore.device, gVkCore.commandPool, NULL);
 	vkDestroyDevice(gVkCore.device, NULL);
