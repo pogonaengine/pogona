@@ -1,5 +1,6 @@
 tests = [
 	['vector', ['vector.c']],
+	['vec', ['vec.c']],
 	['mat', ['mat.c']],
 ]
 
