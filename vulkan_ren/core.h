@@ -57,7 +57,7 @@ i32 rVkEndFrame(void);
 void rVkDestroy(void);
 
 /* returns supported instance version on success, otherwise a negative value */
-i32 rVkInstanceCreate(void);
+i32 rVkInstanceCreate(i8 windowType);
 void rVkInstanceDestroy(void);
 
 i32 rVkPickPhysicalDevice(void);

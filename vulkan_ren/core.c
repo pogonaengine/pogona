@@ -71,7 +71,7 @@ static VkBool32 VKAPI_PTR sDebugCallback(
 }
 #endif
 
-i32 rVkInstanceCreate(void)
+i32 rVkInstanceCreate(i8 windowType)
 {
 	uint32_t supportedApiVersion = 0;
 	rVK_CHECK(vkEnumerateInstanceVersion(&supportedApiVersion));
@@ -93,15 +93,24 @@ i32 rVkInstanceCreate(void)
 	pVectorCreate(&extensions);
 
 	pVectorPush(&extensions, VK_KHR_SURFACE_EXTENSION_NAME);
+	char* windowExtension;
+	switch (windowType) {
 #ifdef pWAYLAND
-	pVectorPush(&extensions, VK_KHR_WAYLAND_SURFACE_EXTENSION_NAME);
+	case pWINDOW_TYPE_WAYLAND:
+		windowExtension = VK_KHR_WAYLAND_SURFACE_EXTENSION_NAME; break;
 #endif
 #ifdef pXCB
-	pVectorPush(&extensions, VK_KHR_XCB_SURFACE_EXTENSION_NAME);
+	case pWINDOW_TYPE_XCB:
+		windowExtension = VK_KHR_XCB_SURFACE_EXTENSION_NAME; break;
 #endif
 #ifdef pXLIB
-	pVectorPush(&extensions, VK_KHR_XLIB_SURFACE_EXTENSION_NAME);
+	case pWINDOW_TYPE_XLIB:
+		windowExtension = VK_KHR_XLIB_SURFACE_EXTENSION_NAME; break;
 #endif
+	default:
+		assert(!"unreachable");
+	}
+	pVectorPush(&extensions, windowExtension);
 #ifndef NDEBUG
 	pVectorPush(&extensions, VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
 	pVectorPush(&layers, "VK_LAYER_KHRONOS_validation");
@@ -302,7 +311,7 @@ i32 rVkCreate(pWindow* window)
 	/* volkInitialize() is already called in pVulkanSupport,
 	 * so there is no need to call it again. */
 
-	error = rVkInstanceCreate();
+	error = rVkInstanceCreate(window->type);
 	if (error < 0) {
 		pLoggerError("Couldn't create Vulkan instance: %d\n", error);
 		goto exit;
