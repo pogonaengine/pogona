@@ -10,7 +10,7 @@
 
 #define rVK_CHECK(x) \
 	do { \
-		u32 result = (x); \
+		i32 result = (x); \
 		if (result < 0) { \
 			pLoggerError("Vulkan call '%s' failed: %d\n", #x, result); \
 			return -1; \
