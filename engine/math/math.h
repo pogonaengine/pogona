@@ -6,7 +6,5 @@
 
 #pragma once
 
-#include "defines.h"
-#include "vulkan.h"
-
-i32 rVkCreateRenderPass(void);
+#include "vec.h"
+#include "mat.h"
