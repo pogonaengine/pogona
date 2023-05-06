@@ -1,11 +1,11 @@
 libpogona_src = files(
-	'window/window.c',
 	'engine.c',
 	'event.c',
 	'logger.c',
-	'renderer.c',
+	'renderer/renderer.c',
 	'util.c',
 	'vector.c',
+	'window/window.c',
 )
 
 libpogona_include = [
