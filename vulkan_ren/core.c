@@ -9,13 +9,13 @@
 #include "logger.h"
 #include "memory.h"
 #include "pipeline.h"
-#include "render.h"
 #include "render_pass.h"
 #include "shader.h"
 #include "surface.h"
 #include "swapchain.h"
 #include "synchronization.h"
 #include <engine/engine.h>
+#include <engine/renderer/mesh.h>
 #include <pch/pch.h>
 
 rVkCore gVkCore = { 0 };
@@ -32,7 +32,7 @@ static rVkBuffer      sIndexBuffer             = { 0 };
 
 static u32            sImageIndex              = 0;
 
-static const rVkVertex sVertices[4] = {
+static const rVertex sVertices[4] = {
 	{ {{-0.5f, -0.5f, 0.0f}}, {{1.0f, 0.0f, 0.0f, 1.0f}} },
 	{ {{ 0.5f, -0.5f, 0.0f}}, {{0.0f, 1.0f, 0.0f, 1.0f}} },
 	{ {{ 0.5f,  0.5f, 0.0f}}, {{0.0f, 0.0f, 1.0f, 1.0f}} },
@@ -399,13 +399,13 @@ i32 rVkCreate(pWindow* window)
 			.binding  = 0,
 			.location = 0,
 			.format   = VK_FORMAT_R32G32B32_SFLOAT,
-			.offset   = offsetof(rVkVertex, pos),
+			.offset   = offsetof(rVertex, pos),
 		},
 		[1] = {
 			.binding  = 0,
 			.location = 1,
 			.format   = VK_FORMAT_R32G32B32A32_SFLOAT,
-			.offset   = offsetof(rVkVertex, colour),
+			.offset   = offsetof(rVertex, colour),
 		},
 	};
 	error = rVkCreateGraphicsPipeline((rVkGraphicsPipelineCreateInfo) {
@@ -414,7 +414,7 @@ i32 rVkCreate(pWindow* window)
 
 			.vertexAttributes = vertexAttributes,
 			.vertexAttributesCount = pARRAY_SIZE(vertexAttributes),
-			.vertexStride = sizeof(rVkVertex),
+			.vertexStride = sizeof(rVertex),
 	});
 	if (error < 0) {
 		pLoggerError("Couldn't create graphics pipeline\n");
