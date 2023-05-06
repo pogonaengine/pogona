@@ -15,7 +15,6 @@
 #include "swapchain.h"
 #include "synchronization.h"
 #include <engine/engine.h>
-#include <engine/renderer/mesh.h>
 #include <pch/pch.h>
 
 rVkCore gVkCore = { 0 };
@@ -31,17 +30,6 @@ static rVkBuffer      sVertexBuffer            = { 0 };
 static rVkBuffer      sIndexBuffer             = { 0 };
 
 static u32            sImageIndex              = 0;
-
-static const rVertex sVertices[4] = {
-	{ {{-0.5f, -0.5f, 0.0f}}, {{1.0f, 0.0f, 0.0f, 1.0f}} },
-	{ {{ 0.5f, -0.5f, 0.0f}}, {{0.0f, 1.0f, 0.0f, 1.0f}} },
-	{ {{ 0.5f,  0.5f, 0.0f}}, {{0.0f, 0.0f, 1.0f, 1.0f}} },
-	{ {{-0.5f,  0.5f, 0.0f}}, {{1.0f, 1.0f, 1.0f, 1.0f}} },
-};
-
-static const u16 sIndices[] = {
-	0, 1, 2, 2, 3, 0,
-};
 
 bool pVulkanSupport(void)
 {
@@ -325,7 +313,7 @@ i32 rVkCreate(pWindow* window)
 	}
 
 	error = rVkCreateBuffer(&sVertexBuffer,
-	                        sizeof(sVertices),
+	                        2 * 1024 * 1024, /* FIXME: this */
 	                        VK_BUFFER_USAGE_VERTEX_BUFFER_BIT,
 	                        VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
 	if (error < 0) {
@@ -334,7 +322,7 @@ i32 rVkCreate(pWindow* window)
 	}
 
 	error = rVkCreateBuffer(&sIndexBuffer,
-	                        sizeof(sVertices),
+	                        2 * 1024 * 1024, /* FIXME: this */
 	                        VK_BUFFER_USAGE_INDEX_BUFFER_BIT,
 	                        VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
 	if (error < 0) {
@@ -436,9 +424,6 @@ i32 rVkBeginFrame(void)
 
 	rVK_CHECK(rVkAcquireNextImage(&sImageIndex, sImageAvailableSemaphore));
 
-	memcpy(sVertexBuffer.data, sVertices, sizeof(sVertices));
-	memcpy(sIndexBuffer.data, sIndices, sizeof(sIndices));
-
 	vkResetCommandBuffer(gVkCore.commandBuffers[0], 0);
 	VkCommandBufferBeginInfo commandBufferBeginInfo = {
 		.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
@@ -481,14 +466,21 @@ i32 rVkBeginFrame(void)
 	return 0;
 }
 
+i32 rVkDrawMesh(const rMesh* mesh)
+{
+	/* FIXME: allocate buffers for each mesh!!! */
+	memcpy(sVertexBuffer.data, mesh->vertices, sizeof(rVertex) * mesh->verticesCount);
+	memcpy(sIndexBuffer.data, mesh->indices, sizeof(u16) * mesh->indicesCount);
+
+	VkDeviceSize dummyOffset = 0;
+	vkCmdBindVertexBuffers(gVkCore.commandBuffers[0], 0, 1, &sVertexBuffer.buffer, &dummyOffset);
+	vkCmdBindIndexBuffer(gVkCore.commandBuffers[0], sIndexBuffer.buffer, 0, VK_INDEX_TYPE_UINT16);
+	vkCmdDrawIndexed(gVkCore.commandBuffers[0], mesh->indicesCount, 1, 0, 0, 0);
+	return 0;
+}
+
 i32 rVkEndFrame(void)
 {
-	VkBuffer vertexBuffers[] = { sVertexBuffer.buffer };
-	VkDeviceSize vertexOffsets[] = { 0 };
-	vkCmdBindVertexBuffers(gVkCore.commandBuffers[0], 0, 1, vertexBuffers, vertexOffsets);
-	vkCmdBindIndexBuffer(gVkCore.commandBuffers[0], sIndexBuffer.buffer, 0, VK_INDEX_TYPE_UINT16);
-	vkCmdDrawIndexed(gVkCore.commandBuffers[0], pARRAY_SIZE(sIndices), 1, 0, 0, 0);
-
 	vkCmdEndRenderPass(gVkCore.commandBuffers[0]);
 	rVK_CHECK(vkEndCommandBuffer(gVkCore.commandBuffers[0]));
 

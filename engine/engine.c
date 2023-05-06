@@ -11,6 +11,22 @@
 #include <config.h>
 #include <pch/pch.h>
 
+static rVertex sVertices[4] = {
+	{ {{-0.5f, -0.5f, 0.0f}}, {{1.0f, 0.0f, 0.0f, 1.0f}} },
+	{ {{ 0.5f, -0.5f, 0.0f}}, {{0.0f, 1.0f, 0.0f, 1.0f}} },
+	{ {{ 0.5f,  0.5f, 0.0f}}, {{0.0f, 0.0f, 1.0f, 1.0f}} },
+	{ {{-0.5f,  0.5f, 0.0f}}, {{1.0f, 1.0f, 1.0f, 1.0f}} },
+};
+static u16 sIndices[6] = {
+	0, 1, 2, 2, 3, 0,
+};
+static const rMesh sMesh = {
+	.vertices = sVertices,
+	.verticesCount = 4,
+	.indices = sIndices,
+	.indicesCount = 6,
+};
+
 extern i32 pEngineEntry(int argc, char** argv)
 {
 	(void) argc;
@@ -52,6 +68,9 @@ extern i32 pEngineEntry(int argc, char** argv)
 			pLoggerError("Couldn't begin a frame. Dying\n");
 			goto exit;
 		}
+
+		renderer.drawMesh(&sMesh);
+
 		error = renderer.endFrame();
 		if (error < 0) {
 			pLoggerWarning("Couldn't end frame\n");
