@@ -6,7 +6,6 @@
 
 #include "core.h"
 #include "defines.h"
-#include "logger.h"
 #include "memory.h"
 #include "pipeline.h"
 #include "render_pass.h"
@@ -15,6 +14,7 @@
 #include "swapchain.h"
 #include "synchronization.h"
 #include <engine/engine.h>
+#include <engine/logger.h>
 #include <pch/pch.h>
 
 rVkCore gVkCore = { 0 };
@@ -30,18 +30,6 @@ static rVkBuffer      sVertexBuffer            = { 0 };
 static rVkBuffer      sIndexBuffer             = { 0 };
 
 static u32            sImageIndex              = 0;
-
-bool pVulkanSupport(void)
-{
-	/* This only tries to load the symbols from libvulkan.so and doesn't try to create an instance, check the devices, or anything like that.
-	 * It should be replaced with a better algorithm in the future. */
-	VkResult error = volkInitialize();
-	if (error != VK_SUCCESS) {
-	  pLoggerError("Vulkan isn't supported: %u\n", error);
-	  return false;
-	}
-	return error == VK_SUCCESS;
-}
 
 #ifndef NDEBUG
 static VkBool32 VKAPI_PTR sDebugCallback(
@@ -296,8 +284,7 @@ i32 rVkCreate(pWindow* window)
 {
 	i32 error = 0;
 
-	/* volkInitialize() is already called in pVulkanSupport,
-	 * so there is no need to call it again. */
+	rVK_CHECK(volkInitialize());
 
 	error = rVkInstanceCreate(window->type);
 	if (error < 0) {
