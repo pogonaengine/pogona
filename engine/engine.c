@@ -8,6 +8,7 @@
 #include "event.h"
 #include "logger.h"
 #include "renderer.h"
+#include "window/window.h"
 #include <config.h>
 #include <pch/pch.h>
 
@@ -32,14 +33,19 @@ extern i32 pEngineEntry(int argc, char** argv)
 	}
 
 	pRenderer renderer = { 0 };
-	error = pRendererPopulate(&renderer);
+	/* FIXME: don't hardcode it
+	 * FIXME: provide a way for the user to change it (envvar e.g.)
+	 * FIXME: loop through an array of renderer paths, based on priority
+	 */
+	error = pRendererLoad(&renderer, "libpogona_vulkan_ren.so");
 	if (error < 0) {
-		pLoggerError("Couldn't populate renderer\n");
+		pLoggerError("Couldn't load renderer\n");
 		pWindowDestroy(&window);
 		goto exit;
 	}
+	pLoggerInfo("Renderer: %s\n", renderer.name);
 
-	error = renderer.create(&window);
+	error = renderer.entry->create(&window);
 	if (error < 0) {
 		pLoggerError("Couldn't create renderer\n");
 		pWindowDestroy(&window);
@@ -47,12 +53,12 @@ extern i32 pEngineEntry(int argc, char** argv)
 	}
 
 	while (window.isRunning) {
-		error = renderer.beginFrame();
+		error = renderer.entry->beginFrame();
 		if (error < 0) {
 			pLoggerError("Couldn't begin a frame. Dying\n");
 			goto exit;
 		}
-		error = renderer.endFrame();
+		error = renderer.entry->endFrame();
 		if (error < 0) {
 			pLoggerWarning("Couldn't end frame\n");
 			goto exit;
@@ -62,7 +68,8 @@ extern i32 pEngineEntry(int argc, char** argv)
 		pEventSend(pEVENT_FRAME, NULL);
 	}
 
-	renderer.destroy();
+	renderer.entry->destroy();
+	pRendererUnload(&renderer);
 	pWindowDestroy(&window);
 	pEventSystemDestroy();
 

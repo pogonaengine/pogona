@@ -9,7 +9,6 @@
 #include <engine/defines.h>
 #include <engine/window/window.h>
 #include "vulkan.h"
-#include "vulkan/vulkan_core.h"
 
 typedef struct {
 	VkPhysicalDevice physicalDevice;
@@ -49,17 +48,7 @@ typedef struct {
 
 extern rVkCore gVkCore;
 
-bool pVulkanSupport(void);
-
 i32 rVkCreate(pWindow* window);
 i32 rVkBeginFrame(void);
 i32 rVkEndFrame(void);
 void rVkDestroy(void);
-
-/* returns supported instance version on success, otherwise a negative value */
-i32 rVkInstanceCreate(i8 windowType);
-void rVkInstanceDestroy(void);
-
-i32 rVkPickPhysicalDevice(void);
-i32 rVkCreateDevice(void);
-i32 rVkCreateCommandPool(void);

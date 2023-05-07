@@ -14,6 +14,7 @@ libpogona_include = [
 
 libpogona_deps = [
 	libm,
+	libdl,
 ]
 
 libpogona_custom_targets = []
@@ -49,17 +50,7 @@ if libXCB.found()
 	config.set('pXCB', 1)
 endif
 
-if get_option('vulkan').enabled()
-	libpogona_src += vulkan_ren_src
-	libpogona_deps += [
-		subproject('vulkan-headers').get_variable('vulkan_headers_dep'),
-		subproject('volk').get_variable('volk_dep'),
-	]
-	libpogona_custom_targets += vulkan_ren_custom_targets
-	config.set('pVULKAN', 1)
-endif
-
-libpogona = library(
+libpogona = shared_library(
 	'pogona',
 	libpogona_src,
 	libpogona_custom_targets,

@@ -6,61 +6,47 @@
 
 #include "logger.h"
 #include "renderer.h"
+#include <dlfcn.h>
 #include <pch/pch.h>
-
-#ifdef pVULKAN
-# include <vulkan_ren/core.h>
-#endif
 
 typedef struct {
 	bool (*pfn)(void);
 	i8 type;
 } SupportTable;
 
-static const SupportTable sTypePriority[pRENDERER_MAX_TYPES] = {
-#ifdef pVULKAN
-	{ pVulkanSupport, pRENDERER_TYPE_VULKAN },
-#endif
-};
-
-static i8 sPickType(void)
+i32 pRendererLoad(pRenderer* self, const char* path)
 {
-	const char* envvar = getenv("POGONA_RENDERER_TYPE");
-	if (envvar) {
-#ifdef pVULKAN
-		if (!strcmp(envvar, "vulkan"))
-			return pRENDERER_TYPE_VULKAN;
-#endif
-	}
-
-	for (u32 i = 0; i < pRENDERER_MAX_TYPES; ++i) {
-		if (sTypePriority[i].pfn()) {
-			return sTypePriority[i].type;
-		}
-	}
-	return pRENDERER_TYPE_INVALID;
-}
-
-i32 pRendererPopulate(pRenderer* self)
-{
-	i8 type = sPickType();
-	if (type == pRENDERER_TYPE_INVALID) {
-		pLoggerError("Host doesn't support any renderer\n");
+	self->handle = dlopen(path, RTLD_NOW);
+	if (!self->handle) {
+		pLoggerError("Could not load renderer \"%s\": %s\n", path, dlerror());
 		return -1;
 	}
 
-	switch (type) {
-#ifdef pVULKAN
-	case pRENDERER_TYPE_VULKAN:
-		self->create     = rVkCreate;
-		self->beginFrame = rVkBeginFrame;
-		self->endFrame   = rVkEndFrame;
-		self->destroy    = rVkDestroy;
-		break;
-#endif
-	default:
-		(void) self;
-		assert(false && "unreachable");
+	self->entry = (pRendererEntry*) dlsym(self->handle, "eEntry");
+	if (!self->entry) {
+		pLoggerError("Could not get renderer entry: %s\n", dlerror());
+		pRendererUnload(self);
+		return -2;
 	}
+
+	self->name = *(char**) dlsym(self->handle, "eName");
+	if (!self->name)
+		self->name = pRENDERER_NAME_UNKNOWN;
+
+	self->version = *(u32*) dlsym(self->handle, "eVersion");
+	if (!self->version)
+		self->version = pRENDERER_VERSION_UNKNOWN;
+
 	return 0;
+}
+
+void pRendererUnload(pRenderer* self)
+{
+	if (self->handle) {
+		dlclose(self->handle);
+		self->handle = NULL;
+	}
+	self->entry   = NULL;
+	self->name    = NULL;
+	self->version = 0;
 }

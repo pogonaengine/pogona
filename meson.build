@@ -94,10 +94,13 @@ if cc.get_id() == 'clang'
 	add_project_arguments('-Wno-gnu', language: 'c')
 endif
 
-subdir('vulkan_ren')
 subdir('engine')
 subdir('runner')
 subdir('tests')
+
+if get_option('vulkan').enabled()
+	subdir('vulkan_ren')
+endif
 
 configure_file(output: 'config.h', configuration: config)
 
