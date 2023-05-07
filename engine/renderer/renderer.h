@@ -7,6 +7,7 @@
 #pragma once
 
 #include "defines.h"
+#include "mesh.h"
 #include "window/window.h"
 #include <config.h>
 
@@ -24,6 +25,7 @@ typedef struct {
 
 	i32 (*create)(pWindow* window);
 	i32 (*beginFrame)(void);
+	i32 (*drawMesh)(const rMesh* mesh);
 	i32 (*endFrame)(void);
 	void (*destroy)(void);
 } pRenderer;

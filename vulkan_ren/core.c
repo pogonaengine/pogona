@@ -9,7 +9,6 @@
 #include "logger.h"
 #include "memory.h"
 #include "pipeline.h"
-#include "render.h"
 #include "render_pass.h"
 #include "shader.h"
 #include "surface.h"
@@ -31,17 +30,6 @@ static rVkBuffer      sVertexBuffer            = { 0 };
 static rVkBuffer      sIndexBuffer             = { 0 };
 
 static u32            sImageIndex              = 0;
-
-static const rVkVertex sVertices[4] = {
-	{ {{-0.5f, -0.5f, 0.0f}}, {{1.0f, 0.0f, 0.0f, 1.0f}} },
-	{ {{ 0.5f, -0.5f, 0.0f}}, {{0.0f, 1.0f, 0.0f, 1.0f}} },
-	{ {{ 0.5f,  0.5f, 0.0f}}, {{0.0f, 0.0f, 1.0f, 1.0f}} },
-	{ {{-0.5f,  0.5f, 0.0f}}, {{1.0f, 1.0f, 1.0f, 1.0f}} },
-};
-
-static const u16 sIndices[] = {
-	0, 1, 2, 2, 3, 0,
-};
 
 bool pVulkanSupport(void)
 {
@@ -334,7 +322,7 @@ i32 rVkCreate(pWindow* window)
 	}
 
 	error = rVkCreateBuffer(&sVertexBuffer,
-	                        sizeof(sVertices),
+	                        2 * 1024 * 1024, /* FIXME: this */
 	                        VK_BUFFER_USAGE_VERTEX_BUFFER_BIT,
 	                        VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
 	if (error < 0) {
@@ -343,7 +331,7 @@ i32 rVkCreate(pWindow* window)
 	}
 
 	error = rVkCreateBuffer(&sIndexBuffer,
-	                        sizeof(sVertices),
+	                        2 * 1024 * 1024, /* FIXME: this */
 	                        VK_BUFFER_USAGE_INDEX_BUFFER_BIT,
 	                        VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
 	if (error < 0) {
@@ -408,13 +396,13 @@ i32 rVkCreate(pWindow* window)
 			.binding  = 0,
 			.location = 0,
 			.format   = VK_FORMAT_R32G32B32_SFLOAT,
-			.offset   = offsetof(rVkVertex, pos),
+			.offset   = offsetof(rVertex, pos),
 		},
 		[1] = {
 			.binding  = 0,
 			.location = 1,
 			.format   = VK_FORMAT_R32G32B32A32_SFLOAT,
-			.offset   = offsetof(rVkVertex, colour),
+			.offset   = offsetof(rVertex, colour),
 		},
 	};
 	error = rVkCreateGraphicsPipeline((rVkGraphicsPipelineCreateInfo) {
@@ -423,7 +411,7 @@ i32 rVkCreate(pWindow* window)
 
 			.vertexAttributes = vertexAttributes,
 			.vertexAttributesCount = pARRAY_SIZE(vertexAttributes),
-			.vertexStride = sizeof(rVkVertex),
+			.vertexStride = sizeof(rVertex),
 	});
 	if (error < 0) {
 		pLoggerError("Couldn't create graphics pipeline\n");
@@ -444,9 +432,6 @@ i32 rVkBeginFrame(void)
 	rVK_CHECK(vkResetFences(gVkCore.device, 1, &sInFlightFence));
 
 	rVK_CHECK(rVkAcquireNextImage(&sImageIndex, sImageAvailableSemaphore));
-
-	memcpy(sVertexBuffer.data, sVertices, sizeof(sVertices));
-	memcpy(sIndexBuffer.data, sIndices, sizeof(sIndices));
 
 	vkResetCommandBuffer(gVkCore.commandBuffers[0], 0);
 	VkCommandBufferBeginInfo commandBufferBeginInfo = {
@@ -490,14 +475,21 @@ i32 rVkBeginFrame(void)
 	return 0;
 }
 
+i32 rVkDrawMesh(const rMesh* mesh)
+{
+	/* FIXME: allocate buffers for each mesh!!! */
+	memcpy(sVertexBuffer.data, mesh->vertices, sizeof(rVertex) * mesh->verticesCount);
+	memcpy(sIndexBuffer.data, mesh->indices, sizeof(u16) * mesh->indicesCount);
+
+	VkDeviceSize dummyOffset = 0;
+	vkCmdBindVertexBuffers(gVkCore.commandBuffers[0], 0, 1, &sVertexBuffer.buffer, &dummyOffset);
+	vkCmdBindIndexBuffer(gVkCore.commandBuffers[0], sIndexBuffer.buffer, 0, VK_INDEX_TYPE_UINT16);
+	vkCmdDrawIndexed(gVkCore.commandBuffers[0], mesh->indicesCount, 1, 0, 0, 0);
+	return 0;
+}
+
 i32 rVkEndFrame(void)
 {
-	VkBuffer vertexBuffers[] = { sVertexBuffer.buffer };
-	VkDeviceSize vertexOffsets[] = { 0 };
-	vkCmdBindVertexBuffers(gVkCore.commandBuffers[0], 0, 1, vertexBuffers, vertexOffsets);
-	vkCmdBindIndexBuffer(gVkCore.commandBuffers[0], sIndexBuffer.buffer, 0, VK_INDEX_TYPE_UINT16);
-	vkCmdDrawIndexed(gVkCore.commandBuffers[0], pARRAY_SIZE(sIndices), 1, 0, 0, 0);
-
 	vkCmdEndRenderPass(gVkCore.commandBuffers[0]);
 	rVK_CHECK(vkEndCommandBuffer(gVkCore.commandBuffers[0]));
 

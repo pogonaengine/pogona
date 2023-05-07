@@ -6,10 +6,11 @@
 
 #pragma once
 
-#include <engine/defines.h>
-#include <engine/window/window.h>
 #include "vulkan.h"
 #include "vulkan/vulkan_core.h"
+#include <engine/defines.h>
+#include <engine/renderer/mesh.h>
+#include <engine/window/window.h>
 
 typedef struct {
 	VkPhysicalDevice physicalDevice;
@@ -53,6 +54,7 @@ bool pVulkanSupport(void);
 
 i32 rVkCreate(pWindow* window);
 i32 rVkBeginFrame(void);
+i32 rVkDrawMesh(const rMesh* mesh);
 i32 rVkEndFrame(void);
 void rVkDestroy(void);
 

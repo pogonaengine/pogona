@@ -54,6 +54,7 @@ i32 pRendererPopulate(pRenderer* self)
 	case pRENDERER_TYPE_VULKAN:
 		self->create     = rVkCreate;
 		self->beginFrame = rVkBeginFrame;
+		self->drawMesh   = rVkDrawMesh;
 		self->endFrame   = rVkEndFrame;
 		self->destroy    = rVkDestroy;
 		break;
